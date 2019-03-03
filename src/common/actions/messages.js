@@ -1,4 +1,4 @@
-import { ADD_MESSAGE } from '../constants';
+import {ADD_MESSAGE} from "../constants"
 
 // {
 //     to: 1, // 0 = all, 1 = admins, n = userID
@@ -13,7 +13,7 @@ const addMessage = (message) => ({
         readableTime: new Date().toLocaleString(),
         timestamp: Date.now()
     }
-});
+})
 
 export {
     addMessage

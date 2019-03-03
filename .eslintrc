@@ -1,0 +1,30 @@
+{
+    "extends": "react-app",
+    "globals": {
+        "Atomics": true,
+        "SharedArrayBuffer": true
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "never"
+        ],
+        "no-console": "error",
+        "no-var": "error"
+    }
+}

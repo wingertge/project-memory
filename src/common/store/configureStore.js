@@ -1,30 +1,30 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from '../reducers';
+import {createStore, applyMiddleware, compose} from "redux"
+import thunk from "redux-thunk"
+import rootReducer from "../reducers"
 
 // https://codeburst.io/react-redux-example-paginated-api-7303d9545016
-const middlewares = [thunk];
+const middlewares = [thunk]
 const enhancer = compose(
-  applyMiddleware(...middlewares),
-  (typeof window !== 'undefined') && window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f,
-);
+    applyMiddleware(...middlewares),
+    (typeof window !== "undefined") && window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f,
+)
 
 const configureStore = preloadedState => {
-  const store = createStore(
-    rootReducer,
-    preloadedState,
-    enhancer
-  );
+    const store = createStore(
+        rootReducer,
+        preloadedState,
+        enhancer
+    )
 
-  if (module.hot) {
+    if (module.hot) {
     // Enable Webpack hot module replacement for reducers
-    module.hot.accept('../reducers', () => {
-      const nextRootReducer = require('../reducers').default;
-      store.replaceReducer(nextRootReducer);
-    });
-  }
+        module.hot.accept("../reducers", () => {
+            const nextRootReducer = require("../reducers").default
+            store.replaceReducer(nextRootReducer)
+        })
+    }
 
-  return store;
-};
+    return store
+}
 
-export default configureStore;
+export default configureStore

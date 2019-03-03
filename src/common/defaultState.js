@@ -1,4 +1,6 @@
+import Immutable from "seamless-immutable"
+
 export default {
-    messages: [],
-    downloader: null
+    messages: Immutable([]),
+    downloader: Immutable({})
 }
