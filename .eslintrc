@@ -26,5 +26,10 @@
         ],
         "no-console": "error",
         "no-var": "error"
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }

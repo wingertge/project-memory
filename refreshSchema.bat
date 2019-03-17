@@ -1,0 +1,1 @@
+yarn run apollo client:codegen --endpoint=http://localhost:4000 --target=typescript --watch --includes=src/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-global-types.ts types
