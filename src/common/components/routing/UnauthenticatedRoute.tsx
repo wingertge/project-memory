@@ -1,11 +1,11 @@
-import React, {ComponentType} from "react"
-import * as PropTypes from "prop-types"
+import React from "react"
+import {DataValue} from "react-apollo"
 import {Route, Redirect, RouteProps} from "react-router"
+import {compose, mapProps, pure} from "recompose"
 import {oc} from "ts-optchain"
-import {GetProfile} from "../../../generated-models"
+import {WithUser, withUser} from "../../enhancers"
 
 interface PropTypes {
-    component: ComponentType<any>,
     props?: object
 }
 
@@ -13,9 +13,10 @@ interface GraphQLPropTypes {
     authenticated: boolean
 }
 
-type Props = RouteProps & GraphQLPropTypes & PropTypes
+type Props = PropTypes & RouteProps & GraphQLPropTypes & WithUser
 
-const UnauthenticatedRoute = ({component: C, props: cProps, authenticated, ...rest}: Props) => {
+const UnauthenticatedRoute = ({component, props: cProps, authenticated, ...rest}: Props) => {
+    const C = component as any
     return (
         <Route {...rest} render={props =>
             !authenticated
@@ -25,13 +26,8 @@ const UnauthenticatedRoute = ({component: C, props: cProps, authenticated, ...re
     )
 }
 
-const withGQL = GetProfile.HOC<RouteProps & PropTypes, GraphQLPropTypes>({
-    props: ({data}) => ({
-        authenticated: !!(oc(data).user())
-    }),
-    options: {
-        errorPolicy: "ignore"
-    }
-})
-
-export default withGQL(UnauthenticatedRoute)
+export default compose<Props, PropTypes & RouteProps>(
+    pure,
+    withUser(),
+    mapProps<GraphQLPropTypes, Props>(({data}: WithUser) => ({authenticated: !oc(data as DataValue<any>).error()}))
+)(UnauthenticatedRoute)

@@ -24,22 +24,42 @@ const modifiedFileLoader = {
     },
 }
 
-const reactLoadablePlugin = new ReactLoadablePlugin({
-    filename: "./build/react-loadable.json"
-})
-
 module.exports = {
-    plugins: ["typescript"],
-    modify: config => {
-        config.module.rules = config.module.rules.filter(rule => rule.loader !== modifiedFileLoader.loader)
-
-        config.module.rules.push({
-            test: /\.(graphql|gql)$/,
-            exclude: /node_modules/,
-            loader: "graphql-tag/loader"
-        }, modifiedFileLoader)
-
-        //config.plugins.push(reactLoadablePlugin)
+    plugins: [{
+        name: "typescript",
+        options: {
+            useBabel: true,
+            useEslint: false,
+            tsLoader: {
+                transpileOnly: true,
+                experimentalWatchApi: true
+            }
+        }
+    }],
+    modify: (config, {target}) => {
+        if(target === "web") {
+            return {
+                ...config,
+                plugins: [
+                    new ReactLoadablePlugin({
+                        filename: "./build/react-loadable.json"
+                    }),
+                    ...config.plugins
+                ],
+                module: {
+                    ...config.module,
+                    rules: [
+                        ...config.module.rules.filter(rule => rule.loader !== modifiedFileLoader.loader),
+                        {
+                            test: /\.(graphql|gql)$/,
+                            exclude: /node_modules/,
+                            loader: "graphql-tag/loader"
+                        },
+                        modifiedFileLoader
+                    ]
+                }
+            }
+        }
 
         return config
     }

@@ -11,9 +11,12 @@ const rawTheme = createMuiTheme({
             dark: "#1e1e1f",
         },
         secondary: {
-            light: "#fff5f8",
+/*            light: "#fff5f8",
             main: "#ff3366",
-            dark: "#e62958",
+            dark: "#e62958",*/
+            light: "#ffb6c1",
+            main: "#ff69b4",
+            dark: "#ff1493",
         },
         // @ts-ignore
         warning: {
@@ -118,4 +121,23 @@ const theme = {
     },
 }
 
-export default theme
+export default createMuiTheme({
+    typography: {
+        useNextVariants: true,
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif",
+    },
+    palette: {
+        type: "dark",
+        primary: {
+            light: "#ff69b4",
+            main: "#ff1493",
+            dark: "#ff1493",
+        },
+        secondary: {
+            light: "#0093dd",
+            main: "#294ddb",
+            dark: "#882d9e"
+        }
+    },
+    direction: "ltr"
+})

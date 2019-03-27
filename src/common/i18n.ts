@@ -1,23 +1,9 @@
-import i18n from "i18next"
-import LanguageDetector from "i18next-browser-languagedetector"
-
-i18n
-.use(LanguageDetector)
-.init({
-    resources: {
-        en: {
-            translations: {
-
-            }
-        }
-    },
+export const baseOptions = {
     fallbackLng: "en",
-    debug: true,
 
     ns: ["translations"],
     defaultNS: "translations",
-
-    keySeparator: false,
+    saveMissing: true,
 
     interpolation: {
         escapeValue: false,
@@ -27,6 +13,4 @@ i18n
     react: {
         wait: true
     }
-})
-
-export default i18n
+}

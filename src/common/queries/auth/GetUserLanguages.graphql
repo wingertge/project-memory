@@ -1,0 +1,11 @@
+query GetUserLanguages($id: ID!) {
+    user(id: $id) {
+        id
+        languages {
+            id
+            languageCode
+            name
+            nativeName
+        }
+    }
+}

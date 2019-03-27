@@ -1,0 +1,3 @@
+query GetCurrentUserID {
+    currentUserID @client
+}

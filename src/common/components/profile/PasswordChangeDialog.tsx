@@ -1,4 +1,3 @@
-import {ApolloError} from "apollo-client"
 import React from "react"
 import {
     withStyles,
@@ -9,20 +8,23 @@ import {
     DialogContent,
     DialogContentText, TextField, DialogActions, Button
 } from "@material-ui/core"
-import {compose, lifecycle, pure, withHandlers} from "recompose"
-import {UpdateProfile, UserInput} from "../../../generated-models"
+import {compose, pure, withHandlers} from "recompose"
 import {
-    FormWithErrors,
+    UpdateProfileDocument,
+    UpdateProfileMutation as Mutation,
+    UpdateProfileMutationVariables as MutationVariables
+} from "../../../generated/graphql"
+import {
+    FormWithErrors, MutateFn,
     MutationProps,
     ValidatorMap,
     withMutation,
-    withState,
+    WithToast, withToast,
     withValidatedFormState
 } from "../../enhancers"
 import {isEqualTo, passwordStrongEnough} from "../../util/validationUtils"
-import ErrorBox from "../common/ErrorBox"
-import Toast from "../common/Toast"
 import {WithTranslation, withTranslation} from "react-i18next"
+import WithErrorBox from "../common/WithErrorBox"
 
 const styles = createStyles({})
 
@@ -30,7 +32,7 @@ interface PropTypes {
     passwordExists: boolean
     open: boolean
     close: () => void
-    sub: string
+    id: string
 }
 
 interface FormState {
@@ -53,23 +55,23 @@ interface HandlerProps {
     onOldPasswordChange: (event) => void
     onNewPasswordChange: (event) => void
     onNewPasswordConfirmChange: (event) => void
-    save: (variables: {sub: string, profile: Partial<UserInput>}) => void
+    save: MutateFn<Mutation, MutationVariables>
     onSave: () => void
+    onSuccess: () => void
 }
 
 type Form = FormState & UpdaterProps & HandlerProps & FormWithErrors<FormState> & ToastProps
 
-type Props = WithStyles<typeof styles> & Form & PropTypes & MutationProps<UpdateProfile.Mutation, UpdateProfile.Variables> & WithTranslation
+type Props = WithStyles<typeof styles> & Form & PropTypes & MutationProps<Mutation, MutationVariables> & WithTranslation & WithToast
 
 const PasswordChangeDialog = (
-    {sub, open, passwordExists, close, onSave, oldPassword, onOldPasswordChange, newPassword, onNewPasswordChange, newPasswordConfirm, onNewPasswordConfirmChange, errors, closeToast, apolloError, apolloResult, loading, t}: Props
-) => {
-    return (
-        <>
-            <Dialog open={open} onClose={close} aria-labelledby="form-dialog-title">
-                <DialogTitle>{passwordExists ? t("Change Password") : t("Create Password")}</DialogTitle>
-                <DialogContent>
-                    {apolloError && <ErrorBox title={t(apolloError.message.split(":")[0].trim())} text={t(apolloError.message.split(":")[1].trim())} retry={onSave}/>}
+    {open, passwordExists, close, onSave, oldPassword, onOldPasswordChange, newPassword, onNewPasswordChange, newPasswordConfirm, onNewPasswordConfirmChange, errors, mutationData, t}: Props
+) => (
+    <>
+        <Dialog open={open} onClose={close} aria-labelledby="form-dialog-title">
+            <DialogTitle>{passwordExists ? t("Change Password") : t("Create Password")}</DialogTitle>
+            <DialogContent>
+                <WithErrorBox prop={mutationData} retry={onSave}>
                     <DialogContentText>
                         {passwordExists ? t("Please enter a new password") : t("Please enter a password")}
                     </DialogContentText>
@@ -103,21 +105,19 @@ const PasswordChangeDialog = (
                         error={!!(errors.newPasswordConfirm)}
                         helperText={t(errors.newPasswordConfirm!)}
                     />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={close} color="primary">
-                        {t("Cancel")}
-                    </Button>
-                    <Button onClick={onSave} color="primary" disabled={loading}>
-                        {t("Save")}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Toast open={!!apolloResult} onClose={closeToast}
-                   message={passwordExists ? t("Successfully changed password") : t("Successfully added a password")}/>
-        </>
-    )
-}
+                </WithErrorBox>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={close} color="primary">
+                    {t("Cancel")}
+                </Button>
+                <Button onClick={onSave} color="primary" disabled={mutationData.saving}>
+                    {t("Save")}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    </>
+)
 
 const validators: ValidatorMap<FormState> = {
     newPassword: [
@@ -139,17 +139,15 @@ export default compose<Props, PropTypes>(
         newPassword: "",
         newPasswordConfirm: ""
     }, validators),
-    withState<Props, ApolloError | undefined>("apolloError", "updateApolloError", undefined),
-    withState<Props, UpdateProfile.Mutation | undefined>("apolloResult", "updateApolloResult", undefined),
-    withMutation<Props, UpdateProfile.Mutation, UpdateProfile.Variables>(UpdateProfile.Document, "save"),
-    withHandlers<Props, Partial<HandlerProps & MutationProps<UpdateProfile.Mutation, UpdateProfile.Variables>>>({
-        closeToast: ({updateApolloResult}) => () => updateApolloResult(undefined),
-        onSave: ({save, sub, newPassword, oldPassword}) => () => save({sub, profile: {password: newPassword, oldPassword}})
-    }),
-    lifecycle<Props, {}>({
-        componentWillReceiveProps(nextProps) {
-            if(!this.props.apolloResult && nextProps.apolloResult)
-                this.props.close()
+    withToast<Props>(({passwordExists}) => passwordExists ? "Successfully changed password" : "Successfully added a password"),
+    withHandlers<Props, Partial<HandlerProps>>({
+        onSuccess: ({openToast, close}) => () => {
+            openToast()
+            close()
         }
+    }),
+    withMutation<Props, Mutation, MutationVariables>(UpdateProfileDocument, "save", "onSuccess"),
+    withHandlers<Props, Partial<HandlerProps>>({
+        onSave: ({save, id, newPassword, oldPassword}) => () => save({id, profile: {password: newPassword, oldPassword}})
     })
 )(PasswordChangeDialog)

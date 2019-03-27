@@ -1,8 +1,10 @@
 import React from "react"
-import {withStyles, Typography, createStyles, Theme, WithStyles} from "@material-ui/core"
+import {withStyles, createStyles, Theme, WithStyles, Chip, Avatar} from "@material-ui/core"
 import * as PropTypes from "prop-types"
-import {GetProfile} from "../../../generated-models"
-import LinkButton from "../common/LinkButton"
+import {WithTranslation, withTranslation} from "react-i18next"
+import {RouteComponentProps, withRouter} from "react-router"
+import {compose, pure, withHandlers} from "recompose"
+import {Language} from "../../../generated/graphql"
 
 const styles = (theme: Theme) => createStyles({
     languageName: {
@@ -16,22 +18,46 @@ const styles = (theme: Theme) => createStyles({
     },
     languageIcon: {
         verticalAlign: "middle"
+    },
+    chip: {
+        margin: theme.spacing.unit
     }
 })
 
 interface PropTypes {
-    language: GetProfile.Languages
+    language: Language
 }
 
-type Props = WithStyles<typeof styles> & PropTypes
+interface HandlerTypes {
+    onLanguageClick: () => void
+}
 
-const LanguageDisplay = ({language: {name, nativeName, languageCode}, classes}: Props) => (
+type Props = WithStyles<typeof styles> & PropTypes & HandlerTypes & WithTranslation & RouteComponentProps<{}>
+
+/*const LanguageDisplay = ({language: {name, nativeName, languageCode}, classes, t}: Props) => (
     <LinkButton className={classes.container} to={`/language/${languageCode}`}>
         <img src={`/static/media/${languageCode}.png`} width="20" height="15" alt={languageCode} className={classes.languageIcon} />
         <Typography variant="body1" className={classes.languageName}>
-            {`${name} (${nativeName})`}
+            {`${t(name)} (${nativeName})`}
         </Typography>
     </LinkButton>
+)*/
+
+const LanguageDisplay = ({language: {name, nativeName, languageCode}, classes, t, onLanguageClick}: Props) => (
+    <Chip
+        avatar={<Avatar src={`/static/media/flags/${languageCode}.png`} alt={languageCode} />}
+        label={`${t(name)} (${nativeName})`}
+        onClick={onLanguageClick}
+        className={classes.chip}
+    />
 )
 
-export default withStyles(styles)(LanguageDisplay)
+export default compose<Props, PropTypes>(
+    pure,
+    withStyles(styles),
+    withTranslation(),
+    withRouter,
+    withHandlers<Props, HandlerTypes>({
+        onLanguageClick: ({history, language: {languageCode}}) => () => history.push(`/language/${languageCode}`)
+    })
+)(LanguageDisplay)

@@ -1,0 +1,6 @@
+query GetDeckDetails($deckID: ID!) {
+    deck(id: $deckID) {
+        id
+        name
+    }
+}

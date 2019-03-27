@@ -1,0 +1,13 @@
+query GetDecksShallow($id: ID!) {
+    user(id: $id) {
+        id
+        ownedDecks {
+            id
+            cardCount
+        }
+        subscribedDecks {
+            id
+            cardCount
+        }
+    }
+}

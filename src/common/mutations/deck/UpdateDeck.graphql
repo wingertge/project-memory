@@ -1,0 +1,6 @@
+mutation UpdateDeck($id: ID!, $deckInput: DeckInput!) {
+    updateDeck(id: $id, input: $deckInput) {
+        id
+        name
+    }
+}

@@ -1,0 +1,11 @@
+mutation UpsertCard($deckID: ID!, $card: CardInput!, $cardFilter: CardFilterInput) {
+    upsertCardInDeck(id: $deckID, card: $card) {
+        id
+        cards(filter: $cardFilter) {
+            id
+            meaning
+            pronunciation
+            translation
+        }
+    }
+}

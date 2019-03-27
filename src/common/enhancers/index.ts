@@ -1,22 +1,38 @@
-import {CircularProgress} from "@material-ui/core"
-import {ComponentType} from "react"
+import {RouteComponentProps, withRouter} from "react-router"
 import {
-    branch,
     compose,
-    InferableComponentEnhancerWithProps,
     mapper, Omit,
-    renderComponent,
-    withHandlers,
-    withProps,
+    withHandlers, withProps,
     withState as withStateBase
 } from "recompose"
-import {oc} from "ts-optchain"
 import {eventHandlerWithValidation, FormWithErrors, ValidatorMap, withValidation} from "./withValidation"
 
 export const eventHandler = <TProps>(updateHandler: keyof TProps) => (props: TProps) => event => (props[updateHandler] as any)(event.target.value)
 
-export function withState<TProps = {}, TState = string>(stateName: string, stateUpdaterName: string, initialState: TState | mapper<TProps, TState>) {
-    return withStateBase<TProps, TState, string, string>(stateName, stateUpdaterName, initialState)
+export function withState<TProps = {}, TState = string>(stateName: keyof TProps, stateUpdaterName: keyof TProps, initialState: TState | mapper<TProps, TState>) {
+    return withStateBase<TProps, TState, string, string>(stateName as string, stateUpdaterName as string, initialState)
+}
+
+export const withRouteProps = <TProps extends RouteComponentProps<any>>(...keys: Array<keyof TProps | [string, keyof TProps] | [(value: string) => any, keyof TProps]>) => {
+    const propEnhancer =  withProps<Partial<TProps>, TProps>(({match: {params}}) => {
+        const props: any = {}
+        keys.forEach(key => {
+            if(Array.isArray(key)) {
+                const [modifier, propName] = key
+                if(typeof modifier === "function") {
+                    props[propName] = modifier(params[propName])
+                } else {
+                    props[propName] = params[modifier]
+                }
+            } else props[key] = params[key]
+        })
+        return props
+    })
+
+    return compose(
+        withRouter,
+        propEnhancer
+    )
 }
 
 /**
@@ -66,7 +82,7 @@ export const withValidatedFormState = <TFormProps extends FormWithErrors<TFormPr
         const updater = `update${uppercaseFirstLetter(key)}`
         const handlerName = `on${uppercaseFirstLetter(key)}Change`
         const def = defaultIsStatic ? defaultState[key] : (props: TProps) => defaultStateFun!(props)[key]
-        stateEnhancers.push(withState<TProps>(key, updater, def))
+        stateEnhancers.push(withState<TProps>(key as keyof TProps, updater as keyof TProps, def))
         callbacks[handlerName] = eventHandlerWithValidation<TFormProps>(key as any, updater as any)
     })
     return compose(
@@ -83,3 +99,6 @@ export * from "./withMutation"
 export * from "./renderBranch"
 export * from "./wrap"
 export * from "./withToast"
+export * from "./withErrorBox"
+export * from "./withUser"
+export * from "./withDialog"

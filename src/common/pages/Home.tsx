@@ -1,19 +1,22 @@
-import React, {Component} from "react"
-import {withStyles} from "@material-ui/core"
+import {createStyles, withStyles} from "@material-ui/core"
+import React from "react"
+import {WithTranslation, withTranslation} from "react-i18next"
+import {compose, pure} from "recompose"
 import Heading from "../components/common/Heading"
 
-const styles = {}
+const styles = createStyles({})
 
-class Home extends Component {
-    static propTypes = {}
+type Props = WithTranslation
 
-    render() {
-        return (
-            <div>
-                <Heading>Home</Heading>
-            </div>
-        )
-    }
-}
+const Home = ({t}: Props) => (
+    <div>
+        <Heading>{t("Home")}</Heading>
+    </div>
+)
 
-export default withStyles(styles)(Home)
+// noinspection JSUnusedGlobalSymbols
+export default compose<Props, {}>(
+    pure,
+    withStyles(styles),
+    withTranslation()
+)(Home)

@@ -1,0 +1,12 @@
+query GetCards($deckID: ID!, $filter: CardFilterInput) {
+    deck(id: $deckID) {
+        id
+        cardCount
+        cards(filter: $filter) {
+            id
+            meaning
+            pronunciation
+            translation
+        }
+    }
+}

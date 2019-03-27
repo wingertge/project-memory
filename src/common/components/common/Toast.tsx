@@ -3,7 +3,7 @@ import {withStyles, Snackbar, Button, IconButton, WithStyles, createStyles, Them
 import {Close as CloseIcon} from "@material-ui/icons"
 import * as PropTypes from "prop-types"
 import {WithTranslation, withTranslation} from "react-i18next"
-import {compose} from "recompose"
+import {compose, pure} from "recompose"
 
 const styles = (theme: Theme) => createStyles({
     close: {
@@ -32,7 +32,7 @@ const Toast = ({open, onClose, message, onUndo, classes, t}: Props) => (
         ContentProps={{
             "aria-describedby": "message-id"
         }}
-        message={<span id="message-id">t({message})</span>}
+        message={<span id="message-id">{message}</span>}
         action={[
             onUndo && <Button key="undo" color="secondary" size="small" onClick={onUndo}>{t("UNDO")}</Button>,
             <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={onClose}>
@@ -43,6 +43,7 @@ const Toast = ({open, onClose, message, onUndo, classes, t}: Props) => (
 )
 
 export default compose<Props, PropTypes>(
+    pure,
     withStyles(styles),
     withTranslation()
 )(Toast)

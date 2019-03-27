@@ -1,11 +1,11 @@
 import {ApolloLink} from "apollo-link"
 import {withClientState} from "apollo-link-state"
-import i18n from "../common/i18n"
-import React from "react"
+import localTypeDefs from "../common/localTypeDefs"
+import i18n from "./i18n"
+import React, {Suspense} from "react"
 import {hydrate} from "react-dom"
-import {I18nextProvider} from "react-i18next"
-import App from "../common/App"
-import {MuiThemeProvider, CssBaseline, createGenerateClassName, Theme} from "@material-ui/core"
+import {I18nextProvider, useSSR} from "react-i18next"
+import {MuiThemeProvider, CssBaseline, Theme, createGenerateClassName} from "@material-ui/core"
 import theme from "../common/theme"
 import {JssProvider} from "react-jss"
 import {createHttpLink} from "apollo-link-http"
@@ -13,7 +13,11 @@ import {ApolloClient} from "apollo-client"
 import {InMemoryCache} from "apollo-cache-inmemory"
 import {ApolloProvider} from "react-apollo"
 import {BrowserRouter} from "react-router-dom"
+import Loadable from "react-loadable"
 import * as env from "./env"
+
+// tslint:disable-next-line:no-var-requires
+let App = require("../common/App").default
 
 class Main extends React.Component {
     // Remove the server-side injected CSS.
@@ -25,8 +29,18 @@ class Main extends React.Component {
     }
 
     render() {
-        return <App />
+        return (
+            <Suspense fallback={null}>
+                <App />
+            </Suspense>
+        )
     }
+}
+
+const MainApp = () => {
+    // @ts-ignore
+    useSSR(window.__PRELOADED_I18N__, window.__INITIAL_LANG__)
+    return <Main />
 }
 
 // @ts-ignore
@@ -35,7 +49,8 @@ const cache = new InMemoryCache().restore(window.__PRELOADED_STATE__)
 const stateLink = withClientState({
     cache,
     defaults: {},
-    resolvers: {}
+    resolvers: {},
+    typeDefs: localTypeDefs
 })
 
 const httpLink = createHttpLink({
@@ -54,14 +69,14 @@ const client = new ApolloClient({
     cache
 })
 
-const Root = generateClassName => (
+const RootApp = generateClassName => (
     <I18nextProvider i18n={i18n}>
         <ApolloProvider client={client}>
             <BrowserRouter>
                 <JssProvider generateClassName={generateClassName}>
                     <MuiThemeProvider theme={theme as Theme}>
-                        <CssBaseline />
-                        <Main />
+                        <CssBaseline/>
+                        <MainApp/>
                     </MuiThemeProvider>
                 </JssProvider>
             </BrowserRouter>
@@ -69,16 +84,18 @@ const Root = generateClassName => (
     </I18nextProvider>
 )
 
-hydrate(
-    Root(createGenerateClassName()),
-    document.getElementById("root")
-)
+Loadable.preloadReady().then(() => {
+    hydrate(
+        RootApp(createGenerateClassName()),
+        document.getElementById("root")
+    )
+})
 
 if (module.hot) {
     module.hot.accept("../common/App", () => {
-        const generateClassName = createGenerateClassName()
+        App = require("../common/App").default
         hydrate(
-            Root(generateClassName),
+            RootApp(createGenerateClassName()),
             document.getElementById("root")
         )
     })

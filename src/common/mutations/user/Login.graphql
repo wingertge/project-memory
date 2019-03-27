@@ -1,0 +1,6 @@
+mutation Login($authorizationCode: ID!) {
+    authenticate(code: $authorizationCode) {
+        accessToken
+        expiresIn
+    }
+}

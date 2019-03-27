@@ -28,13 +28,16 @@
         "comment-format": false,
         "interface-name": false,
         "curly": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "object-literal-key-quotes": [true, "as-needed"]
     },
     "rulesDirectory": [],
     "linterOptions": {
         "exclude": [
             "node_modules/**",
-            "src/generated-models.tsx"
+            "src/generated/**",
+            "build/**",
+            "razzle.config.js"
         ]
     }
 }

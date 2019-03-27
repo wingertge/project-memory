@@ -1,31 +1,13 @@
 import React from "react"
-import {Route, Redirect} from "react-router"
-import {GetProfile} from "../../../generated-models"
+import {Route, withRouter, RouteProps, RouteComponentProps} from "react-router"
+import {compose, pure} from "recompose"
+import {redirectOnError, withUser, WithUser} from "../../enhancers"
 
-interface PropTypes {
-    component: any,
-    props?: any,
-    path: string
-}
+type Props = RouteComponentProps<{}> & RouteProps & WithUser
 
-interface GraphQLPropTypes {
-    authenticated: boolean
-}
-
-type Props = PropTypes & GraphQLPropTypes
-
-const AuthenticatedRoute = ({component: C, props: cProps, authenticated, ...rest}: Props) => (
-    <Route {...rest} render={props =>
-        authenticated
-            ? <C {...props} {...cProps} />
-            : <Redirect to={`/login?redirect=${props.location.pathname}${props.location.search}`} />
-    } />
-)
-
-const withGQL = GetProfile.HOC<PropTypes, GraphQLPropTypes>({
-    props: ({data}) => ({
-        authenticated: Boolean(data && data.user)
-    })
-})
-
-export default withGQL(AuthenticatedRoute)
+export default compose<Props, RouteProps>(
+    pure,
+    withRouter,
+    withUser(),
+    redirectOnError<Props>(props => `/login?redirect=${props.location.pathname}${props.location.search}`)
+)(Route)

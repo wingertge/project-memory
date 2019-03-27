@@ -1,15 +1,15 @@
+overwrite: true
 schema:
   - "http://localhost:4000"
-documents:
-  - "./src/**/*.ts"
-config: {}
+  - "./src/common/localTypeDefs.graphql"
+documents: "**/*.graphql"
 generates:
-  ./src/generated-models.tsx:
-    config: {}
+  src/generated/graphql.tsx:
     plugins:
-      - "typescript-common"
-      - "typescript-client"
+      - "typescript"
+      - "typescript-operations"
       - "typescript-react-apollo"
-require: []
+    config:
+      withHoc: true
+      enumsAsTypes: true
 watch: true
-overwrite: true

@@ -1,0 +1,8 @@
+mutation UpdateProfile($id: ID!, $profile: UserInput!) {
+    editUser(id: $id, input: $profile) {
+        id
+        username
+        email
+        name
+    }
+}
