@@ -40,7 +40,7 @@ const styles = (theme: Theme) => createStyles({
 
 const ResponsiveDrawer = ({children, classes, theme, container, isOpen, close}: Props) => (
     <div className={classes.drawer}>
-        <Hidden smUp implementation="js">
+        <Hidden smUp>
             <Drawer
                 container={container}
                 variant="temporary"
@@ -54,7 +54,7 @@ const ResponsiveDrawer = ({children, classes, theme, container, isOpen, close}: 
                 {children}
             </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="js">
+        <Hidden xsDown>
             <Drawer classes={{
                 paper: classes.drawerPaper
             }} variant="permanent" open>

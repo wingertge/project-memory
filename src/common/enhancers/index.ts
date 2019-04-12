@@ -1,9 +1,9 @@
 import {RouteComponentProps, withRouter} from "react-router"
 import {
-    compose,
+    compose, HandleCreators, HandleCreatorsFactory,
     mapper, Omit,
-    withHandlers, withProps,
-    withState as withStateBase
+    withHandlers as withHandlersBase, withProps as withPropsBase,
+    withState as withStateBase,
 } from "recompose"
 import {eventHandlerWithValidation, FormWithErrors, ValidatorMap, withValidation} from "./withValidation"
 
@@ -13,8 +13,12 @@ export function withState<TProps = {}, TState = string>(stateName: keyof TProps,
     return withStateBase<TProps, TState, string, string>(stateName as string, stateUpdaterName as string, initialState)
 }
 
+export function withProps<TProps>(createProps: Partial<TProps> | mapper<TProps, Partial<TProps>>) {
+    return withPropsBase<Partial<TProps>, TProps>(createProps)
+}
+
 export const withRouteProps = <TProps extends RouteComponentProps<any>>(...keys: Array<keyof TProps | [string, keyof TProps] | [(value: string) => any, keyof TProps]>) => {
-    const propEnhancer =  withProps<Partial<TProps>, TProps>(({match: {params}}) => {
+    const propEnhancer =  withProps<TProps>(({match: {params}}) => {
         const props: any = {}
         keys.forEach(key => {
             if(Array.isArray(key)) {
@@ -91,6 +95,8 @@ export const withValidatedFormState = <TFormProps extends FormWithErrors<TFormPr
         withHandlers(callbacks)
     )
 }
+
+export const withHandlers = <TProps>(handlerCreators: | HandleCreators<TProps, Partial<TProps>> | HandleCreatorsFactory<TProps, Partial<TProps>>) => withHandlersBase<TProps, Partial<TProps>>(handlerCreators)
 
 const uppercaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.substr(1)
 

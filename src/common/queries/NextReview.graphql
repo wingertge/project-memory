@@ -1,0 +1,15 @@
+query NextReview($userId: ID!) {
+    user(id: $userId) {
+        id
+        nextReview {
+            id
+            card {
+                id
+                meaning
+                pronunciation
+                translation
+            }
+            reviewedFields
+        }
+    }
+}

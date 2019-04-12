@@ -2,17 +2,22 @@
 import {compose, mapper} from "recompose"
 import {oc} from "ts-optchain"
 import {
-    GetProfileProps,
+    CurrentUserIdProps,
+    ProfileProps,
     User,
-    withGetCurrentUserId,
-    withGetProfile
+    withCurrentUserId,
+    withProfile
 } from "../../generated/graphql"
 
-export interface WithUser extends GetProfileProps {
+export interface WithUser extends ProfileProps {
     user: User
 }
 
-export const withID = <TProps = {}>(idName: keyof TProps | string = "id") => withGetCurrentUserId({
+export interface WithID extends CurrentUserIdProps {
+    id: string
+}
+
+export const withID = <TProps = {}>(idName: keyof TProps | string = "id") => withCurrentUserId({
     props: ({data}) => ({
         [idName]: oc(data).currentUserID()
     }),
@@ -23,7 +28,7 @@ export const withUser = <TProps = WithUser>(id?: string | mapper<TProps, string>
     let idValue: any = id
     if(!idValue)
         idValue = ({id}: {id: string}) => id
-    const gql = withGetProfile({
+    const gql = withProfile({
         props: ({data}) => ({
             data,
             [propName]: oc(data).user()

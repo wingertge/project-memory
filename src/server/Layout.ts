@@ -33,8 +33,6 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
             ${assets.client.css
         ? `<link rel="stylesheet" href="${assets.client.css}">`
         : ""}
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
               ${process.env.NODE_ENV === "production"
         ? `<script src="${assets.client.js}" defer></script>`
         : `<script src="${assets.client.js}" defer crossorigin></script>`}

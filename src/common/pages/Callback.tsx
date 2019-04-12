@@ -13,7 +13,7 @@ type Props = RouteComponentProps<{}> & WithStyles<typeof styles> & WithTranslati
 const Callback = ({location: {search}, t}: Props) => {
     const query = parse(search.replace("?", ""))
     const code = query.code as string
-    const redirectTo = (query.state && JSON.parse(query.state as string)) || "/"
+    const redirectTo = "/"
 
     if (!code) return <ErrorBox title={t("Error")} text={t("Missing Authorization code from URL")}/>
 

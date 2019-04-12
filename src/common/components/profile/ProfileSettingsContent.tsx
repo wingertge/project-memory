@@ -25,7 +25,6 @@ import {
     WithUser,
     withValidatedFormState
 } from "../../enhancers"
-import {isSocial} from "../../selectors"
 import {isEmail, longerThan, noInvalidCharacters, notEmpty, shorterThan} from "../../util/validationUtils"
 import Heading from "../common/Heading"
 import PasswordChangeDialog from "./PasswordChangeDialog"
@@ -117,8 +116,8 @@ const ProfileSettings = ({t, classes, user, errors, username, email, name, onUse
                                            className={classes.textField}
                                            value={email}
                                            onChange={onEmailChange}
-                                           disabled={isSocial(user)}
-                                           helperText={isSocial(user) ? t("Can't change email on a social connection login") : t(errors.email!)}
+                                           disabled={user.isSocial}
+                                           helperText={user.isSocial ? t("Can't change email on a social connection login") : t(errors.email!)}
                                            error={!!(errors.email)} />
                             </Grid>
                         </Grid>
@@ -136,11 +135,11 @@ const ProfileSettings = ({t, classes, user, errors, username, email, name, onUse
                                         <Button variant="outlined" color="primary" onClick={openPasswordChange} fullWidth>
                                             {t("Change Password")}
                                         </Button>
-                                        <PasswordChangeDialog id={user.id} passwordExists={!isSocial(user)} open={passwordChangeOpen}
+                                        <PasswordChangeDialog id={user.id} passwordExists={!user.isSocial} open={passwordChangeOpen}
                                                               close={closePasswordChange}/>
                                     </Grid>
                                     <Grid item xs={4}>
-                                        <Button onClick={onSubmit} disabled={!!(loading || !_.isEmpty(errors))} variant="contained" color="primary" fullWidth>
+                                        <Button onClick={onSubmit} disabled={(loading || !_.isEmpty(errors))} variant="contained" color="primary" fullWidth>
                                             {loading ? "Saving..." : "Save"}
                                         </Button>
                                     </Grid>

@@ -23,3 +23,9 @@ export const joinDecks = createSelector<ShallowDecksUser, ShallowDeck[], Shallow
     subscribedDecksSelector,
     (ownedDecks, subscribedDecks) => [...ownedDecks.filter(deck => !!deck), ...subscribedDecks.filter(deck => !!deck)] as Deck[]
 )
+
+export const isSubscribed = createSelector<{decks: Deck[], id: string}, string[], string, boolean>(
+    ({decks}) => decks.map(deck => deck.id),
+    ({id}) => id,
+    (decks, id) => decks.includes(id)
+)

@@ -7,23 +7,21 @@ import {
     DialogTitle,
     TextField, Theme, WithStyles, withStyles
 } from "@material-ui/core"
-import Maybe from "graphql/tsutils/Maybe"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
-import {compose, pure, withHandlers, withProps, withPropsOnChange} from "recompose"
+import {compose, pure, withHandlers, withProps} from "recompose"
 import {oc} from "ts-optchain"
 import {
-    Card, UpsertCardDocument,
-    UpsertCardMutation,
-    UpsertCardMutationVariables,
-    UpsertCardProps
+    AddCardDocument,
+    AddCardMutation, AddCardMutationVariables,
+    Card, UpdateCardDocument, UpdateCardMutation, UpdateCardMutationVariables
 } from "../../../generated/graphql"
-import {MutateFn, MutationProps, withErrorBox, withFormState, withMutation, WithToast, withToast} from "../../enhancers"
+import {withErrorBox, withFormState, withMutation, WithToast, withToast} from "../../enhancers"
 import {Column, SortDirection} from "./types"
 
 export interface PropTypes {
     closeDialog: () => void
-    card?: Maybe<Pick<Card, "id" | "meaning" | "pronunciation" | "translation">>
+    card?: Card
     deckId: string
     rowsPerPage: number
     page: number
@@ -66,12 +64,14 @@ interface SpecialTypes {
     translationRef: any
 }
 
-interface GraphQLTypes {
-    submit: MutateFn<UpsertCardMutation, UpsertCardMutationVariables>
+interface MutationTypes {
+    createCard: () => void
+    editCard: () => void
+    mutationData: any
 }
 
 type Form = FormTypes & FormHandlerTypes & FormUpdaterTypes
-type Props = WithTranslation & PropTypes & Form & WithStyles<typeof styles> & UpsertCardProps<{}> & HandlerTypes & MutationProps<UpsertCardMutation, UpsertCardMutationVariables> & GraphQLTypes & WithToast & SpecialTypes
+type Props = WithTranslation & PropTypes & Form & WithStyles<typeof styles> & HandlerTypes & MutationTypes & WithToast & SpecialTypes
 
 const styles = (theme: Theme) => createStyles({
     form: {
@@ -147,24 +147,44 @@ export default compose<Props, PropTypes>(
             }
         }
     }),
-    withMutation<Props, UpsertCardMutation, UpsertCardMutationVariables>(UpsertCardDocument, "submit", "onSaved"),
+    withMutation<Props, AddCardMutation, AddCardMutationVariables>(AddCardDocument, ({deckId, meaning, pronunciation, translation, rowsPerPage, page, sortBy, sortDirection}) => ({
+        card: {
+            meaning,
+            pronunciation,
+            translation,
+            deck: deckId
+        },
+        cardFilter: {
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            sortBy,
+            sortDirection
+        }
+    }), ({onSaved}) => onSaved(), undefined, {submitName: "createCard"}),
+    withMutation<Props, UpdateCardMutation, UpdateCardMutationVariables>(UpdateCardDocument, ({card, meaning, pronunciation, translation}) => ({
+        id: card!.id,
+        card: {
+            meaning,
+            pronunciation,
+            translation
+        }
+    }), ({onSaved}) => onSaved(), undefined, {
+        submitName: "editCard",
+        optimisticResponse: ({card, meaning, pronunciation, translation}) => ({
+            __typename: "Mutation",
+            editCard: {
+                __typename: "Card",
+                id: card!.id,
+                meaning,
+                pronunciation,
+                translation
+            }
+        })
+    }),
     withHandlers<Props, Partial<HandlerTypes>>({
-        onSubmit: ({submit, deckId, card, meaning, pronunciation, translation, rowsPerPage, page, sortBy, sortDirection}) => () => {
-            submit({
-                deckID: deckId,
-                card: {
-                    id: oc(card).id(),
-                    meaning,
-                    pronunciation,
-                    translation
-                },
-                cardFilter: {
-                    limit: rowsPerPage,
-                    offset: page * rowsPerPage,
-                    sortBy,
-                    sortDirection
-                }
-            })
+        onSubmit: ({createCard, editCard, card}) => () => {
+            if(card) editCard()
+            else createCard()
         }
     }),
     withHandlers<Props, Partial<HandlerTypes>>({

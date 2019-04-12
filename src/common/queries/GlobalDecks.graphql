@@ -1,0 +1,16 @@
+query GlobalDecks($filter: DeckFilterInput, $userId: ID!) {
+    decks(filter: $filter) {
+        id
+        name
+        cardCount
+        rating
+        isLikedBy(userID: $userId)
+        language {
+            ...languageFields
+        }
+        owner {
+            id
+            username
+        }
+    }
+}

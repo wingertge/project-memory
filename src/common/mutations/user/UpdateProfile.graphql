@@ -4,5 +4,12 @@ mutation UpdateProfile($id: ID!, $profile: UserInput!) {
         username
         email
         name
+        introStep
+        nativeLanguage {
+            id
+            name
+            nativeName
+            languageCode
+        }
     }
 }

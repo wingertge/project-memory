@@ -23,9 +23,7 @@ export type Card = {
   meaning: Scalars["String"];
   pronunciation?: Maybe<Scalars["String"]>;
   audioUrl?: Maybe<Scalars["String"]>;
-  language?: Maybe<Language>;
-  creator: User;
-  containingDecks?: Maybe<Array<Maybe<Deck>>>;
+  deck?: Maybe<Deck>;
 };
 
 export type CardFilterInput = {
@@ -33,9 +31,6 @@ export type CardFilterInput = {
   offset?: Maybe<Scalars["Int"]>;
   sortDirection?: Maybe<SortDirection>;
   sortBy?: Maybe<CardSortingOptions>;
-  creator?: Maybe<Scalars["ID"]>;
-  language?: Maybe<Scalars["ID"]>;
-  containedInDeck?: Maybe<Scalars["ID"]>;
 };
 
 export type CardInput = {
@@ -43,8 +38,7 @@ export type CardInput = {
   meaning?: Maybe<Scalars["String"]>;
   pronunciation?: Maybe<Scalars["String"]>;
   audioUrl?: Maybe<Scalars["String"]>;
-  language?: Maybe<Scalars["ID"]>;
-  id?: Maybe<Scalars["ID"]>;
+  deck?: Maybe<Scalars["ID"]>;
 };
 
 export type CardSortingOptions = "meaning" | "pronunciation" | "translation";
@@ -53,20 +47,36 @@ export type Deck = {
   id: Scalars["ID"];
   name: Scalars["String"];
   owner: User;
-  language?: Maybe<Language>;
+  language: Language;
+  nativeLanguage: Language;
   cards?: Maybe<Array<Maybe<Card>>>;
-  cardCount?: Maybe<Scalars["Int"]>;
+  cardCount: Scalars["Int"];
+  subscribers?: Maybe<Array<Maybe<User>>>;
+  subscriberCount: Scalars["Int"];
+  rating: Scalars["Int"];
+  isLikedBy: Scalars["Boolean"];
 };
 
 export type DeckCardsArgs = {
   filter?: Maybe<CardFilterInput>;
 };
 
+export type DeckSubscribersArgs = {
+  filter?: Maybe<SubscriberFilterInput>;
+};
+
+export type DeckIsLikedByArgs = {
+  userID: Scalars["ID"];
+};
+
 export type DeckFilterInput = {
   limit?: Maybe<Scalars["Int"]>;
+  sortBy?: Maybe<DeckSortBy>;
+  sortDirection?: Maybe<SortDirection>;
   search?: Maybe<Scalars["String"]>;
   owner?: Maybe<Scalars["ID"]>;
-  language?: Maybe<Scalars["ID"]>;
+  languages?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  nativeLanguage?: Maybe<Scalars["ID"]>;
   cardContained?: Maybe<Scalars["ID"]>;
 };
 
@@ -74,8 +84,11 @@ export type DeckInput = {
   name?: Maybe<Scalars["String"]>;
   owner?: Maybe<Scalars["String"]>;
   language?: Maybe<Scalars["ID"]>;
+  nativeLanguage?: Maybe<Scalars["ID"]>;
   cards?: Maybe<Array<Maybe<CardInput>>>;
 };
+
+export type DeckSortBy = "name" | "cardCount" | "rating" | "subscribers";
 
 export type Identity = {
   userId: Scalars["ID"];
@@ -97,14 +110,16 @@ export type Mutation = {
   initUser?: Maybe<User>;
   editUser?: Maybe<User>;
   deleteUser?: Maybe<User>;
-  addDeck?: Maybe<Deck>;
+  addLanguageToUser?: Maybe<User>;
+  addDeck?: Maybe<User>;
   updateDeck?: Maybe<Deck>;
-  upsertCardInDeck?: Maybe<Deck>;
-  removeCardsFromDeck?: Maybe<Deck>;
   deleteDeck?: Maybe<Deck>;
-  createCard?: Maybe<Card>;
+  changeSubscriptionStatus?: Maybe<User>;
+  changeLikeStatus?: Maybe<Deck>;
+  createCard?: Maybe<Deck>;
   editCard?: Maybe<Card>;
-  deleteCard?: Maybe<Card>;
+  deleteCards?: Maybe<Deck>;
+  submitReview?: Maybe<Review>;
 };
 
 export type MutationAuthenticateArgs = {
@@ -124,6 +139,11 @@ export type MutationDeleteUserArgs = {
   id: Scalars["ID"];
 };
 
+export type MutationAddLanguageToUserArgs = {
+  id: Scalars["ID"];
+  input: Scalars["ID"];
+};
+
 export type MutationAddDeckArgs = {
   input: DeckInput;
 };
@@ -133,18 +153,20 @@ export type MutationUpdateDeckArgs = {
   input: DeckInput;
 };
 
-export type MutationUpsertCardInDeckArgs = {
-  id: Scalars["ID"];
-  card: CardInput;
-};
-
-export type MutationRemoveCardsFromDeckArgs = {
-  id: Scalars["ID"];
-  cards?: Maybe<Array<Maybe<Scalars["ID"]>>>;
-};
-
 export type MutationDeleteDeckArgs = {
   id: Scalars["ID"];
+};
+
+export type MutationChangeSubscriptionStatusArgs = {
+  id: Scalars["ID"];
+  deckID: Scalars["ID"];
+  value: Scalars["Boolean"];
+};
+
+export type MutationChangeLikeStatusArgs = {
+  id: Scalars["ID"];
+  userID: Scalars["ID"];
+  value?: Maybe<Scalars["Boolean"]>;
 };
 
 export type MutationCreateCardArgs = {
@@ -156,8 +178,15 @@ export type MutationEditCardArgs = {
   input: CardInput;
 };
 
-export type MutationDeleteCardArgs = {
+export type MutationDeleteCardsArgs = {
+  deck: Scalars["ID"];
+  ids: Array<Maybe<Scalars["ID"]>>;
+};
+
+export type MutationSubmitReviewArgs = {
   id: Scalars["ID"];
+  correct: Scalars["Boolean"];
+  field: ReviewFields;
 };
 
 export type Query = {
@@ -167,6 +196,7 @@ export type Query = {
   language?: Maybe<Language>;
   decks?: Maybe<Array<Maybe<Deck>>>;
   deck?: Maybe<Deck>;
+  review?: Maybe<Review>;
   currentUserID: Scalars["ID"];
 };
 
@@ -190,20 +220,39 @@ export type QueryDeckArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryReviewArgs = {
+  id: Scalars["ID"];
+};
+
 export type Review = {
   id: Scalars["ID"];
-  date: Scalars["Date"];
+  nextReviewAt?: Maybe<Scalars["Date"]>;
+  box: Scalars["Int"];
   card: Card;
+  user: User;
+  reviewedFields?: Maybe<Array<Maybe<ReviewFields>>>;
+  correct?: Maybe<Scalars["Boolean"]>;
 };
+
+export type ReviewFields = "meaning" | "pronunciation" | "translation";
 
 export type ReviewFilterInput = {
   limit?: Maybe<Scalars["Int"]>;
   offset?: Maybe<Scalars["Int"]>;
   deck?: Maybe<Scalars["ID"]>;
-  maxTime?: Maybe<Scalars["Date"]>;
+  toBeReviewedBy?: Maybe<Scalars["Date"]>;
+  sortBy?: Maybe<ReviewSortOptions>;
+  sortDirection?: Maybe<SortDirection>;
+  box?: Maybe<Scalars["Int"]>;
 };
 
+export type ReviewSortOptions = "reviewDate" | "box";
+
 export type SortDirection = "asc" | "desc";
+
+export type SubscriberFilterInput = {
+  limit?: Maybe<Scalars["Int"]>;
+};
 
 export type User = {
   sub?: Maybe<Scalars["ID"]>;
@@ -215,18 +264,28 @@ export type User = {
   gender: Scalars["String"];
   locale?: Maybe<Scalars["String"]>;
   identities?: Maybe<Array<Maybe<Identity>>>;
+  isSocial: Scalars["Boolean"];
+  nativeLanguage?: Maybe<Language>;
   languages?: Maybe<Array<Maybe<Language>>>;
   ownedDecks?: Maybe<Array<Maybe<Deck>>>;
   subscribedDecks?: Maybe<Array<Maybe<Deck>>>;
   reviewQueue?: Maybe<Array<Maybe<Review>>>;
-  reviewQueueLength?: Maybe<Scalars["Int"]>;
+  reviewsCount?: Maybe<Scalars["Int"]>;
+  nextReview?: Maybe<Review>;
+  lessonQueue?: Maybe<Array<Maybe<Review>>>;
+  lessonsCount?: Maybe<Scalars["Int"]>;
+  introStep?: Maybe<Scalars["Int"]>;
 };
 
 export type UserReviewQueueArgs = {
   filter?: Maybe<ReviewFilterInput>;
 };
 
-export type UserReviewQueueLengthArgs = {
+export type UserReviewsCountArgs = {
+  filter?: Maybe<ReviewFilterInput>;
+};
+
+export type UserLessonQueueArgs = {
   filter?: Maybe<ReviewFilterInput>;
 };
 
@@ -240,7 +299,116 @@ export type UserInput = {
   email?: Maybe<Scalars["String"]>;
   password?: Maybe<Scalars["String"]>;
   oldPassword?: Maybe<Scalars["String"]>;
+  introStep?: Maybe<Scalars["Int"]>;
+  nativeLanguage?: Maybe<Scalars["ID"]>;
 };
+export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
+  Language,
+  "id" | "languageCode" | "name" | "nativeName"
+>;
+
+export type AddCardMutationVariables = {
+  card: CardInput;
+  cardFilter?: Maybe<CardFilterInput>;
+};
+
+export type AddCardMutation = { __typename?: "Mutation" } & {
+  createCard: Maybe<
+    { __typename?: "Deck" } & Pick<Deck, "id"> & {
+        cards: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Card" } & Pick<
+                Card,
+                "id" | "meaning" | "pronunciation" | "translation"
+              >
+            >
+          >
+        >;
+      }
+  >;
+};
+
+export type AddDeckMutationVariables = {
+  input: DeckInput;
+};
+
+export type AddDeckMutation = { __typename?: "Mutation" } & {
+  addDeck: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        ownedDecks: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Deck" } & Pick<
+                Deck,
+                "id" | "name" | "cardCount" | "subscriberCount"
+              > & {
+                  language: {
+                    __typename?: "Language";
+                  } & LanguageFieldsFragment;
+                  nativeLanguage: {
+                    __typename?: "Language";
+                  } & LanguageFieldsFragment;
+                }
+            >
+          >
+        >;
+      }
+  >;
+};
+
+export type DeleteCardsMutationVariables = {
+  deckId: Scalars["ID"];
+  cardIds: Array<Maybe<Scalars["ID"]>>;
+  cardFilter?: Maybe<CardFilterInput>;
+};
+
+export type DeleteCardsMutation = { __typename?: "Mutation" } & {
+  deleteCards: Maybe<
+    { __typename?: "Deck" } & Pick<Deck, "id"> & {
+        cards: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Card" } & Pick<
+                Card,
+                "id" | "meaning" | "pronunciation" | "translation"
+              >
+            >
+          >
+        >;
+      }
+  >;
+};
+
+export type SubmitReviewMutationVariables = {
+  reviewId: Scalars["ID"];
+  field: ReviewFields;
+  correct: Scalars["Boolean"];
+};
+
+export type SubmitReviewMutation = { __typename?: "Mutation" } & {
+  submitReview: Maybe<
+    { __typename?: "Review" } & Pick<
+      Review,
+      "id" | "box" | "nextReviewAt" | "reviewedFields" | "correct"
+    >
+  >;
+};
+
+export type UpdateCardMutationVariables = {
+  id: Scalars["ID"];
+  card: CardInput;
+};
+
+export type UpdateCardMutation = { __typename?: "Mutation" } & {
+  editCard: Maybe<
+    { __typename?: "Card" } & Pick<
+      Card,
+      "id" | "meaning" | "pronunciation" | "translation" | "audioUrl"
+    >
+  >;
+};
+
 export type UpdateDeckMutationVariables = {
   id: Scalars["ID"];
   deckInput: DeckInput;
@@ -250,22 +418,61 @@ export type UpdateDeckMutation = { __typename?: "Mutation" } & {
   updateDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "name">>;
 };
 
-export type UpsertCardMutationVariables = {
-  deckID: Scalars["ID"];
-  card: CardInput;
-  cardFilter?: Maybe<CardFilterInput>;
+export type AddLanguageToUserMutationVariables = {
+  userId: Scalars["ID"];
+  languageId: Scalars["ID"];
 };
 
-export type UpsertCardMutation = { __typename?: "Mutation" } & {
-  upsertCardInDeck: Maybe<
-    { __typename?: "Deck" } & Pick<Deck, "id"> & {
-        cards: Maybe<
+export type AddLanguageToUserMutation = { __typename?: "Mutation" } & {
+  addLanguageToUser: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        languages: Maybe<
           Array<
             Maybe<
-              { __typename?: "Card" } & Pick<
-                Card,
-                "id" | "meaning" | "pronunciation" | "translation"
+              { __typename?: "Language" } & Pick<
+                Language,
+                "id" | "name" | "nativeName" | "languageCode"
               >
+            >
+          >
+        >;
+      }
+  >;
+};
+
+export type ChangeLikeStatusMutationVariables = {
+  userId: Scalars["ID"];
+  deckId: Scalars["ID"];
+  value?: Maybe<Scalars["Boolean"]>;
+};
+
+export type ChangeLikeStatusMutation = { __typename?: "Mutation" } & {
+  changeLikeStatus: Maybe<
+    { __typename?: "Deck" } & Pick<Deck, "id" | "rating" | "isLikedBy">
+  >;
+};
+
+export type ChangeSubscriptionStatusMutationVariables = {
+  userId: Scalars["ID"];
+  deckId: Scalars["ID"];
+  value: Scalars["Boolean"];
+};
+
+export type ChangeSubscriptionStatusMutation = { __typename?: "Mutation" } & {
+  changeSubscriptionStatus: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        subscribedDecks: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Deck" } & Pick<
+                Deck,
+                "id" | "name" | "cardCount"
+              > & {
+                  owner: { __typename?: "User" } & Pick<
+                    User,
+                    "id" | "username"
+                  >;
+                }
             >
           >
         >;
@@ -293,61 +500,95 @@ export type UpdateProfileMutationVariables = {
 
 export type UpdateProfileMutation = { __typename?: "Mutation" } & {
   editUser: Maybe<
-    { __typename?: "User" } & Pick<User, "id" | "username" | "email" | "name">
+    { __typename?: "User" } & Pick<
+      User,
+      "id" | "username" | "email" | "name" | "introStep"
+    > & {
+        nativeLanguage: Maybe<
+          { __typename?: "Language" } & Pick<
+            Language,
+            "id" | "name" | "nativeName" | "languageCode"
+          >
+        >;
+      }
   >;
 };
 
-export type GetCurrentUserIdQueryVariables = {};
+export type CurrentUserIdQueryVariables = {};
 
-export type GetCurrentUserIdQuery = { __typename?: "Query" } & Pick<
+export type CurrentUserIdQuery = { __typename?: "Query" } & Pick<
   Query,
   "currentUserID"
 >;
 
-export type GetProfileQueryVariables = {
+export type ProfileQueryVariables = {
   id?: Maybe<Scalars["ID"]>;
 };
 
-export type GetProfileQuery = { __typename?: "Query" } & {
+export type ProfileQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<
       User,
-      | "sub"
       | "id"
       | "username"
       | "email"
       | "name"
       | "picture"
-      | "reviewQueueLength"
-    > & {
-        identities: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Identity" } & Pick<
-                Identity,
-                "isSocial" | "provider"
-              >
-            >
-          >
-        >;
-      }
+      | "introStep"
+      | "isSocial"
+    >
   >;
 };
 
-export type GetUserLanguagesQueryVariables = {
-  id: Scalars["ID"];
+export type GlobalDecksQueryVariables = {
+  filter?: Maybe<DeckFilterInput>;
+  userId: Scalars["ID"];
 };
 
-export type GetUserLanguagesQuery = { __typename?: "Query" } & {
+export type GlobalDecksQuery = { __typename?: "Query" } & {
+  decks: Maybe<
+    Array<
+      Maybe<
+        { __typename?: "Deck" } & Pick<
+          Deck,
+          "id" | "name" | "cardCount" | "rating" | "isLikedBy"
+        > & {
+            language: { __typename?: "Language" } & LanguageFieldsFragment;
+            owner: { __typename?: "User" } & Pick<User, "id" | "username">;
+          }
+      >
+    >
+  >;
+};
+
+export type LanguagesQueryVariables = {};
+
+export type LanguagesQuery = { __typename?: "Query" } & {
+  languages: Maybe<
+    Array<Maybe<{ __typename?: "Language" } & LanguageFieldsFragment>>
+  >;
+};
+
+export type LessonsQueryVariables = {
+  userId: Scalars["ID"];
+  filter?: Maybe<ReviewFilterInput>;
+};
+
+export type LessonsQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        languages: Maybe<
+        lessonQueue: Maybe<
           Array<
             Maybe<
-              { __typename?: "Language" } & Pick<
-                Language,
-                "id" | "languageCode" | "name" | "nativeName"
-              >
+              { __typename?: "Review" } & Pick<
+                Review,
+                "id" | "reviewedFields"
+              > & {
+                  card: { __typename?: "Card" } & Pick<
+                    Card,
+                    "id" | "meaning" | "pronunciation" | "translation"
+                  >;
+                }
             >
           >
         >;
@@ -355,12 +596,58 @@ export type GetUserLanguagesQuery = { __typename?: "Query" } & {
   >;
 };
 
-export type GetCardsQueryVariables = {
+export type NextReviewQueryVariables = {
+  userId: Scalars["ID"];
+};
+
+export type NextReviewQuery = { __typename?: "Query" } & {
+  user: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        nextReview: Maybe<
+          { __typename?: "Review" } & Pick<Review, "id" | "reviewedFields"> & {
+              card: { __typename?: "Card" } & Pick<
+                Card,
+                "id" | "meaning" | "pronunciation" | "translation"
+              >;
+            }
+        >;
+      }
+  >;
+};
+
+export type ReviewsQueryVariables = {
+  userId: Scalars["ID"];
+  filter?: Maybe<ReviewFilterInput>;
+};
+
+export type ReviewsQuery = { __typename?: "Query" } & {
+  user: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        reviewQueue: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Review" } & Pick<
+                Review,
+                "id" | "box" | "correct" | "reviewedFields"
+              > & {
+                  card: { __typename?: "Card" } & Pick<
+                    Card,
+                    "id" | "meaning" | "pronunciation" | "translation"
+                  >;
+                }
+            >
+          >
+        >;
+      }
+  >;
+};
+
+export type CardsQueryVariables = {
   deckID: Scalars["ID"];
   filter?: Maybe<CardFilterInput>;
 };
 
-export type GetCardsQuery = { __typename?: "Query" } & {
+export type CardsQuery = { __typename?: "Query" } & {
   deck: Maybe<
     { __typename?: "Deck" } & Pick<Deck, "id" | "cardCount"> & {
         cards: Maybe<
@@ -377,26 +664,82 @@ export type GetCardsQuery = { __typename?: "Query" } & {
   >;
 };
 
-export type GetDeckDetailsQueryVariables = {
+export type DeckDetailsQueryVariables = {
   deckID: Scalars["ID"];
 };
 
-export type GetDeckDetailsQuery = { __typename?: "Query" } & {
+export type DeckDetailsQuery = { __typename?: "Query" } & {
   deck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "name">>;
 };
 
-export type GetDecksShallowQueryVariables = {
+export type LessonsCountQueryVariables = {
+  userId: Scalars["ID"];
+};
+
+export type LessonsCountQuery = { __typename?: "Query" } & {
+  user: Maybe<{ __typename?: "User" } & Pick<User, "id" | "lessonsCount">>;
+};
+
+export type ReviewsCountQueryVariables = {
+  userId: Scalars["ID"];
+  filter: ReviewFilterInput;
+};
+
+export type ReviewsCountQuery = { __typename?: "Query" } & {
+  user: Maybe<{ __typename?: "User" } & Pick<User, "id" | "reviewsCount">>;
+};
+
+export type ShallowDecksQueryVariables = {
   id: Scalars["ID"];
 };
 
-export type GetDecksShallowQuery = { __typename?: "Query" } & {
+export type ShallowDecksQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
         ownedDecks: Maybe<
-          Array<Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "cardCount">>>
+          Array<
+            Maybe<
+              { __typename?: "Deck" } & Pick<
+                Deck,
+                "id" | "name" | "cardCount" | "rating" | "isLikedBy"
+              > & {
+                  language: {
+                    __typename?: "Language";
+                  } & LanguageFieldsFragment;
+                }
+            >
+          >
         >;
         subscribedDecks: Maybe<
-          Array<Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "cardCount">>>
+          Array<
+            Maybe<
+              { __typename?: "Deck" } & Pick<
+                Deck,
+                "id" | "name" | "cardCount" | "rating" | "isLikedBy"
+              > & {
+                  language: {
+                    __typename?: "Language";
+                  } & LanguageFieldsFragment;
+                }
+            >
+          >
+        >;
+      }
+  >;
+};
+
+export type UserLanguagesQueryVariables = {
+  userId: Scalars["ID"];
+};
+
+export type UserLanguagesQuery = { __typename?: "Query" } & {
+  user: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        languages: Maybe<
+          Array<Maybe<{ __typename?: "Language" } & LanguageFieldsFragment>>
+        >;
+        nativeLanguage: Maybe<
+          { __typename?: "Language" } & LanguageFieldsFragment
         >;
       }
   >;
@@ -405,7 +748,289 @@ export type GetDecksShallowQuery = { __typename?: "Query" } & {
 import gql from "graphql-tag";
 import * as React from "react";
 import * as ReactApollo from "react-apollo";
+export const languageFieldsFragmentDoc = gql`
+  fragment languageFields on Language {
+    id
+    languageCode
+    name
+    nativeName
+  }
+`;
+export const AddCardDocument = gql`
+  mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
+    createCard(input: $card) {
+      id
+      cards(filter: $cardFilter) {
+        id
+        meaning
+        pronunciation
+        translation
+      }
+    }
+  }
+`;
 
+export class AddCardComponent extends React.Component<
+  Partial<ReactApollo.MutationProps<AddCardMutation, AddCardMutationVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<AddCardMutation, AddCardMutationVariables>
+        mutation={AddCardDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type AddCardProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddCardMutation, AddCardMutationVariables>
+> &
+  TChildProps;
+export type AddCardMutationFn = ReactApollo.MutationFn<
+  AddCardMutation,
+  AddCardMutationVariables
+>;
+export function withAddCard<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        AddCardMutation,
+        AddCardMutationVariables,
+        AddCardProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddCardMutation,
+    AddCardMutationVariables,
+    AddCardProps<TChildProps>
+  >(AddCardDocument, operationOptions);
+}
+export const AddDeckDocument = gql`
+  mutation AddDeck($input: DeckInput!) {
+    addDeck(input: $input) {
+      id
+      ownedDecks {
+        id
+        name
+        language {
+          ...languageFields
+        }
+        nativeLanguage {
+          ...languageFields
+        }
+        cardCount
+        subscriberCount
+      }
+    }
+  }
+  ${languageFieldsFragmentDoc}
+`;
+
+export class AddDeckComponent extends React.Component<
+  Partial<ReactApollo.MutationProps<AddDeckMutation, AddDeckMutationVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<AddDeckMutation, AddDeckMutationVariables>
+        mutation={AddDeckDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type AddDeckProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddDeckMutation, AddDeckMutationVariables>
+> &
+  TChildProps;
+export type AddDeckMutationFn = ReactApollo.MutationFn<
+  AddDeckMutation,
+  AddDeckMutationVariables
+>;
+export function withAddDeck<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        AddDeckMutation,
+        AddDeckMutationVariables,
+        AddDeckProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddDeckMutation,
+    AddDeckMutationVariables,
+    AddDeckProps<TChildProps>
+  >(AddDeckDocument, operationOptions);
+}
+export const DeleteCardsDocument = gql`
+  mutation DeleteCards(
+    $deckId: ID!
+    $cardIds: [ID]!
+    $cardFilter: CardFilterInput
+  ) {
+    deleteCards(deck: $deckId, ids: $cardIds) {
+      id
+      cards(filter: $cardFilter) {
+        id
+        meaning
+        pronunciation
+        translation
+      }
+    }
+  }
+`;
+
+export class DeleteCardsComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<DeleteCardsMutation, DeleteCardsMutationVariables>
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<DeleteCardsMutation, DeleteCardsMutationVariables>
+        mutation={DeleteCardsDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type DeleteCardsProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<DeleteCardsMutation, DeleteCardsMutationVariables>
+> &
+  TChildProps;
+export type DeleteCardsMutationFn = ReactApollo.MutationFn<
+  DeleteCardsMutation,
+  DeleteCardsMutationVariables
+>;
+export function withDeleteCards<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        DeleteCardsMutation,
+        DeleteCardsMutationVariables,
+        DeleteCardsProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeleteCardsMutation,
+    DeleteCardsMutationVariables,
+    DeleteCardsProps<TChildProps>
+  >(DeleteCardsDocument, operationOptions);
+}
+export const SubmitReviewDocument = gql`
+  mutation SubmitReview(
+    $reviewId: ID!
+    $field: ReviewFields!
+    $correct: Boolean!
+  ) {
+    submitReview(id: $reviewId, field: $field, correct: $correct) {
+      id
+      box
+      nextReviewAt
+      reviewedFields
+      correct
+    }
+  }
+`;
+
+export class SubmitReviewComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<
+      SubmitReviewMutation,
+      SubmitReviewMutationVariables
+    >
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<SubmitReviewMutation, SubmitReviewMutationVariables>
+        mutation={SubmitReviewDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type SubmitReviewProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<SubmitReviewMutation, SubmitReviewMutationVariables>
+> &
+  TChildProps;
+export type SubmitReviewMutationFn = ReactApollo.MutationFn<
+  SubmitReviewMutation,
+  SubmitReviewMutationVariables
+>;
+export function withSubmitReview<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        SubmitReviewMutation,
+        SubmitReviewMutationVariables,
+        SubmitReviewProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    SubmitReviewMutation,
+    SubmitReviewMutationVariables,
+    SubmitReviewProps<TChildProps>
+  >(SubmitReviewDocument, operationOptions);
+}
+export const UpdateCardDocument = gql`
+  mutation UpdateCard($id: ID!, $card: CardInput!) {
+    editCard(id: $id, input: $card) {
+      id
+      meaning
+      pronunciation
+      translation
+      audioUrl
+    }
+  }
+`;
+
+export class UpdateCardComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<UpdateCardMutation, UpdateCardMutationVariables>
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<UpdateCardMutation, UpdateCardMutationVariables>
+        mutation={UpdateCardDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type UpdateCardProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdateCardMutation, UpdateCardMutationVariables>
+> &
+  TChildProps;
+export type UpdateCardMutationFn = ReactApollo.MutationFn<
+  UpdateCardMutation,
+  UpdateCardMutationVariables
+>;
+export function withUpdateCard<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        UpdateCardMutation,
+        UpdateCardMutationVariables,
+        UpdateCardProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdateCardMutation,
+    UpdateCardMutationVariables,
+    UpdateCardProps<TChildProps>
+  >(UpdateCardDocument, operationOptions);
+}
 export const UpdateDeckDocument = gql`
   mutation UpdateDeck($id: ID!, $deckInput: DeckInput!) {
     updateDeck(id: $id, input: $deckInput) {
@@ -454,62 +1079,194 @@ export function withUpdateDeck<TProps, TChildProps = {}>(
     UpdateDeckProps<TChildProps>
   >(UpdateDeckDocument, operationOptions);
 }
-export const UpsertCardDocument = gql`
-  mutation UpsertCard(
-    $deckID: ID!
-    $card: CardInput!
-    $cardFilter: CardFilterInput
-  ) {
-    upsertCardInDeck(id: $deckID, card: $card) {
+export const AddLanguageToUserDocument = gql`
+  mutation AddLanguageToUser($userId: ID!, $languageId: ID!) {
+    addLanguageToUser(id: $userId, input: $languageId) {
       id
-      cards(filter: $cardFilter) {
+      languages {
         id
-        meaning
-        pronunciation
-        translation
+        name
+        nativeName
+        languageCode
       }
     }
   }
 `;
 
-export class UpsertCardComponent extends React.Component<
+export class AddLanguageToUserComponent extends React.Component<
   Partial<
-    ReactApollo.MutationProps<UpsertCardMutation, UpsertCardMutationVariables>
+    ReactApollo.MutationProps<
+      AddLanguageToUserMutation,
+      AddLanguageToUserMutationVariables
+    >
   >
 > {
   render() {
     return (
-      <ReactApollo.Mutation<UpsertCardMutation, UpsertCardMutationVariables>
-        mutation={UpsertCardDocument}
+      <ReactApollo.Mutation<
+        AddLanguageToUserMutation,
+        AddLanguageToUserMutationVariables
+      >
+        mutation={AddLanguageToUserDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type UpsertCardProps<TChildProps = {}> = Partial<
-  ReactApollo.MutateProps<UpsertCardMutation, UpsertCardMutationVariables>
+export type AddLanguageToUserProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables
+  >
 > &
   TChildProps;
-export type UpsertCardMutationFn = ReactApollo.MutationFn<
-  UpsertCardMutation,
-  UpsertCardMutationVariables
+export type AddLanguageToUserMutationFn = ReactApollo.MutationFn<
+  AddLanguageToUserMutation,
+  AddLanguageToUserMutationVariables
 >;
-export function withUpsertCard<TProps, TChildProps = {}>(
+export function withAddLanguageToUser<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        UpsertCardMutation,
-        UpsertCardMutationVariables,
-        UpsertCardProps<TChildProps>
+        AddLanguageToUserMutation,
+        AddLanguageToUserMutationVariables,
+        AddLanguageToUserProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withMutation<
     TProps,
-    UpsertCardMutation,
-    UpsertCardMutationVariables,
-    UpsertCardProps<TChildProps>
-  >(UpsertCardDocument, operationOptions);
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables,
+    AddLanguageToUserProps<TChildProps>
+  >(AddLanguageToUserDocument, operationOptions);
+}
+export const ChangeLikeStatusDocument = gql`
+  mutation ChangeLikeStatus($userId: ID!, $deckId: ID!, $value: Boolean) {
+    changeLikeStatus(id: $deckId, userID: $userId, value: $value) {
+      id
+      rating
+      isLikedBy(userID: $userId)
+    }
+  }
+`;
+
+export class ChangeLikeStatusComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<
+      ChangeLikeStatusMutation,
+      ChangeLikeStatusMutationVariables
+    >
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<
+        ChangeLikeStatusMutation,
+        ChangeLikeStatusMutationVariables
+      >
+        mutation={ChangeLikeStatusDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type ChangeLikeStatusProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables
+  >
+> &
+  TChildProps;
+export type ChangeLikeStatusMutationFn = ReactApollo.MutationFn<
+  ChangeLikeStatusMutation,
+  ChangeLikeStatusMutationVariables
+>;
+export function withChangeLikeStatus<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        ChangeLikeStatusMutation,
+        ChangeLikeStatusMutationVariables,
+        ChangeLikeStatusProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables,
+    ChangeLikeStatusProps<TChildProps>
+  >(ChangeLikeStatusDocument, operationOptions);
+}
+export const ChangeSubscriptionStatusDocument = gql`
+  mutation ChangeSubscriptionStatus(
+    $userId: ID!
+    $deckId: ID!
+    $value: Boolean!
+  ) {
+    changeSubscriptionStatus(id: $userId, deckID: $deckId, value: $value) {
+      id
+      subscribedDecks {
+        id
+        name
+        cardCount
+        owner {
+          id
+          username
+        }
+      }
+    }
+  }
+`;
+
+export class ChangeSubscriptionStatusComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<
+      ChangeSubscriptionStatusMutation,
+      ChangeSubscriptionStatusMutationVariables
+    >
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<
+        ChangeSubscriptionStatusMutation,
+        ChangeSubscriptionStatusMutationVariables
+      >
+        mutation={ChangeSubscriptionStatusDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type ChangeSubscriptionStatusProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables
+  >
+> &
+  TChildProps;
+export type ChangeSubscriptionStatusMutationFn = ReactApollo.MutationFn<
+  ChangeSubscriptionStatusMutation,
+  ChangeSubscriptionStatusMutationVariables
+>;
+export function withChangeSubscriptionStatus<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        ChangeSubscriptionStatusMutation,
+        ChangeSubscriptionStatusMutationVariables,
+        ChangeSubscriptionStatusProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables,
+    ChangeSubscriptionStatusProps<TChildProps>
+  >(ChangeSubscriptionStatusDocument, operationOptions);
 }
 export const LoginDocument = gql`
   mutation Login($authorizationCode: ID!) {
@@ -564,6 +1321,13 @@ export const UpdateProfileDocument = gql`
       username
       email
       name
+      introStep
+      nativeLanguage {
+        id
+        name
+        nativeName
+        languageCode
+      }
     }
   }
 `;
@@ -613,155 +1377,346 @@ export function withUpdateProfile<TProps, TChildProps = {}>(
     UpdateProfileProps<TChildProps>
   >(UpdateProfileDocument, operationOptions);
 }
-export const GetCurrentUserIdDocument = gql`
-  query GetCurrentUserID {
+export const CurrentUserIdDocument = gql`
+  query CurrentUserID {
     currentUserID @client
   }
 `;
 
-export class GetCurrentUserIdComponent extends React.Component<
+export class CurrentUserIdComponent extends React.Component<
   Partial<
-    ReactApollo.QueryProps<
-      GetCurrentUserIdQuery,
-      GetCurrentUserIdQueryVariables
-    >
+    ReactApollo.QueryProps<CurrentUserIdQuery, CurrentUserIdQueryVariables>
   >
 > {
   render() {
     return (
-      <ReactApollo.Query<GetCurrentUserIdQuery, GetCurrentUserIdQueryVariables>
-        query={GetCurrentUserIdDocument}
+      <ReactApollo.Query<CurrentUserIdQuery, CurrentUserIdQueryVariables>
+        query={CurrentUserIdDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type GetCurrentUserIdProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<GetCurrentUserIdQuery, GetCurrentUserIdQueryVariables>
+export type CurrentUserIdProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<CurrentUserIdQuery, CurrentUserIdQueryVariables>
 > &
   TChildProps;
-export function withGetCurrentUserId<TProps, TChildProps = {}>(
+export function withCurrentUserId<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        GetCurrentUserIdQuery,
-        GetCurrentUserIdQueryVariables,
-        GetCurrentUserIdProps<TChildProps>
+        CurrentUserIdQuery,
+        CurrentUserIdQueryVariables,
+        CurrentUserIdProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withQuery<
     TProps,
-    GetCurrentUserIdQuery,
-    GetCurrentUserIdQueryVariables,
-    GetCurrentUserIdProps<TChildProps>
-  >(GetCurrentUserIdDocument, operationOptions);
+    CurrentUserIdQuery,
+    CurrentUserIdQueryVariables,
+    CurrentUserIdProps<TChildProps>
+  >(CurrentUserIdDocument, operationOptions);
 }
-export const GetProfileDocument = gql`
-  query GetProfile($id: ID) {
+export const ProfileDocument = gql`
+  query Profile($id: ID) {
     user(id: $id) {
-      sub
       id
       username
       email
       name
       picture
-      reviewQueueLength
-      identities {
-        isSocial
-        provider
-      }
+      introStep
+      isSocial
     }
   }
 `;
 
-export class GetProfileComponent extends React.Component<
-  Partial<ReactApollo.QueryProps<GetProfileQuery, GetProfileQueryVariables>>
+export class ProfileComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<ProfileQuery, ProfileQueryVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Query<GetProfileQuery, GetProfileQueryVariables>
-        query={GetProfileDocument}
+      <ReactApollo.Query<ProfileQuery, ProfileQueryVariables>
+        query={ProfileDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type GetProfileProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<GetProfileQuery, GetProfileQueryVariables>
+export type ProfileProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ProfileQuery, ProfileQueryVariables>
 > &
   TChildProps;
-export function withGetProfile<TProps, TChildProps = {}>(
+export function withProfile<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        GetProfileQuery,
-        GetProfileQueryVariables,
-        GetProfileProps<TChildProps>
+        ProfileQuery,
+        ProfileQueryVariables,
+        ProfileProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withQuery<
     TProps,
-    GetProfileQuery,
-    GetProfileQueryVariables,
-    GetProfileProps<TChildProps>
-  >(GetProfileDocument, operationOptions);
+    ProfileQuery,
+    ProfileQueryVariables,
+    ProfileProps<TChildProps>
+  >(ProfileDocument, operationOptions);
 }
-export const GetUserLanguagesDocument = gql`
-  query GetUserLanguages($id: ID!) {
-    user(id: $id) {
+export const GlobalDecksDocument = gql`
+  query GlobalDecks($filter: DeckFilterInput, $userId: ID!) {
+    decks(filter: $filter) {
       id
-      languages {
+      name
+      cardCount
+      rating
+      isLikedBy(userID: $userId)
+      language {
+        ...languageFields
+      }
+      owner {
         id
-        languageCode
-        name
-        nativeName
+        username
       }
     }
   }
+  ${languageFieldsFragmentDoc}
 `;
 
-export class GetUserLanguagesComponent extends React.Component<
-  Partial<
-    ReactApollo.QueryProps<
-      GetUserLanguagesQuery,
-      GetUserLanguagesQueryVariables
-    >
-  >
+export class GlobalDecksComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<GlobalDecksQuery, GlobalDecksQueryVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Query<GetUserLanguagesQuery, GetUserLanguagesQueryVariables>
-        query={GetUserLanguagesDocument}
+      <ReactApollo.Query<GlobalDecksQuery, GlobalDecksQueryVariables>
+        query={GlobalDecksDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type GetUserLanguagesProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<GetUserLanguagesQuery, GetUserLanguagesQueryVariables>
+export type GlobalDecksProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<GlobalDecksQuery, GlobalDecksQueryVariables>
 > &
   TChildProps;
-export function withGetUserLanguages<TProps, TChildProps = {}>(
+export function withGlobalDecks<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        GetUserLanguagesQuery,
-        GetUserLanguagesQueryVariables,
-        GetUserLanguagesProps<TChildProps>
+        GlobalDecksQuery,
+        GlobalDecksQueryVariables,
+        GlobalDecksProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withQuery<
     TProps,
-    GetUserLanguagesQuery,
-    GetUserLanguagesQueryVariables,
-    GetUserLanguagesProps<TChildProps>
-  >(GetUserLanguagesDocument, operationOptions);
+    GlobalDecksQuery,
+    GlobalDecksQueryVariables,
+    GlobalDecksProps<TChildProps>
+  >(GlobalDecksDocument, operationOptions);
 }
-export const GetCardsDocument = gql`
-  query GetCards($deckID: ID!, $filter: CardFilterInput) {
+export const LanguagesDocument = gql`
+  query Languages {
+    languages {
+      ...languageFields
+    }
+  }
+  ${languageFieldsFragmentDoc}
+`;
+
+export class LanguagesComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<LanguagesQuery, LanguagesQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<LanguagesQuery, LanguagesQueryVariables>
+        query={LanguagesDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type LanguagesProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LanguagesQuery, LanguagesQueryVariables>
+> &
+  TChildProps;
+export function withLanguages<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        LanguagesQuery,
+        LanguagesQueryVariables,
+        LanguagesProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LanguagesQuery,
+    LanguagesQueryVariables,
+    LanguagesProps<TChildProps>
+  >(LanguagesDocument, operationOptions);
+}
+export const LessonsDocument = gql`
+  query Lessons($userId: ID!, $filter: ReviewFilterInput) {
+    user(id: $userId) {
+      id
+      lessonQueue(filter: $filter) {
+        id
+        card {
+          id
+          meaning
+          pronunciation
+          translation
+        }
+        reviewedFields
+      }
+    }
+  }
+`;
+
+export class LessonsComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<LessonsQuery, LessonsQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<LessonsQuery, LessonsQueryVariables>
+        query={LessonsDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type LessonsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LessonsQuery, LessonsQueryVariables>
+> &
+  TChildProps;
+export function withLessons<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        LessonsQuery,
+        LessonsQueryVariables,
+        LessonsProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LessonsQuery,
+    LessonsQueryVariables,
+    LessonsProps<TChildProps>
+  >(LessonsDocument, operationOptions);
+}
+export const NextReviewDocument = gql`
+  query NextReview($userId: ID!) {
+    user(id: $userId) {
+      id
+      nextReview {
+        id
+        card {
+          id
+          meaning
+          pronunciation
+          translation
+        }
+        reviewedFields
+      }
+    }
+  }
+`;
+
+export class NextReviewComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<NextReviewQuery, NextReviewQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<NextReviewQuery, NextReviewQueryVariables>
+        query={NextReviewDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type NextReviewProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<NextReviewQuery, NextReviewQueryVariables>
+> &
+  TChildProps;
+export function withNextReview<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        NextReviewQuery,
+        NextReviewQueryVariables,
+        NextReviewProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    NextReviewQuery,
+    NextReviewQueryVariables,
+    NextReviewProps<TChildProps>
+  >(NextReviewDocument, operationOptions);
+}
+export const ReviewsDocument = gql`
+  query Reviews($userId: ID!, $filter: ReviewFilterInput) {
+    user(id: $userId) {
+      id
+      reviewQueue(filter: $filter) {
+        id
+        box
+        correct
+        card {
+          id
+          meaning
+          pronunciation
+          translation
+        }
+        reviewedFields
+      }
+    }
+  }
+`;
+
+export class ReviewsComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<ReviewsQuery, ReviewsQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<ReviewsQuery, ReviewsQueryVariables>
+        query={ReviewsDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type ReviewsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ReviewsQuery, ReviewsQueryVariables>
+> &
+  TChildProps;
+export function withReviews<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        ReviewsQuery,
+        ReviewsQueryVariables,
+        ReviewsProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ReviewsQuery,
+    ReviewsQueryVariables,
+    ReviewsProps<TChildProps>
+  >(ReviewsDocument, operationOptions);
+}
+export const CardsDocument = gql`
+  query Cards($deckID: ID!, $filter: CardFilterInput) {
     deck(id: $deckID) {
       id
       cardCount
@@ -775,41 +1730,41 @@ export const GetCardsDocument = gql`
   }
 `;
 
-export class GetCardsComponent extends React.Component<
-  Partial<ReactApollo.QueryProps<GetCardsQuery, GetCardsQueryVariables>>
+export class CardsComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<CardsQuery, CardsQueryVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Query<GetCardsQuery, GetCardsQueryVariables>
-        query={GetCardsDocument}
+      <ReactApollo.Query<CardsQuery, CardsQueryVariables>
+        query={CardsDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type GetCardsProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<GetCardsQuery, GetCardsQueryVariables>
+export type CardsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<CardsQuery, CardsQueryVariables>
 > &
   TChildProps;
-export function withGetCards<TProps, TChildProps = {}>(
+export function withCards<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        GetCardsQuery,
-        GetCardsQueryVariables,
-        GetCardsProps<TChildProps>
+        CardsQuery,
+        CardsQueryVariables,
+        CardsProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withQuery<
     TProps,
-    GetCardsQuery,
-    GetCardsQueryVariables,
-    GetCardsProps<TChildProps>
-  >(GetCardsDocument, operationOptions);
+    CardsQuery,
+    CardsQueryVariables,
+    CardsProps<TChildProps>
+  >(CardsDocument, operationOptions);
 }
-export const GetDeckDetailsDocument = gql`
-  query GetDeckDetails($deckID: ID!) {
+export const DeckDetailsDocument = gql`
+  query DeckDetails($deckID: ID!) {
     deck(id: $deckID) {
       id
       name
@@ -817,89 +1772,232 @@ export const GetDeckDetailsDocument = gql`
   }
 `;
 
-export class GetDeckDetailsComponent extends React.Component<
-  Partial<
-    ReactApollo.QueryProps<GetDeckDetailsQuery, GetDeckDetailsQueryVariables>
-  >
+export class DeckDetailsComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<DeckDetailsQuery, DeckDetailsQueryVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Query<GetDeckDetailsQuery, GetDeckDetailsQueryVariables>
-        query={GetDeckDetailsDocument}
+      <ReactApollo.Query<DeckDetailsQuery, DeckDetailsQueryVariables>
+        query={DeckDetailsDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type GetDeckDetailsProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<GetDeckDetailsQuery, GetDeckDetailsQueryVariables>
+export type DeckDetailsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<DeckDetailsQuery, DeckDetailsQueryVariables>
 > &
   TChildProps;
-export function withGetDeckDetails<TProps, TChildProps = {}>(
+export function withDeckDetails<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        GetDeckDetailsQuery,
-        GetDeckDetailsQueryVariables,
-        GetDeckDetailsProps<TChildProps>
+        DeckDetailsQuery,
+        DeckDetailsQueryVariables,
+        DeckDetailsProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withQuery<
     TProps,
-    GetDeckDetailsQuery,
-    GetDeckDetailsQueryVariables,
-    GetDeckDetailsProps<TChildProps>
-  >(GetDeckDetailsDocument, operationOptions);
+    DeckDetailsQuery,
+    DeckDetailsQueryVariables,
+    DeckDetailsProps<TChildProps>
+  >(DeckDetailsDocument, operationOptions);
 }
-export const GetDecksShallowDocument = gql`
-  query GetDecksShallow($id: ID!) {
-    user(id: $id) {
+export const LessonsCountDocument = gql`
+  query LessonsCount($userId: ID!) {
+    user(id: $userId) {
       id
-      ownedDecks {
-        id
-        cardCount
-      }
-      subscribedDecks {
-        id
-        cardCount
-      }
+      lessonsCount
     }
   }
 `;
 
-export class GetDecksShallowComponent extends React.Component<
-  Partial<
-    ReactApollo.QueryProps<GetDecksShallowQuery, GetDecksShallowQueryVariables>
-  >
+export class LessonsCountComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<LessonsCountQuery, LessonsCountQueryVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Query<GetDecksShallowQuery, GetDecksShallowQueryVariables>
-        query={GetDecksShallowDocument}
+      <ReactApollo.Query<LessonsCountQuery, LessonsCountQueryVariables>
+        query={LessonsCountDocument}
         {...(this as any)["props"] as any}
       />
     );
   }
 }
-export type GetDecksShallowProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<GetDecksShallowQuery, GetDecksShallowQueryVariables>
+export type LessonsCountProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LessonsCountQuery, LessonsCountQueryVariables>
 > &
   TChildProps;
-export function withGetDecksShallow<TProps, TChildProps = {}>(
+export function withLessonsCount<TProps, TChildProps = {}>(
   operationOptions:
     | ReactApollo.OperationOption<
         TProps,
-        GetDecksShallowQuery,
-        GetDecksShallowQueryVariables,
-        GetDecksShallowProps<TChildProps>
+        LessonsCountQuery,
+        LessonsCountQueryVariables,
+        LessonsCountProps<TChildProps>
       >
     | undefined
 ) {
   return ReactApollo.withQuery<
     TProps,
-    GetDecksShallowQuery,
-    GetDecksShallowQueryVariables,
-    GetDecksShallowProps<TChildProps>
-  >(GetDecksShallowDocument, operationOptions);
+    LessonsCountQuery,
+    LessonsCountQueryVariables,
+    LessonsCountProps<TChildProps>
+  >(LessonsCountDocument, operationOptions);
+}
+export const ReviewsCountDocument = gql`
+  query ReviewsCount($userId: ID!, $filter: ReviewFilterInput!) {
+    user(id: $userId) {
+      id
+      reviewsCount(filter: $filter)
+    }
+  }
+`;
+
+export class ReviewsCountComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<ReviewsCountQuery, ReviewsCountQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<ReviewsCountQuery, ReviewsCountQueryVariables>
+        query={ReviewsCountDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type ReviewsCountProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ReviewsCountQuery, ReviewsCountQueryVariables>
+> &
+  TChildProps;
+export function withReviewsCount<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        ReviewsCountQuery,
+        ReviewsCountQueryVariables,
+        ReviewsCountProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ReviewsCountQuery,
+    ReviewsCountQueryVariables,
+    ReviewsCountProps<TChildProps>
+  >(ReviewsCountDocument, operationOptions);
+}
+export const ShallowDecksDocument = gql`
+  query ShallowDecks($id: ID!) {
+    user(id: $id) {
+      id
+      ownedDecks {
+        id
+        name
+        cardCount
+        rating
+        isLikedBy(userID: $id)
+        language {
+          ...languageFields
+        }
+      }
+      subscribedDecks {
+        id
+        name
+        cardCount
+        rating
+        isLikedBy(userID: $id)
+        language {
+          ...languageFields
+        }
+      }
+    }
+  }
+  ${languageFieldsFragmentDoc}
+`;
+
+export class ShallowDecksComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<ShallowDecksQuery, ShallowDecksQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<ShallowDecksQuery, ShallowDecksQueryVariables>
+        query={ShallowDecksDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type ShallowDecksProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ShallowDecksQuery, ShallowDecksQueryVariables>
+> &
+  TChildProps;
+export function withShallowDecks<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        ShallowDecksQuery,
+        ShallowDecksQueryVariables,
+        ShallowDecksProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ShallowDecksQuery,
+    ShallowDecksQueryVariables,
+    ShallowDecksProps<TChildProps>
+  >(ShallowDecksDocument, operationOptions);
+}
+export const UserLanguagesDocument = gql`
+  query UserLanguages($userId: ID!) {
+    user(id: $userId) {
+      id
+      languages {
+        ...languageFields
+      }
+      nativeLanguage {
+        ...languageFields
+      }
+    }
+  }
+  ${languageFieldsFragmentDoc}
+`;
+
+export class UserLanguagesComponent extends React.Component<
+  Partial<
+    ReactApollo.QueryProps<UserLanguagesQuery, UserLanguagesQueryVariables>
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Query<UserLanguagesQuery, UserLanguagesQueryVariables>
+        query={UserLanguagesDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type UserLanguagesProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<UserLanguagesQuery, UserLanguagesQueryVariables>
+> &
+  TChildProps;
+export function withUserLanguages<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        UserLanguagesQuery,
+        UserLanguagesQueryVariables,
+        UserLanguagesProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    UserLanguagesQuery,
+    UserLanguagesQueryVariables,
+    UserLanguagesProps<TChildProps>
+  >(UserLanguagesDocument, operationOptions);
 }

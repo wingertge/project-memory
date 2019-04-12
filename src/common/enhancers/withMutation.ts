@@ -1,5 +1,4 @@
 import {ApolloError} from "apollo-client"
-import {ErrorLink} from "apollo-link-error"
 import {DocumentNode} from "graphql"
 import {MutationFn} from "react-apollo"
 import * as ReactApollo from "react-apollo"
@@ -7,12 +6,12 @@ import {graphql} from "react-apollo"
 import {compose, mapper, withHandlers} from "recompose"
 import {oc} from "ts-optchain"
 import {withState} from "./index"
-import ErrorHandler = ErrorLink.ErrorHandler
 
 interface MutationOptions<TProps, TMutation, TVariables> {
     ignoreErrors?: boolean
     variables?: Partial<TVariables>
-    optimisticResponse?: TMutation | mapper<TProps, TMutation>
+    optimisticResponse?: TMutation | mapper<TProps, TMutation> | mapper<TProps, (...extraArgs: any) => TMutation>
+    submitName?: string
 }
 
 export type Props<TQuery, TVariables, TChildProps = any> = Partial<ReactApollo.DataProps<TQuery, TVariables>> & TChildProps
@@ -33,7 +32,8 @@ export interface MutationProps<TMutation, TVariables> {
 export type MutateFn<TMutation, TVariables> = (variables: TVariables) => void
 
 export interface WithMutation {
-    submitMutation: () => void
+    submitMutation: (...args: any) => void
+    mutationData: MutationData<any>
 }
 
 export type SuccessHandler<TProps, TMutation> = (props: TProps, result: TMutation) => void
@@ -41,7 +41,7 @@ export type FailureHandler<TProps> = (props: TProps, error: ApolloError) => void
 
 export const withMutation = <TProps, TMutation, TVariables = {}, TChildProps = {}>(
     mutation: DocumentNode,
-    variables: keyof TProps | mapper<TProps, TVariables>,
+    variables: keyof TProps | mapper<TProps, TVariables> | mapper<TProps, (...args: any) => TVariables>,
     onSuccess?: keyof TProps | SuccessHandler<TProps, TMutation>,
     onError?: keyof TProps | FailureHandler<TProps>,
     options: MutationOptions<TProps, TMutation, TVariables> = {}
@@ -51,7 +51,6 @@ export const withMutation = <TProps, TMutation, TVariables = {}, TChildProps = {
         options: (props: TProps & any) => {
             return ({
                 errorPolicy: options.ignoreErrors ? "ignore" : "none",
-                optimisticResponse: typeof options.optimisticResponse === "function" ? (options.optimisticResponse as mapper<TProps, TMutation>)(props) : options.optimisticResponse,
                 onCompleted: onSuccess ? (data: TMutation) => {
                     props.updateMutationData({
                         ...props.mutationData,
@@ -96,15 +95,23 @@ export const withMutation = <TProps, TMutation, TVariables = {}, TChildProps = {
     if(typeof variables === "function") {
         // @ts-ignore
         enhancers.push(withHandlers({
-            submitMutation: (props: TProps & MutationProps<TMutation, TVariables>) => () => {
+            [oc(options).submitName("submitMutation")]: (props: TProps & MutationProps<TMutation, TVariables>) => (...extraArgs: any) => {
                 const {mutate, mutationData, updateMutationData} = props
-                const mappedVariables = variables(props)
+                let mappedVariables = variables(props)
+                if(typeof mappedVariables === "function")
+                    mappedVariables = (mappedVariables as (...args: any) => TVariables)(...extraArgs)
+                let optimisticResponse: TMutation | mapper<TProps, TMutation> | mapper<TProps, (...extraArgs: any) => TMutation> | undefined = oc(options).optimisticResponse()
+                if(typeof optimisticResponse === "function")
+                    optimisticResponse = (optimisticResponse as mapper<TProps, TMutation> | mapper<TProps, (...extraArgs: any) => TMutation>)(props)
+                if(typeof optimisticResponse === "function")
+                    optimisticResponse = (optimisticResponse as (...extraArgs: any) => TMutation)(...extraArgs) as TMutation
                 updateMutationData({
                     ...mutationData,
                     saving: true
                 })
                 return mutate({
-                    variables: {...vars, ...mappedVariables} as TVariables
+                    variables: {...vars, ...mappedVariables} as TVariables,
+                    optimisticResponse
                 })
             }
         }))

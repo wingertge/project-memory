@@ -1,0 +1,206 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type AuthResult {
+    accessToken: String!
+    expiresIn: Int!
+    idToken: String!
+    tokenType: String!
+}
+
+type Card {
+    audioUrl: String
+    deck: Deck
+    id: ID!
+    meaning: String!
+    pronunciation: String
+    translation: String!
+}
+
+type Deck {
+    cardCount: Int!
+    cards(filter: CardFilterInput): [Card]
+    id: ID!
+    isLikedBy(userID: ID!): Boolean!
+    language: Language!
+    name: String!
+    nativeLanguage: Language!
+    owner: User!
+    rating: Int!
+    subscriberCount: Int!
+    subscribers(filter: SubscriberFilterInput): [User]
+}
+
+type Identity {
+    connection: String!
+    isSocial: Boolean!
+    provider: String!
+    userId: ID!
+}
+
+type Language {
+    id: ID!
+    languageCode: String!
+    name: String!
+    nativeName: String!
+}
+
+type Mutation {
+    addDeck(input: DeckInput!): User
+    addLanguageToUser(id: ID!, input: ID!): User
+    authenticate(code: ID!): AuthResult
+    changeLikeStatus(id: ID!, userID: ID!, value: Boolean): Deck
+    changeSubscriptionStatus(deckID: ID!, id: ID!, value: Boolean!): User
+    createCard(input: CardInput!): Deck
+    deleteCards(deck: ID!, ids: [ID]!): Deck
+    deleteDeck(id: ID!): Deck
+    deleteUser(id: ID!): User
+    editCard(id: ID!, input: CardInput!): Card
+    editUser(id: ID!, input: UserInput!): User
+    initUser(id: ID!): User
+    logout: Boolean
+    submitReview(correct: Boolean!, field: ReviewFields!, id: ID!): Review
+    updateDeck(id: ID!, input: DeckInput!): Deck
+}
+
+type Query {
+    deck(id: ID!): Deck
+    decks(filter: DeckFilterInput): [Deck]
+    language(languageCode: String!): Language
+    languages: [Language]
+    review(id: ID!): Review
+    user(id: ID): User
+    users(filter: UserFilterInput): [User]
+}
+
+type Review {
+    box: Int!
+    card: Card!
+    correct: Boolean
+    id: ID!
+    nextReviewAt: Date
+    reviewedFields: [ReviewFields]
+    user: User!
+}
+
+type User {
+    email: String
+    gender: String!
+    id: ID!
+    identities: [Identity]
+    introStep: Int
+    isSocial: Boolean!
+    languages: [Language]
+    lessonQueue(filter: ReviewFilterInput): [Review]
+    lessonsCount: Int
+    locale: String
+    name: String
+    nativeLanguage: Language
+    nextReview: Review
+    ownedDecks: [Deck]
+    picture: String!
+    reviewQueue(filter: ReviewFilterInput): [Review]
+    reviewsCount(filter: ReviewFilterInput): Int
+    sub: ID
+    subscribedDecks: [Deck]
+    username: String!
+}
+
+enum CardSortingOptions {
+    meaning
+    pronunciation
+    translation
+}
+
+enum DeckSortBy {
+    cardCount
+    name
+    rating
+    subscribers
+}
+
+enum ReviewFields {
+    meaning
+    pronunciation
+    translation
+}
+
+enum ReviewSortOptions {
+    box
+    reviewDate
+}
+
+enum SortDirection {
+    asc
+    desc
+}
+
+input CardFilterInput {
+    limit: Int
+    offset: Int
+    sortBy: CardSortingOptions
+    sortDirection: SortDirection
+}
+
+input CardInput {
+    audioUrl: String
+    deck: ID
+    meaning: String
+    pronunciation: String
+    translation: String
+}
+
+input DeckFilterInput {
+    cardContained: ID
+    languages: [ID]
+    limit: Int
+    nativeLanguage: ID
+    owner: ID
+    search: String
+    sortBy: DeckSortBy
+    sortDirection: SortDirection
+}
+
+input DeckInput {
+    cards: [CardInput]
+    language: ID
+    name: String
+    nativeLanguage: ID
+    owner: String
+}
+
+input ReviewFilterInput {
+    box: Int
+    deck: ID
+    limit: Int
+    offset: Int
+    sortBy: ReviewSortOptions
+    sortDirection: SortDirection
+    toBeReviewedBy: Date
+}
+
+input SubscriberFilterInput {
+    limit: Int
+}
+
+input UserFilterInput {
+    limit: Int
+}
+
+input UserInput {
+    email: String
+    introStep: Int
+    name: String
+    nativeLanguage: ID
+    oldPassword: String
+    password: String
+    username: String
+}
+
+
+"Represents a date in time"
+scalar Date

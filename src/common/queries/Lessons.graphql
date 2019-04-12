@@ -1,0 +1,15 @@
+query Lessons($userId: ID!, $filter: ReviewFilterInput) {
+    user(id: $userId) {
+        id
+        lessonQueue(filter: $filter) {
+            id
+            card {
+                id
+                meaning
+                pronunciation
+                translation
+            }
+            reviewedFields
+        }
+    }
+}

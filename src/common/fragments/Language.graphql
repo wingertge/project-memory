@@ -1,0 +1,6 @@
+fragment languageFields on Language {
+    id
+    languageCode
+    name
+    nativeName
+}

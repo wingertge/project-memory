@@ -1,0 +1,25 @@
+query ShallowDecks($id: ID!) {
+    user(id: $id) {
+        id
+        ownedDecks {
+            id
+            name
+            cardCount
+            rating
+            isLikedBy(userID: $id)
+            language {
+                ...languageFields
+            }
+        }
+        subscribedDecks {
+            id
+            name
+            cardCount
+            rating
+            isLikedBy(userID: $id)
+            language {
+                ...languageFields
+            }
+        }
+    }
+}

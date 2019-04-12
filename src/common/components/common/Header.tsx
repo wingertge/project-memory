@@ -1,6 +1,6 @@
 import {
     AppBar, Badge,
-    createStyles,
+    createStyles, Hidden,
     IconButton,
     Menu,
     MenuItem, Theme,
@@ -12,11 +12,13 @@ import {AccountCircle, AssignmentLate} from "@material-ui/icons"
 import React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {RouteComponentProps, withRouter} from "react-router"
-import {compose, pure, withHandlers, withProps} from "recompose"
+import {compose, lifecycle, pure, withHandlers} from "recompose"
 import {oc} from "ts-optchain"
 import Auth from "../../../client/Auth"
-import {withState, withUser, WithUser} from "../../enhancers"
+import {withReviewsCount} from "../../../generated/graphql"
+import {withProps, withState, withUser, WithUser} from "../../enhancers"
 import LinkButton from "./LinkButton"
+import Logo from "../../assets/logo.png"
 
 const styles = (theme: Theme) => createStyles({
     appBar: {
@@ -41,6 +43,12 @@ const styles = (theme: Theme) => createStyles({
     reviewsIcon: {
         width: 36,
         height: 36
+    },
+    logo: {
+        width: 40,
+        height: 40,
+        marginLeft: theme.spacing.unit * -1.5,
+        marginRight: theme.spacing.unit
     }
 })
 
@@ -53,31 +61,40 @@ interface GraphQLPropTypes {
     authenticated: boolean
     username: string | null
     pendingReviews: number
+    reviewsCountData: any
 }
 
 interface HandlerTypes {
     openMenu: (event) => void
     closeMenu: () => void
     openSettings: () => void
+    openReviews: () => void
     logout: () => void
 }
 
 type Props = GraphQLPropTypes & RouteComponentProps<{}> & StateTypes & HandlerTypes & WithTranslation & WithStyles<typeof styles> & WithUser
 
-const Header = ({classes, t, username, anchorEl, openMenu, closeMenu, openSettings, logout, pendingReviews}: Props) => (
+const Header = ({classes, t, username, anchorEl, openMenu, closeMenu, openSettings, logout, pendingReviews, openReviews}: Props) => (
     <AppBar position="sticky" className={classes.appBar}>
         <Toolbar>
+            <img src={Logo} alt={t("Logo")} className={classes.logo} />
             <Typography variant="h6" color="inherit">
                 <LinkButton to="/" className={classes.navbarLink}>{t("Home")}</LinkButton>
             </Typography>
-            {pendingReviews !== -1 && <IconButton className={classes.reviewsButton}>
-                <Badge badgeContent={pendingReviews} max={42} color="secondary" classes={{badge: classes.badge}}>
-                    <AssignmentLate className={classes.reviewsIcon} />
-                </Badge>
-            </IconButton>}
+            {typeof pendingReviews !== "undefined" && (
+                <IconButton onClick={openReviews} className={classes.reviewsButton}>
+                    <Badge badgeContent={pendingReviews} max={42} color="secondary" classes={{badge: classes.badge}} invisible={pendingReviews <= 0}>
+                        <AssignmentLate className={classes.reviewsIcon} />
+                    </Badge>
+                </IconButton>
+            )}
             <div className={classes.grow} />
             <div>
-                {username && <LinkButton to="/profile" className={classes.navbarLink}>{username}</LinkButton>}
+                {username && (
+                    <Hidden smDown>
+                        <LinkButton to="/profile" className={classes.navbarLink}>{username}</LinkButton>
+                    </Hidden>
+                )}
                 <IconButton aria-owns={!!anchorEl ? "menu-appbar" : undefined} aria-haspopup="true"
                             onClick={openMenu} color="inherit">
                     <AccountCircle />
@@ -92,6 +109,17 @@ const Header = ({classes, t, username, anchorEl, openMenu, closeMenu, openSettin
     </AppBar>
 )
 
+let date = new Date().toISOString()
+let component: any
+
+const queueReviewRefetch = () => {
+    setTimeout(() => {
+        queueReviewRefetch()
+        date = new Date().toISOString()
+        component.forceUpdate()
+    }, 60000)
+}
+
 export {Header as RawAppHeader}
 
 export default compose<Props, {}>(
@@ -104,20 +132,44 @@ export default compose<Props, {}>(
         closeMenu: ({updateAnchorEl}) => () => updateAnchorEl(null)
     }),
     withUser(),
-    withProps<GraphQLPropTypes, Props>(({user}) => ({
+    withProps<Props>(({user}) => ({
         authenticated: !!user,
-        username: oc(user).username() || null,
-        pendingReviews: oc(user).reviewQueueLength(-1)
+        username: oc(user).username() || null
     })),
+    withReviewsCount<Props, Partial<GraphQLPropTypes>>({
+        skip: ({user}) => !user,
+        options: ({user}) => ({
+            variables: {
+                userId: user && user.id,
+                filter: {toBeReviewedBy: date}
+            }
+        }),
+        props: ({data}) => ({
+            reviewsCountData: data,
+            pendingReviews: oc(data).user.reviewsCount(0)
+        })
+    }),
     withHandlers<Props, Partial<HandlerTypes>>({
         openMenu: ({authenticated, updateAnchorEl, location}) => event => authenticated ? updateAnchorEl(event.currentTarget) : Auth.login(true, location),
         openSettings: ({closeMenu, history}) => () => {
             closeMenu()
             history.push("/settings")
         },
+        openReviews: ({history}) => () => {
+            history.push("/reviews")
+        },
         logout: ({closeMenu, history}) => () => {
             closeMenu()
             history.push("/logout")
+        }
+    }),
+    lifecycle<Props, {}>({
+        componentDidMount() {
+            component = this
+            queueReviewRefetch()
+        },
+        componentDidUpdate() {
+            component = this
         }
     })
 )(Header)

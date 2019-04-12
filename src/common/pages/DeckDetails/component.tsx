@@ -4,17 +4,16 @@ import Heading from "../../components/common/Heading"
 import CardTable from "./CardTable"
 import {Props} from "./types"
 
-export const DeckDetailsRaw = ({t, id, openDialog, name, submitMutation, onNameChange}: Props) => (
+export const DeckDetailsRaw = ({t, classes, id, openDialog, name, submitMutation, onNameChange, rowsPerPage, updateRowsPerPage, page, sortBy, sortDirection}: Props) => (
     <div>
         <Heading>
             {t("Edit Deck")}
         </Heading>
-        <form>
-            <TextField label={t("Deck Name")} value={name} onChange={onNameChange} />
+        <form className={classes.form}>
+            <TextField label={t("Deck Name")} value={name} onChange={onNameChange} className={classes.textField} />
             <Button onClick={submitMutation}>{t("Save")}</Button>
-            <Button onClick={() => openDialog({deckId: id})}>{t("Add Cards")}</Button>
+            <Button onClick={() => openDialog({deckId: id, rowsPerPage, page, sortBy, sortDirection})}>{t("Add Cards")}</Button>
         </form>
-        <Heading>Cards</Heading>
-        <CardTable deckId={id} />
+        <CardTable deckId={id} rowsPerPage={rowsPerPage} updateRowsPerPage={updateRowsPerPage} />
     </div>
 )

@@ -42,7 +42,7 @@ initI18n(() => {
 
             const __auth__ = req.signedCookies.__auth__
             const decoded = __auth__ && jwt.decode(__auth__)
-            const id = decoded && decoded[`${process.env.REACT_APP_OAUTH_NAMESPACE}/uuid`]
+            const id = decoded && decoded[`${process.env.REACT_APP_OAUTH_NAMESPACE}/uuid`] || "none"
             let apollo = createApollo({auth: __auth__, id})
 
             apollo = await handleCallback(routeParams[0], req, res, apollo)
@@ -50,14 +50,6 @@ initI18n(() => {
             // Create the server side style sheet
             const sheetRegistry = new SheetsRegistry()
             const context = {} as any
-
-            const history = createMemoryHistory({
-                initialEntries: [req.url]
-            })
-
-            if(req.query.state && JSON.parse(req.query.state)) {
-                history.push(JSON.parse(req.query.state))
-            }
 
             const modules: string[] = []
             const generateClassNames = createGenerateClassName()

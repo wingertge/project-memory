@@ -1,0 +1,11 @@
+mutation AddLanguageToUser($userId: ID!, $languageId: ID!) {
+    addLanguageToUser(id: $userId, input: $languageId) {
+        id
+        languages {
+            id
+            name
+            nativeName
+            languageCode
+        }
+    }
+}

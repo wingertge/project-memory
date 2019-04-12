@@ -1,0 +1,9 @@
+mutation UpdateCard($id: ID!, $card: CardInput!) {
+    editCard(id: $id, input: $card) {
+        id
+        meaning
+        pronunciation
+        translation
+        audioUrl
+    }
+}

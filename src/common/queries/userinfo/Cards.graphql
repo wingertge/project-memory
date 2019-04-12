@@ -1,4 +1,4 @@
-query GetCards($deckID: ID!, $filter: CardFilterInput) {
+query Cards($deckID: ID!, $filter: CardFilterInput) {
     deck(id: $deckID) {
         id
         cardCount

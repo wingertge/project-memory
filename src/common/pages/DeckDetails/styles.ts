@@ -1,3 +1,10 @@
-import {createStyles} from "@material-ui/core"
+import {createStyles, Theme} from "@material-ui/core"
 
-export const styles = createStyles({})
+export const styles = (theme: Theme) => createStyles({
+    textField: {
+        width: 400
+    },
+    form: {
+        margin: theme.spacing.unit * 2
+    }
+})

@@ -1,0 +1,6 @@
+query ReviewsCount($userId: ID!, $filter: ReviewFilterInput!) {
+    user(id: $userId) {
+        id
+        reviewsCount(filter: $filter)
+    }
+}

@@ -17,12 +17,18 @@ import {withTranslation, WithTranslation} from "react-i18next"
 import {RouteComponentProps, withRouter} from "react-router"
 import {compose, pure, withHandlers, withProps} from "recompose"
 import {oc} from "ts-optchain"
-import {Card, withGetCards} from "../../../generated/graphql"
-import {withDialog, WithDialog, withRouteProps, withState} from "../../enhancers"
+import {
+    Card,
+    DeleteCardsDocument,
+    DeleteCardsMutation,
+    DeleteCardsMutationVariables,
+    withCards
+} from "../../../generated/graphql"
+import {withDialog, WithDialog, WithMutation, withMutation, withRouteProps, withState} from "../../enhancers"
 import EditCardForm, {PropTypes as CardFormPropTypes} from "./EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
-import {Column, RouteTypes} from "./types"
+import {Column, RouteTypes, SortDirection} from "./types"
 
 const rows = [
     {id: "meaning", numeric: false, disablePadding: true, label: "Meaning"},
@@ -33,16 +39,16 @@ const rows = [
 
 interface PropTypes {
     deckId: string
+    rowsPerPage: number
+    updateRowsPerPage: (state: number) => number
 }
 
 interface StateTypes {
     selected: string[]
-    rowsPerPage: number
 }
 
 interface UpdaterTypes {
     updateSelected: (state: string[]) => string[]
-    updateRowsPerPage: (state: number) => number
 }
 
 interface HandlerTypes {
@@ -55,6 +61,12 @@ interface HandlerTypes {
     onEditClicked: (card: Pick<Card, "id" | "meaning" | "pronunciation" | "translation">) => void
 }
 
+interface StateUpdaterTypes {
+    updatePage: (page: number) => void
+    updateSortBy: (sortBy: Column) => void
+    updateSortDirection: (sortDirection: SortDirection) => void
+}
+
 interface InjectedPropTypes {
     emptyRows: number
 }
@@ -65,7 +77,9 @@ interface GraphQLTypes {
 }
 
 // @ts-ignore
-type Props = WithStyles<typeof styles> & WithTranslation & PropTypes & StateTypes & UpdaterTypes & HandlerTypes & InjectedPropTypes & RouteComponentProps<RouteTypes> & RouteTypes & GraphQLTypes & WithDialog<CardFormPropTypes>
+type Props =
+    PropTypes & StateTypes & UpdaterTypes & HandlerTypes & InjectedPropTypes & RouteTypes & StateUpdaterTypes &
+    WithStyles<typeof styles> & WithTranslation & RouteComponentProps<{}> & GraphQLTypes & WithDialog<CardFormPropTypes> & WithMutation
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -80,9 +94,11 @@ const styles = (theme: Theme) => createStyles({
     }
 })
 
-const CardTable = ({t, classes, cards, cardCount, onRowClicked, isSelected, emptyRows, rowsPerPage, page, onChangePage, onChangeRowsPerPage, onSelectAllClick, selected, sortDirection, sortBy, onRequestSort, onEditClicked}: Props) => (
+const CardTable = (
+    {t, classes, cards, cardCount, onRowClicked, isSelected, emptyRows, rowsPerPage, page, onChangePage, onChangeRowsPerPage, onSelectAllClick, selected, sortDirection, sortBy, onRequestSort, onEditClicked, submitMutation}: Props
+) => (
     <Paper className={classes.root}>
-        <CardTableToolbar numSelected={selected.length}/>
+        <CardTableToolbar numSelected={selected.length} onDeleteClicked={submitMutation} />
         <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
                 <CardTableHead numSelected={selected.length} order={sortDirection || "asc"} orderBy={sortBy || "meaning"} onSelectAllClick={onSelectAllClick} onRequestSort={onRequestSort} rowCount={rowsPerPage - emptyRows} rows={rows}/>
@@ -147,10 +163,12 @@ export default compose<Props, PropTypes>(
     withTranslation(),
     withRouter,
     withState<Props, string[]>("selected", "updateSelected", []),
-    withState<Props, number>("rowsPerPage", "updateRowsPerPage", 30),
     withRouteProps<Props>([page => toInt(page), "page"], [sortBy => sortBy || "meaning", "sortBy"], [sortDir => sortDir || "asc", "sortDirection"]),
+    withState<Props, number>("page", "updatePage", ({page}) => page),
+    withState<Props, Column>("sortBy", "updateSortBy", ({sortBy}) => sortBy),
+    withState<Props, SortDirection>("sortDirection", "updateSortDirection", ({sortDirection}) => sortDirection),
     withDialog<Props, CardFormPropTypes>(EditCardForm),
-    withGetCards<Props, GraphQLTypes>({
+    withCards<Props, GraphQLTypes>({
         options: ({deckId, rowsPerPage, page, sortBy, sortDirection}) => ({
             variables: {
                 deckID: deckId,
@@ -176,18 +194,24 @@ export default compose<Props, PropTypes>(
 
             updateSelected(newSelected)
         },
-        onChangePage: ({history, deckId, sortDirection, sortBy}) => (_, page) => {
+        onChangePage: ({history, deckId, sortDirection, sortBy, updatePage}) => (_, page) => {
             history.push(formatPath(deckId, page, sortDirection || "asc", sortBy || "meaning"))
+            updatePage(page)
         },
         onChangeRowsPerPage: ({updateRowsPerPage, selected, updateSelected, cards}) => event => {
             updateRowsPerPage(event.target.value)
             updateSelected(selected.filter(id => cards.findIndex(card => card.id === id) < event.target.value))
         },
         onSelectAllClick: ({updateSelected, cards}) => event => event.target.checked ? updateSelected(cards.map(card => card.id)) : updateSelected([]),
-        onRequestSort: ({sortDirection, sortBy, history, deckId, page}) => (event, prop) => {
-            if(sortBy === prop && sortDirection === "asc")
+        onRequestSort: ({sortDirection, sortBy, history, deckId, page, updateSortBy, updateSortDirection}) => (event, prop) => {
+            updateSortBy(prop)
+            if(sortBy === prop && sortDirection === "asc") {
                 history.push(formatPath(deckId, page, "desc", prop))
-            else history.push(formatPath(deckId, page, "asc", prop))
+                updateSortDirection("desc")
+            } else {
+                history.push(formatPath(deckId, page, "asc", prop))
+                updateSortDirection("asc")
+            }
         },
         onEditClicked: ({openDialog, deckId}) => card => {
             openDialog({deckId, card})
@@ -195,5 +219,28 @@ export default compose<Props, PropTypes>(
     }),
     withProps<InjectedPropTypes, Props>(({rowsPerPage, page, cardCount}) => ({
         emptyRows: rowsPerPage - Math.min(rowsPerPage, cardCount - page * rowsPerPage)
-    }))
+    })),
+    withMutation<Props, DeleteCardsMutation, DeleteCardsMutationVariables>(DeleteCardsDocument, ({deckId, selected, rowsPerPage, page, sortBy, sortDirection}) => ({
+        deckId,
+        cardIds: selected,
+        cardFilter: {
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            sortBy,
+            sortDirection
+        }
+    }), undefined, undefined, {
+        optimisticResponse: ({deckId, selected, cards, updateSelected}) => {
+            const response = {
+                __typename: "Mutation",
+                deleteCards: {
+                    __typename: "Deck",
+                    id: deckId,
+                    cards: cards.filter(card => !selected.includes(card.id))
+                }
+            }
+            updateSelected([])
+            return response as any
+        }
+    })
 )(CardTable)

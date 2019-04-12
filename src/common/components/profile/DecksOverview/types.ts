@@ -1,12 +1,14 @@
 import {WithStyles} from "@material-ui/core"
-import Maybe from "graphql/tsutils/Maybe"
+import {RouteComponentProps} from "react-router"
 import {Deck} from "../../../../generated/graphql"
+import {WithDialog} from "../../../enhancers"
 import styles from "./styles"
+import {PropTypes as CreateDeckFormTypes} from "./CreateDeckForm"
 
 export interface GraphQLTypes {
     id: string
-    ownedDecks: Array<Maybe<Pick<Deck, "cardCount" | "id">>>
-    subscribedDecks: Array<Maybe<Pick<Deck, "cardCount" | "id">>>
+    ownedDecks: Deck[]
+    subscribedDecks: Deck[]
 }
 
-export type Props = WithStyles<typeof styles> & GraphQLTypes
+export type Props = WithStyles<typeof styles> & GraphQLTypes & RouteComponentProps<{}> & WithDialog<CreateDeckFormTypes>

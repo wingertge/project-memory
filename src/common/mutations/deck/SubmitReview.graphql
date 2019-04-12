@@ -1,0 +1,9 @@
+mutation SubmitReview($reviewId: ID!, $field: ReviewFields!, $correct: Boolean!) {
+    submitReview(id: $reviewId, field: $field, correct: $correct) {
+        id
+        box
+        nextReviewAt
+        reviewedFields
+        correct
+    }
+}

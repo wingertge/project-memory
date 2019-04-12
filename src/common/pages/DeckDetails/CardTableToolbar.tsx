@@ -5,10 +5,10 @@ import * as React from "react"
 import classNames from "classnames"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose, pure} from "recompose"
-import Spacer from "../../components/common/Spacer"
 
 interface PropTypes {
     numSelected: number
+    onDeleteClicked: () => void
 }
 
 type Props = WithStyles<typeof styles> & PropTypes & WithTranslation
@@ -37,7 +37,7 @@ const styles = (theme: Theme) => createStyles({
     }
 })
 
-const CardTableToolbar = ({t, classes, numSelected}: Props) => (
+const CardTableToolbar = ({t, classes, numSelected, onDeleteClicked}: Props) => (
     <Toolbar className={classNames(classes.root, {[classes.highlight]: numSelected > 0})}>
         <div className={classes.title}>
             {numSelected > 0 ? (
@@ -54,7 +54,7 @@ const CardTableToolbar = ({t, classes, numSelected}: Props) => (
         <div className={classes.actions}>
             {numSelected > 0 ? (
                 <Tooltip title={t("Delete")}>
-                    <IconButton>
+                    <IconButton onClick={onDeleteClicked}>
                         <Delete />
                     </IconButton>
                 </Tooltip>

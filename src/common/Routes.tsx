@@ -6,6 +6,7 @@ import AuthenticatedRoute from "./components/routing/AuthenticatedRoute"
 import UnauthenticatedRoute from "./components/routing/UnauthenticatedRoute"
 import Loadable from "react-loadable"
 import DeckDetails from "./pages/DeckDetails"
+import Intro from "./pages/Intro"
 import TestBed from "./pages/TestBed"
 
 const Home = Loadable({
@@ -38,6 +39,12 @@ const Login = Loadable({
     timeout: 10000
 })
 
+const Lessons = Loadable({
+    loader: () => import("./pages/Lessons"),
+    loading: Loading,
+    timeout: 1000
+})
+
 /*
 const DeckDetails = Loadable({
     loader: () => import("./pages/DeckDetails"),
@@ -50,9 +57,22 @@ const NotFound = Loadable({
     loading: Loading
 })
 
+/*
+const Intro = Loadable({
+    loader: () => import("./pages/Intro"),
+    loading: Loading
+})
+*/
+
+const Reviews = Loadable({
+    loader: () => import("./pages/Reviews"),
+    loading: Loading
+})
+
 const Routes = () => (
     <Switch>
         <Route exact path="/" component={Home} />
+        <AuthenticatedRoute path="/intro" component={Intro} />
         <Route path="/callback" component={Callback} />
         <AuthenticatedRoute path="/settings" component={Settings} />
         <AuthenticatedRoute path="/profile" component={Profile} />
@@ -62,8 +82,10 @@ const Routes = () => (
             if(typeof window === "undefined") { return <Redirect to="/"/> }
             Auth.logout()
         }} />
-        <AuthenticatedRoute path="/test" component={TestBed}/>
-        <UnauthenticatedRoute path="/login" component={Login}/>
+        <AuthenticatedRoute path="/test" component={TestBed} />
+        <AuthenticatedRoute path="/lessons" component={Lessons} />
+        <AuthenticatedRoute path="/reviews" component={Reviews} />
+        <UnauthenticatedRoute path="/login" component={Login} />
         <Route component={NotFound}/>
     </Switch>
 )

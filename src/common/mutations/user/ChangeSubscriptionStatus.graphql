@@ -1,0 +1,14 @@
+mutation ChangeSubscriptionStatus($userId: ID!, $deckId: ID!, $value: Boolean!) {
+    changeSubscriptionStatus(id: $userId, deckID: $deckId, value: $value) {
+        id
+        subscribedDecks {
+            id
+            name
+            cardCount
+            owner {
+                id
+                username
+            }
+        }
+    }
+}

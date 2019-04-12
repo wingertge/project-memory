@@ -1,0 +1,11 @@
+mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
+    createCard(input: $card) {
+        id
+        cards(filter: $cardFilter) {
+            id
+            meaning
+            pronunciation
+            translation
+        }
+    }
+}

@@ -1,0 +1,7 @@
+mutation ChangeLikeStatus($userId: ID!, $deckId: ID!, $value: Boolean) {
+    changeLikeStatus(id: $deckId, userID: $userId, value: $value) {
+        id
+        rating
+        isLikedBy(userID: $userId)
+    }
+}

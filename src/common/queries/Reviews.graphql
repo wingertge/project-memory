@@ -1,0 +1,18 @@
+query Reviews($userId: ID!, $filter: ReviewFilterInput) {
+    user(id: $userId) {
+        id
+        reviewQueue(filter: $filter) {
+            id
+            box
+            correct
+            card {
+                id
+                meaning
+                pronunciation
+                translation
+            }
+            reviewedFields
+        }
+    }
+}
+

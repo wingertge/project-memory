@@ -1,4 +1,4 @@
-query GetDeckDetails($deckID: ID!) {
+query DeckDetails($deckID: ID!) {
     deck(id: $deckID) {
         id
         name

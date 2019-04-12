@@ -2,14 +2,14 @@ import {CircularProgress, withStyles} from "@material-ui/core"
 import {withTranslation} from "react-i18next"
 import {compose, pure} from "recompose"
 import {oc} from "ts-optchain"
-import {UpdateDeckDocument, withGetDeckDetails} from "../../../generated/graphql"
+import {UpdateDeckDocument, withDeckDetails} from "../../../generated/graphql"
 import {
     renderOnError,
     renderWhileLoading,
     withRouteProps,
     withValidatedFormState,
     withDialog,
-    withMutation, withToast, withErrorBox
+    withMutation, withToast, withErrorBox, withState
 } from "../../enhancers"
 import ErrorBox from "../../components/common/ErrorBox"
 import EditCardForm, {PropTypes as CardFormPropTypes} from "./EditCardForm"
@@ -27,7 +27,7 @@ export default compose<Props, {}>(
     withTranslation(),
     withRouteProps<Props>([id => id, "id"], [page => parseInt(page || "0", 10), "page"], [sortDir => sortDir || "asc", "sortDirection"], [sortBy => sortBy || "meaning", "sortBy"]),
     withDialog<Props, CardFormPropTypes>(EditCardForm),
-    withGetDeckDetails<Props, GraphQLTypes>({
+    withDeckDetails<Props, GraphQLTypes>({
         options: ({id}) => ({
             variables: {
                 deckID: id
@@ -41,6 +41,7 @@ export default compose<Props, {}>(
     withValidatedFormState<Form, Props>(({deck}) => ({
         name: oc(deck).name("")
     }), deckPropsValidators),
+    withState<Props, number>("rowsPerPage", "updateRowsPerPage", 30),
     withToast("Successfully saved profile"),
     withMutation<Props, Mutation, MutationVariables>(UpdateDeckDocument,  ({id, name}) => ({id, deckInput: {name}}), ({openToast}) => openToast()),
     withErrorBox<Props>("submitMutation", "mutationData"),

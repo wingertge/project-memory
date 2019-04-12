@@ -1,5 +1,7 @@
 import {createStyles, Theme} from "@material-ui/core"
 import Color from "color"
+import NewDeckDark from "../../../assets/new_deck_dark.svg"
+import NewDeckLight from "../../../assets/new_deck_light.svg"
 
 export default (theme: Theme) => createStyles({
     card: {
@@ -7,36 +9,10 @@ export default (theme: Theme) => createStyles({
     cardContent: {
         marginBottom: theme.spacing.unit * -1
     },
-    spacer: {
-        flex: "1 1 100%"
-    },
-    deck: {
-        width: 150,
-        height: 200,
-        backgroundImage: `url("/static/media/deck.png")`,
-        backgroundRepeat: "round",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        textAlign: "center",
-        padding: theme.spacing.unit * 3
-    },
-    deckActions: {
-        display: "flex"
-    },
-    deckActionButton: {
-        width: "fit-content",
-        height: "fit-content",
-        padding: 4
-    },
-    cardNumber: {
-        marginLeft: -12,
-        marginTop: -32
-    },
     newDeck: {
         width: 144,
         height: 192,
-        backgroundImage: `url("/static/media/new_deck_${theme.palette.type}.svg")`,
+        backgroundImage: `url("${theme.palette.type === "light" ? NewDeckLight : NewDeckDark}")`,
         backgroundRepeat: "round",
         backgroundColor: "transparent",
         borderRadius: "8pt",
