@@ -1,5 +1,6 @@
 /* tslint:disable:no-console no-var-requires */
-import "./typings/index.d.ts"
+// tslint:disable-next-line:no-reference
+///<reference path="./typings/index.d.ts"/>
 import express from "express"
 import Loadable from "react-loadable"
 

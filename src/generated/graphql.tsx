@@ -776,6 +776,7 @@ export type UserLanguagesQuery = { __typename?: "Query" } & {
 import gql from "graphql-tag";
 import * as React from "react";
 import * as ReactApollo from "react-apollo";
+import * as ReactApolloHooks from "react-apollo-hooks";
 export const languageFieldsFragmentDoc = gql`
   fragment languageFields on Language {
     id
@@ -835,6 +836,18 @@ export function withAddCard<TProps, TChildProps = {}>(
     AddCardProps<TChildProps>
   >(AddCardDocument, operationOptions);
 }
+
+export function useAddCardMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    AddCardMutation,
+    AddCardMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    AddCardMutation,
+    AddCardMutationVariables
+  >(AddCardDocument, baseOptions);
+}
 export const AddDeckDocument = gql`
   mutation AddDeck($input: DeckInput!) {
     addDeck(input: $input) {
@@ -893,6 +906,18 @@ export function withAddDeck<TProps, TChildProps = {}>(
     AddDeckProps<TChildProps>
   >(AddDeckDocument, operationOptions);
 }
+
+export function useAddDeckMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    AddDeckMutation,
+    AddDeckMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    AddDeckMutation,
+    AddDeckMutationVariables
+  >(AddDeckDocument, baseOptions);
+}
 export const DeleteCardsDocument = gql`
   mutation DeleteCards(
     $deckId: ID!
@@ -949,6 +974,18 @@ export function withDeleteCards<TProps, TChildProps = {}>(
     DeleteCardsMutationVariables,
     DeleteCardsProps<TChildProps>
   >(DeleteCardsDocument, operationOptions);
+}
+
+export function useDeleteCardsMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeleteCardsMutation,
+    DeleteCardsMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    DeleteCardsMutation,
+    DeleteCardsMutationVariables
+  >(DeleteCardsDocument, baseOptions);
 }
 export const SubmitReviewDocument = gql`
   mutation SubmitReview(
@@ -1008,6 +1045,18 @@ export function withSubmitReview<TProps, TChildProps = {}>(
     SubmitReviewProps<TChildProps>
   >(SubmitReviewDocument, operationOptions);
 }
+
+export function useSubmitReviewMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    SubmitReviewMutation,
+    SubmitReviewMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    SubmitReviewMutation,
+    SubmitReviewMutationVariables
+  >(SubmitReviewDocument, baseOptions);
+}
 export const UpdateCardDocument = gql`
   mutation UpdateCard($id: ID!, $card: CardInput!) {
     editCard(id: $id, input: $card) {
@@ -1059,6 +1108,18 @@ export function withUpdateCard<TProps, TChildProps = {}>(
     UpdateCardProps<TChildProps>
   >(UpdateCardDocument, operationOptions);
 }
+
+export function useUpdateCardMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateCardMutation,
+    UpdateCardMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateCardMutation,
+    UpdateCardMutationVariables
+  >(UpdateCardDocument, baseOptions);
+}
 export const UpdateDeckDocument = gql`
   mutation UpdateDeck($id: ID!, $deckInput: DeckInput!) {
     updateDeck(id: $id, input: $deckInput) {
@@ -1106,6 +1167,18 @@ export function withUpdateDeck<TProps, TChildProps = {}>(
     UpdateDeckMutationVariables,
     UpdateDeckProps<TChildProps>
   >(UpdateDeckDocument, operationOptions);
+}
+
+export function useUpdateDeckMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateDeckMutation,
+    UpdateDeckMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateDeckMutation,
+    UpdateDeckMutationVariables
+  >(UpdateDeckDocument, baseOptions);
 }
 export const AddLanguageToUserDocument = gql`
   mutation AddLanguageToUser($userId: ID!, $languageId: ID!) {
@@ -1169,6 +1242,18 @@ export function withAddLanguageToUser<TProps, TChildProps = {}>(
     AddLanguageToUserProps<TChildProps>
   >(AddLanguageToUserDocument, operationOptions);
 }
+
+export function useAddLanguageToUserMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables
+  >(AddLanguageToUserDocument, baseOptions);
+}
 export const ChangeLikeStatusDocument = gql`
   mutation ChangeLikeStatus($userId: ID!, $deckId: ID!, $value: Boolean) {
     changeLikeStatus(id: $deckId, userID: $userId, value: $value) {
@@ -1226,6 +1311,18 @@ export function withChangeLikeStatus<TProps, TChildProps = {}>(
     ChangeLikeStatusMutationVariables,
     ChangeLikeStatusProps<TChildProps>
   >(ChangeLikeStatusDocument, operationOptions);
+}
+
+export function useChangeLikeStatusMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables
+  >(ChangeLikeStatusDocument, baseOptions);
 }
 export const ChangeSubscriptionStatusDocument = gql`
   mutation ChangeSubscriptionStatus(
@@ -1296,6 +1393,18 @@ export function withChangeSubscriptionStatus<TProps, TChildProps = {}>(
     ChangeSubscriptionStatusProps<TChildProps>
   >(ChangeSubscriptionStatusDocument, operationOptions);
 }
+
+export function useChangeSubscriptionStatusMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables
+  >(ChangeSubscriptionStatusDocument, baseOptions);
+}
 export const LoginDocument = gql`
   mutation Login($authorizationCode: ID!) {
     authenticate(code: $authorizationCode) {
@@ -1341,6 +1450,18 @@ export function withLogin<TProps, TChildProps = {}>(
     LoginMutationVariables,
     LoginProps<TChildProps>
   >(LoginDocument, operationOptions);
+}
+
+export function useLoginMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    LoginMutation,
+    LoginMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<LoginMutation, LoginMutationVariables>(
+    LoginDocument,
+    baseOptions
+  );
 }
 export const RemoveLanguageFromUserDocument = gql`
   mutation RemoveLanguageFromUser($userId: ID!, $languageId: ID!) {
@@ -1403,6 +1524,18 @@ export function withRemoveLanguageFromUser<TProps, TChildProps = {}>(
     RemoveLanguageFromUserMutationVariables,
     RemoveLanguageFromUserProps<TChildProps>
   >(RemoveLanguageFromUserDocument, operationOptions);
+}
+
+export function useRemoveLanguageFromUserMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables
+  >(RemoveLanguageFromUserDocument, baseOptions);
 }
 export const UpdateProfileDocument = gql`
   mutation UpdateProfile($id: ID!, $profile: UserInput!) {
@@ -1467,6 +1600,18 @@ export function withUpdateProfile<TProps, TChildProps = {}>(
     UpdateProfileProps<TChildProps>
   >(UpdateProfileDocument, operationOptions);
 }
+
+export function useUpdateProfileMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >(UpdateProfileDocument, baseOptions);
+}
 export const CurrentUserIdDocument = gql`
   query CurrentUserID {
     currentUserID @client
@@ -1507,6 +1652,15 @@ export function withCurrentUserId<TProps, TChildProps = {}>(
     CurrentUserIdQueryVariables,
     CurrentUserIdProps<TChildProps>
   >(CurrentUserIdDocument, operationOptions);
+}
+
+export function useCurrentUserIdQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<CurrentUserIdQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    CurrentUserIdQuery,
+    CurrentUserIdQueryVariables
+  >(CurrentUserIdDocument, baseOptions);
 }
 export const ProfileDocument = gql`
   query Profile($id: ID) {
@@ -1554,6 +1708,15 @@ export function withProfile<TProps, TChildProps = {}>(
     ProfileQueryVariables,
     ProfileProps<TChildProps>
   >(ProfileDocument, operationOptions);
+}
+
+export function useProfileQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<ProfileQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<ProfileQuery, ProfileQueryVariables>(
+    ProfileDocument,
+    baseOptions
+  );
 }
 export const GlobalDecksDocument = gql`
   query GlobalDecks($filter: DeckFilterInput, $userId: ID!) {
@@ -1608,6 +1771,15 @@ export function withGlobalDecks<TProps, TChildProps = {}>(
     GlobalDecksProps<TChildProps>
   >(GlobalDecksDocument, operationOptions);
 }
+
+export function useGlobalDecksQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<GlobalDecksQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<GlobalDecksQuery, GlobalDecksQueryVariables>(
+    GlobalDecksDocument,
+    baseOptions
+  );
+}
 export const LanguagesDocument = gql`
   query Languages {
     languages {
@@ -1649,6 +1821,15 @@ export function withLanguages<TProps, TChildProps = {}>(
     LanguagesQueryVariables,
     LanguagesProps<TChildProps>
   >(LanguagesDocument, operationOptions);
+}
+
+export function useLanguagesQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<LanguagesQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<LanguagesQuery, LanguagesQueryVariables>(
+    LanguagesDocument,
+    baseOptions
+  );
 }
 export const LessonsDocument = gql`
   query Lessons($userId: ID!, $filter: ReviewFilterInput) {
@@ -1701,6 +1882,15 @@ export function withLessons<TProps, TChildProps = {}>(
     LessonsProps<TChildProps>
   >(LessonsDocument, operationOptions);
 }
+
+export function useLessonsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<LessonsQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<LessonsQuery, LessonsQueryVariables>(
+    LessonsDocument,
+    baseOptions
+  );
+}
 export const NextReviewDocument = gql`
   query NextReview($userId: ID!) {
     user(id: $userId) {
@@ -1751,6 +1941,15 @@ export function withNextReview<TProps, TChildProps = {}>(
     NextReviewQueryVariables,
     NextReviewProps<TChildProps>
   >(NextReviewDocument, operationOptions);
+}
+
+export function useNextReviewQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<NextReviewQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<NextReviewQuery, NextReviewQueryVariables>(
+    NextReviewDocument,
+    baseOptions
+  );
 }
 export const ReviewsDocument = gql`
   query Reviews($userId: ID!, $filter: ReviewFilterInput) {
@@ -1805,6 +2004,15 @@ export function withReviews<TProps, TChildProps = {}>(
     ReviewsProps<TChildProps>
   >(ReviewsDocument, operationOptions);
 }
+
+export function useReviewsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<ReviewsQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<ReviewsQuery, ReviewsQueryVariables>(
+    ReviewsDocument,
+    baseOptions
+  );
+}
 export const CardsDocument = gql`
   query Cards($deckID: ID!, $filter: CardFilterInput) {
     deck(id: $deckID) {
@@ -1853,6 +2061,15 @@ export function withCards<TProps, TChildProps = {}>(
     CardsProps<TChildProps>
   >(CardsDocument, operationOptions);
 }
+
+export function useCardsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<CardsQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<CardsQuery, CardsQueryVariables>(
+    CardsDocument,
+    baseOptions
+  );
+}
 export const DeckDetailsDocument = gql`
   query DeckDetails($deckID: ID!) {
     deck(id: $deckID) {
@@ -1894,6 +2111,15 @@ export function withDeckDetails<TProps, TChildProps = {}>(
     DeckDetailsQueryVariables,
     DeckDetailsProps<TChildProps>
   >(DeckDetailsDocument, operationOptions);
+}
+
+export function useDeckDetailsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<DeckDetailsQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<DeckDetailsQuery, DeckDetailsQueryVariables>(
+    DeckDetailsDocument,
+    baseOptions
+  );
 }
 export const LessonsCountDocument = gql`
   query LessonsCount($userId: ID!) {
@@ -1937,6 +2163,15 @@ export function withLessonsCount<TProps, TChildProps = {}>(
     LessonsCountProps<TChildProps>
   >(LessonsCountDocument, operationOptions);
 }
+
+export function useLessonsCountQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<LessonsCountQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    LessonsCountQuery,
+    LessonsCountQueryVariables
+  >(LessonsCountDocument, baseOptions);
+}
 export const ReviewsCountDocument = gql`
   query ReviewsCount($userId: ID!, $filter: ReviewFilterInput!) {
     user(id: $userId) {
@@ -1978,6 +2213,15 @@ export function withReviewsCount<TProps, TChildProps = {}>(
     ReviewsCountQueryVariables,
     ReviewsCountProps<TChildProps>
   >(ReviewsCountDocument, operationOptions);
+}
+
+export function useReviewsCountQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<ReviewsCountQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    ReviewsCountQuery,
+    ReviewsCountQueryVariables
+  >(ReviewsCountDocument, baseOptions);
 }
 export const ShallowDecksDocument = gql`
   query ShallowDecks($id: ID!) {
@@ -2041,6 +2285,15 @@ export function withShallowDecks<TProps, TChildProps = {}>(
     ShallowDecksProps<TChildProps>
   >(ShallowDecksDocument, operationOptions);
 }
+
+export function useShallowDecksQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<ShallowDecksQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    ShallowDecksQuery,
+    ShallowDecksQueryVariables
+  >(ShallowDecksDocument, baseOptions);
+}
 export const UserLanguagesDocument = gql`
   query UserLanguages($userId: ID!) {
     user(id: $userId) {
@@ -2090,4 +2343,13 @@ export function withUserLanguages<TProps, TChildProps = {}>(
     UserLanguagesQueryVariables,
     UserLanguagesProps<TChildProps>
   >(UserLanguagesDocument, operationOptions);
+}
+
+export function useUserLanguagesQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<UserLanguagesQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    UserLanguagesQuery,
+    UserLanguagesQueryVariables
+  >(UserLanguagesDocument, baseOptions);
 }

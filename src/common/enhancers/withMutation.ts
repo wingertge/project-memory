@@ -45,7 +45,7 @@ export const withMutation = <TProps, TMutation, TVariables = {}, TChildProps = {
     onSuccess?: keyof TProps | SuccessHandler<TProps, TMutation>,
     onError?: keyof TProps | FailureHandler<TProps>,
     options: MutationOptions<TProps, TMutation, TVariables> = {}
-    ) => {
+) => {
     const vars = oc(options).variables({} as any)
     const mutationOptions: ReactApollo.OperationOption<TProps, TMutation, TVariables, Props<TMutation, TVariables>> = {
         options: (props: TProps & any) => {

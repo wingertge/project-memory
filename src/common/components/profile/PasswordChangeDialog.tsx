@@ -1,31 +1,15 @@
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
-import React from "react"
+import React, {useState} from "react"
 import {
     Dialog,
     DialogTitle,
     DialogContent,
     DialogContentText, TextField, DialogActions, Button
 } from "@material-ui/core"
-import {compose, pure, withHandlers} from "recompose"
-import {
-    UpdateProfileDocument,
-    UpdateProfileMutation as Mutation,
-    UpdateProfileMutationVariables as MutationVariables
-} from "../../../generated/graphql"
-import {
-    FormWithErrors,
-    MutateFn,
-    MutationProps,
-    ValidatorMap, withMutation,
-    withToast,
-    WithToast,
-    withValidatedFormState
-} from "../../enhancers"
+import {useUpdateProfileMutation} from "../../../generated/graphql"
+import {useValidatedFormState, useToast, ValidatorMap} from "../../hooks"
 import {isEqualTo, passwordStrongEnough} from "../../util/validationUtils"
-import {WithTranslation, withTranslation} from "react-i18next"
+import {useTranslation} from "react-i18next"
 import WithErrorBox from "../common/WithErrorBox"
-
-const styles = createStyles({})
 
 interface PropTypes {
     passwordExists: boolean
@@ -34,119 +18,117 @@ interface PropTypes {
     id: string
 }
 
-interface FormState {
+interface Form {
     oldPassword: string
     newPassword: string
     newPasswordConfirm: string
 }
 
-interface UpdaterProps {
-    updateOldPassword: (state: string) => string
-    updateNewPassword: (state: string) => string
-    updateNewPasswordConfirm: (state: string) => string
-}
-
-interface ToastProps {
-    closeToast: () => void
-}
-
-interface HandlerProps {
-    onOldPasswordChange: (event) => void
-    onNewPasswordChange: (event) => void
-    onNewPasswordConfirmChange: (event) => void
-    save: MutateFn<Mutation, MutationVariables>
-    onSave: () => void
-    onSuccess: () => void
-}
-
-type Form = FormState & UpdaterProps & HandlerProps & FormWithErrors<FormState> & ToastProps
-
-type Props = WithStyles<typeof styles> & Form & PropTypes & MutationProps<Mutation, MutationVariables> & WithTranslation & WithToast
-
-const PasswordChangeDialog = (
-    {open, passwordExists, close, onSave, onOldPasswordChange, onNewPasswordChange, onNewPasswordConfirmChange, errors, mutationData, t}: Props
-) => (
-    <>
-        <Dialog open={open} onClose={close} aria-labelledby="form-dialog-title">
-            <DialogTitle>{passwordExists ? t("Change Password") : t("Create Password")}</DialogTitle>
-            <DialogContent>
-                <WithErrorBox prop={mutationData} retry={onSave}>
-                    <DialogContentText>
-                        {passwordExists ? t("Please enter a new password") : t("Please enter a password")}
-                    </DialogContentText>
-                    {passwordExists && <TextField
-                        autoFocus
-                        margin="dense"
-                        name="oldPassword"
-                        label={t("Old Password")}
-                        type="password"
-                        fullWidth
-                        onChange={onOldPasswordChange}
-                        error={!!(errors.oldPassword)}
-                        helperText={t(errors.oldPassword!)}
-                    />}
-                    <TextField
-                        autoFocus={!passwordExists}
-                        margin="dense"
-                        name="newPassword"
-                        label={passwordExists ? t("New Password") : t("Password")}
-                        type="password" fullWidth onChange={onNewPasswordChange}
-                        error={!!(errors.newPassword)}
-                        helperText={t(errors.newPassword!)}
-                    />
-                    <TextField
-                        margin="dense"
-                        name="newPasswordConfirm"
-                        label={passwordExists ? t("Confirm New Password") : t("Confirm Password")}
-                        type="password"
-                        fullWidth
-                        onChange={onNewPasswordConfirmChange}
-                        error={!!(errors.newPasswordConfirm)}
-                        helperText={t(errors.newPasswordConfirm!)}
-                    />
-                </WithErrorBox>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={close} color="primary">
-                    {t("Cancel")}
-                </Button>
-                <Button onClick={onSave} color="primary" disabled={mutationData.saving}>
-                    {t("Save")}
-                </Button>
-            </DialogActions>
-        </Dialog>
-    </>
-)
-
-const validators: ValidatorMap<FormState> = {
+const validators: ValidatorMap<Form> = {
     newPassword: [
         {fun: passwordStrongEnough(), message: "Password needs to be stronger"}
     ],
     newPasswordConfirm: [
-        {fun: isEqualTo<FormState>("newPassword"), message: "Passwords don't match"}
+        {fun: isEqualTo("newPassword"), message: "Passwords don't match"}
     ]
 }
 
-export {PasswordChangeDialog as RawPasswordChangeDialog}
-
-export default compose<Props, PropTypes>(
-    pure,
-    withStyles(styles),
-    withTranslation(),
-    withValidatedFormState<Form, Props>({
+export const PasswordChangeDialog = (
+    {id, open, passwordExists, close}: PropTypes
+) => {
+    const {t} = useTranslation()
+    const {oldPassword, newPassword, newPasswordConfirm} = useValidatedFormState<Form>({
         oldPassword: "",
         newPassword: "",
         newPasswordConfirm: ""
-    }, validators),
-    withToast<Props>(({passwordExists}) => passwordExists ? "Successfully changed password" : "Successfully added a password"),
-    withHandlers<Props, Partial<HandlerProps>>({
-        onSuccess: ({openToast, close}) => () => {
+    }, validators)
+
+    const {Toast, openToast} = useToast(passwordExists ? "Successfully changed password" : "Successfully added a password")
+
+    const mutate = useUpdateProfileMutation({
+        variables: {
+            id,
+            profile: {
+                password: newPassword.value,
+                oldPassword: oldPassword.value
+            }
+        }
+    })
+
+    const [mutationErrors, setMutationErrors] = useState<any>(undefined)
+    const [saving, setSaving] = useState<boolean>(false)
+
+    const save = () => {
+        setSaving(true)
+        mutate().then(({errors}) => {
+            setSaving(false)
+            setMutationErrors(errors)
             openToast()
             close()
-        }
-    }),
-    withMutation<Props, Mutation, MutationVariables>(UpdateProfileDocument, "save", "onSuccess"),
-    withHandlers<Props, Partial<HandlerProps>>({
-        onSave: ({save, id, newPassword, oldPassword}) => () => save({id, profile: {password: newPassword, oldPassword}})
-    })
-)(PasswordChangeDialog)
+        })
+    }
+
+    const mutationData = {
+        error: (mutationErrors && mutationErrors.length > 0 && mutationErrors[0]) || undefined
+    }
+
+    return (
+        <>
+            <Toast />
+            <Dialog open={open} onClose={close} aria-labelledby="form-dialog-title">
+                <DialogTitle>{passwordExists ? t("Change Password") : t("Create Password")}</DialogTitle>
+                <DialogContent>
+                    <WithErrorBox prop={mutationData} retry={save}>
+                        <DialogContentText>
+                            {passwordExists ? t("Please enter a new password") : t("Please enter a password")}
+                        </DialogContentText>
+                        {passwordExists && <TextField
+                            autoFocus
+                            margin="dense"
+                            name="oldPassword"
+                            label={t("Old Password")}
+                            type="password"
+                            fullWidth
+                            onChange={oldPassword.onChange}
+                            value={oldPassword.value}
+                            error={!!oldPassword.error}
+                            helperText={t(oldPassword.error!)}
+                        />}
+                        <TextField
+                            autoFocus={!passwordExists}
+                            margin="dense"
+                            name="newPassword"
+                            label={passwordExists ? t("New Password") : t("Password")}
+                            type="password" fullWidth onChange={newPassword.onChange}
+                            value={newPassword.value}
+                            error={!!newPassword.error}
+                            helperText={t(newPassword.error!)}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="newPasswordConfirm"
+                            label={passwordExists ? t("Confirm New Password") : t("Confirm Password")}
+                            type="password"
+                            fullWidth
+                            value={newPasswordConfirm.value}
+                            onChange={newPasswordConfirm.onChange}
+                            error={!!newPasswordConfirm.error}
+                            helperText={t(newPasswordConfirm.error!)}
+                        />
+                    </WithErrorBox>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={close} color="primary">
+                        {t("Cancel")}
+                    </Button>
+                    <Button onClick={save} color="primary" disabled={saving}>
+                        {t("Save")}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    )
+
+}
+
+export default PasswordChangeDialog

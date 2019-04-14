@@ -1,29 +1,23 @@
-import {Theme, Tooltip, Typography} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {CircularProgress, Theme, Tooltip, Typography} from "@material-ui/core"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
-import {WithTranslation, withTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {withReviewsCount} from "../../../generated/graphql"
-import {WithID, withID} from "../../enhancers"
+import {useReviewsCountQuery} from "../../../generated/graphql"
+import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Egg from "../../assets/egg.png"
 import Hatchling from "../../assets/hatchling.png"
 import Chick from "../../assets/chick.png"
 import Chicken from "../../assets/chicken.png"
 import MotherHen from "../../assets/mother_hen.png"
+import {useID} from "../../hooks"
 
 type Stage = "Egg" | "Hatchling" | "Chick" | "Chicken" | "Mother Hen"
 
 interface PropTypes {
     stage: Stage
 }
-
-interface GQLTypes {
-    reviewsCount: number
-}
-
-type Props = WithStyles<typeof styles> & WithTranslation & PropTypes & GQLTypes & WithID
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -72,6 +66,8 @@ const styles = (theme: Theme) => createStyles({
     }
 })
 
+const useStyles = makeStyles(styles)
+
 const icons: {[Key in Stage]: any} = {
     Egg,
     Hatchling,
@@ -80,8 +76,35 @@ const icons: {[Key in Stage]: any} = {
     "Mother Hen": MotherHen
 }
 
-export const StageCountDisplayRaw = ({t, classes, stage, reviewsCount}: Props) => (
-    <div className={classes.root}>
+const stages: {[Key in Stage]: number[]} = {
+    Egg: [1, 2, 3],
+    Hatchling: [4, 5],
+    Chick: [6, 7],
+    Chicken: [8, 9],
+    "Mother Hen": [10]
+}
+
+const StageCountDisplay = ({stage}: PropTypes) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const id = useID()
+
+    const {data, loading, error} = useReviewsCountQuery({
+        variables: {
+            userId: id,
+            filter: {
+                boxes: stages[stage]
+            }
+        }
+    })
+
+    const reviewsCount = oc(data).user.reviewsCount(0)
+
+    if(error) return <ApolloErrorBox error={error} />
+    if(loading) return <CircularProgress />
+
+    return (
+        <div className={classes.root}>
             <div className={clsx(
                 classes.content,
                 {
@@ -95,43 +118,17 @@ export const StageCountDisplayRaw = ({t, classes, stage, reviewsCount}: Props) =
                 <Tooltip title={(
                     <div className={classes.tooltip}>
                         <Typography variant="h6" gutterBottom>{t(stage)}</Typography>
-                        {/*<img src={icons[stage]} alt={t(stage)} className={classes.icon} />*/}
                     </div>
                 )}>
                     <div>
                         <Typography variant="h2">{reviewsCount}</Typography>
-                        <img src={icons[stage]} alt={t(stage)} className={classes.icon} />
+                        <img src={icons[stage]} alt={t(stage)} className={classes.icon}/>
                     </div>
                 </Tooltip>
             </div>
-    </div>
-)
+        </div>
+    )
 
-const stages: {[Key in Stage]: number[]} = {
-    Egg: [1, 2, 3],
-    Hatchling: [4, 5],
-    Chick: [6, 7],
-    Chicken: [8, 9],
-    "Mother Hen": [10]
 }
 
-export default compose<Props, PropTypes>(
-    pure,
-    withStyles(styles),
-    withTranslation(),
-    withID(),
-    withReviewsCount<Props, GQLTypes>({
-        options: ({id, stage}) => ({
-            variables: {
-                userId: id,
-                filter: {
-                    boxes: stages[stage]
-                }
-            }
-        }),
-        props: ({data}) => ({
-            data,
-            reviewsCount: oc(data).user.reviewsCount(0)
-        })
-    })
-)(StageCountDisplayRaw)
+export default StageCountDisplay

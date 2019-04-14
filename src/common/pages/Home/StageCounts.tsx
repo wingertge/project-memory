@@ -1,12 +1,9 @@
-import {Card, CardMedia, Theme} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {Card, Theme} from "@material-ui/core"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
-import {compose, pure} from "recompose"
 import StageCountDisplay from "./StageCountDisplay"
 
-type Props = WithStyles<typeof styles>
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     container: {
         display: "flex"
     },
@@ -19,25 +16,23 @@ const styles = (theme: Theme) => createStyles({
         justifyContent: "center",
         padding: theme.spacing(2, 0)
     }
-})
+}))
 
-export const StageCountsRaw = ({classes}: Props) => (
-    <div className={classes.root}>
-        <Card className={classes.card}>
-            <CardMedia>
+export const StageCounts = () => {
+    const classes = useStyles()
+    return (
+        <div className={classes.root}>
+            <Card className={classes.card}>
                 <div className={classes.container}>
-                    <StageCountDisplay stage="Egg" />
-                    <StageCountDisplay stage="Hatchling" />
-                    <StageCountDisplay stage="Chick" />
-                    <StageCountDisplay stage="Chicken" />
-                    <StageCountDisplay stage="Mother Hen" />
+                    <StageCountDisplay stage="Egg"/>
+                    <StageCountDisplay stage="Hatchling"/>
+                    <StageCountDisplay stage="Chick"/>
+                    <StageCountDisplay stage="Chicken"/>
+                    <StageCountDisplay stage="Mother Hen"/>
                 </div>
-            </CardMedia>
-        </Card>
-    </div>
-)
+            </Card>
+        </div>
+    )
+}
 
-export default compose<Props, {}>(
-    pure,
-    withStyles(styles)
-)(StageCountsRaw)
+export default StageCounts

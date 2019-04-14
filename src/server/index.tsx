@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import express from "express"
 import React from "react"
 import {ApolloProvider, getDataFromTree} from "react-apollo"
+import {ApolloProvider as ApolloHooksProvider} from "react-apollo-hooks"
 import {renderToString} from "react-dom/server"
 import morgan from "morgan"
 import {I18nextProvider} from "react-i18next"
@@ -55,12 +56,14 @@ initI18n(() => {
             const Root = () => (
                 <I18nextProvider i18n={req.i18n}>
                     <ApolloProvider client={apollo.client}>
-                        <StaticRouter location={req.url} context={context}>
-                            <ThemeProvider theme={theme as Theme}>
-                                <CssBaseline />
-                                <App />
-                            </ThemeProvider>
-                        </StaticRouter>
+                        <ApolloHooksProvider client={apollo.client}>
+                            <StaticRouter location={req.url} context={context}>
+                                <ThemeProvider theme={theme as Theme}>
+                                    <CssBaseline />
+                                    <App />
+                                </ThemeProvider>
+                            </StaticRouter>
+                        </ApolloHooksProvider>
                     </ApolloProvider>
                 </I18nextProvider>
             )

@@ -1,11 +1,10 @@
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
 import {Button, Card, CardContent, CardActions, Theme, Typography} from "@material-ui/core"
-import {WithTranslation, withTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import Heading from "./Heading"
 
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     errorBox: {
         backgroundColor: theme.palette.error.light + "33",
         borderColor: theme.palette.error.dark,
@@ -23,7 +22,7 @@ const styles = (theme: Theme) => createStyles({
     retryButton: {
         color: theme.palette.error.main
     }
-})
+}))
 
 interface PropTypes {
     text: string
@@ -31,27 +30,25 @@ interface PropTypes {
     retry?: (event) => void
 }
 
-type Props = WithStyles<typeof styles> & PropTypes & WithTranslation
+export const ErrorBox = ({title, text, retry}: PropTypes) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    return (
+        <Card className={classes.errorBox}>
+            <CardContent className={classes.cardContent}>
+                <Heading color="error">
+                    {title}
+                </Heading>
+                <Typography variant="body1" gutterBottom color="error">
+                    {text}
+                </Typography>
+            </CardContent>
+            {retry &&
+            <CardActions className={classes.cardActions}>
+                <Button onClick={retry} className={classes.retryButton}>{t("Retry")}</Button>
+            </CardActions>}
+        </Card>
+    )
+}
 
-const ErrorBox = ({title, text, retry, classes, t}: Props) => (
-    <Card className={classes.errorBox}>
-        <CardContent className={classes.cardContent}>
-            <Heading color="error">
-                {title}
-            </Heading>
-            <Typography variant="body1" gutterBottom color="error">
-                {text}
-            </Typography>
-        </CardContent>
-        {retry &&
-        <CardActions className={classes.cardActions}>
-            <Button onClick={retry} className={classes.retryButton}>{t("Retry")}</Button>
-        </CardActions>}
-    </Card>
-)
-
-export default compose<Props, PropTypes>(
-    pure,
-    withStyles(styles),
-    withTranslation()
-)(ErrorBox)
+export default ErrorBox

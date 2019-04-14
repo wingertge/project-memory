@@ -10,6 +10,7 @@ generates:
       - "typescript-operations"
       - "typescript-react-apollo"
     config:
+      withHooks: true
       withHoc: true
       enumsAsTypes: true
 watch: true

@@ -13,6 +13,7 @@ import {createHttpLink} from "apollo-link-http"
 import {ApolloClient} from "apollo-client"
 import {InMemoryCache} from "apollo-cache-inmemory"
 import {ApolloProvider} from "react-apollo"
+import {ApolloProvider as ApolloHooksProvider} from "react-apollo-hooks"
 import {BrowserRouter} from "react-router-dom"
 import Loadable from "react-loadable"
 import * as env from "./env"
@@ -73,14 +74,16 @@ const client = new ApolloClient({
 const RootApp = generateClassName => (
     <I18nextProvider i18n={i18n}>
         <ApolloProvider client={client}>
-            <BrowserRouter>
-                <JssProvider generateClassName={generateClassName}>
-                    <ThemeProvider theme={theme as Theme}>
-                        <CssBaseline/>
-                        <MainApp/>
-                    </ThemeProvider>
-                </JssProvider>
-            </BrowserRouter>
+            <ApolloHooksProvider client={client}>
+                <BrowserRouter>
+                    <JssProvider generateClassName={generateClassName}>
+                        <ThemeProvider theme={theme as Theme}>
+                            <CssBaseline/>
+                            <MainApp/>
+                        </ThemeProvider>
+                    </JssProvider>
+                </BrowserRouter>
+            </ApolloHooksProvider>
         </ApolloProvider>
     </I18nextProvider>
 )

@@ -8,4 +8,6 @@ interface LinkButtonProps extends ButtonProps {
     replace?: boolean
 }
 
-export default (props: LinkButtonProps) => <Button {...props} component={Link as any}/>
+export const LinkButton = (props: LinkButtonProps) => <Button {...props} component={Link as any}/>
+
+export default LinkButton

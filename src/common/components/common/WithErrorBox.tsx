@@ -1,7 +1,6 @@
 import {ApolloError} from "apollo-client"
 import React from "react"
-import {WithTranslation, withTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import ErrorBox from "./ErrorBox"
 
 interface PropTypes {
@@ -10,9 +9,8 @@ interface PropTypes {
     children: any
 }
 
-type Props = PropTypes & WithTranslation
-
-const WithErrorBox = ({prop: {error}, retry, children, t}: Props) => {
+export const WithErrorBox = ({prop: {error}, retry, children}: PropTypes) => {
+    const {t} = useTranslation()
     const title = error && (error.message.includes(":") ? error.message.split(":")[0].trim() : "Error")
     const message = error && (error.message.includes(":") ? error.message.split(":")[1].trim() : error.message.trim())
     return (
@@ -23,7 +21,4 @@ const WithErrorBox = ({prop: {error}, retry, children, t}: Props) => {
     )
 }
 
-export default compose<Props, PropTypes>(
-    pure,
-    withTranslation()
-)(WithErrorBox)
+export default WithErrorBox

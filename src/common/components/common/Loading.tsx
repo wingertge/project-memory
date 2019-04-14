@@ -1,13 +1,11 @@
 import {CircularProgress} from "@material-ui/core"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import ErrorBox from "./ErrorBox"
 import LoadingComponentProps = LoadableExport.LoadingComponentProps
 
-type Props = WithTranslation & LoadingComponentProps
-
-const Loading = ({error, retry, pastDelay, timedOut, t}: Props) => {
+export const Loading = ({error, retry, pastDelay, timedOut}: LoadingComponentProps) => {
+    const {t} = useTranslation()
     if(error || timedOut) {
         return <ErrorBox title={t("Error!")} text={t("Error loading page. Please try again.")} retry={retry}/>
     } else if(pastDelay) {
@@ -17,7 +15,4 @@ const Loading = ({error, retry, pastDelay, timedOut, t}: Props) => {
     }
 }
 
-export default compose<Props, LoadingComponentProps>(
-    pure,
-    withTranslation()
-)(Loading)
+export default Loading
