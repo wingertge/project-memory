@@ -1,4 +1,5 @@
-import {CircularProgress, createStyles, Theme, withStyles, WithStyles} from "@material-ui/core"
+import {CircularProgress, Theme} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {compose} from "recompose"
 import {oc} from "ts-optchain"
@@ -55,8 +56,7 @@ const styles = (theme: Theme) => createStyles({
         display: "flex",
         flexWrap: "wrap",
         overflowY: "auto",
-        padding: theme.spacing.unit * 0.5,
-        paddingTop: theme.spacing.unit * 2
+        padding: theme.spacing(0.5, 2, 0.5, 0.5)
     }
 })
 

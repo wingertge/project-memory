@@ -1,12 +1,11 @@
 import {
-    Card, CardContent,
-    createStyles,
-    Theme,
-    withStyles,
-    WithStyles
+    Card, CardContent
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {compose, pure} from "recompose"
+import LanguageSettings from "../../pages/Settings/LanguageSettings"
+import Spacer from "../common/Spacer"
 import ProfileSettingsContent from "./ProfileSettingsContent"
 
 
@@ -27,6 +26,8 @@ const ProfileSettings = ({classes}: Props) => (
         <CardContent className={classes.cardContent}>
             <ProfileSettingsContent />
         </CardContent>
+        <Spacer />
+        <LanguageSettings />
     </Card>
 )
 

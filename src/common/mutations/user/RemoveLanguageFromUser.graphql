@@ -1,0 +1,11 @@
+mutation RemoveLanguageFromUser($userId: ID!, $languageId: ID!) {
+    removeLanguageFromUser(id: $userId, language: $languageId) {
+        id
+        languages {
+            id
+            name
+            nativeName
+            languageCode
+        }
+    }
+}

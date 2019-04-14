@@ -1,12 +1,13 @@
+import {Theme} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
-import {createStyles, Theme, WithStyles, withStyles} from "@material-ui/core/styles"
 import AppHeader from "./components/common/Header"
 import Routes from "./Routes"
 
 const styles = (theme: Theme) => createStyles({
     content: {
         textAlign: "center",
-        marginTop: theme.spacing.unit * 2,
+        marginTop: theme.spacing(2),
     },
     "@global": {
         "*::-webkit-scrollbar-thumb": {

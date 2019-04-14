@@ -1,4 +1,4 @@
-import {WithStyles} from "@material-ui/core"
+import {WithStyles} from "@material-ui/styles"
 import Maybe from "graphql/tsutils/Maybe"
 import {WithTranslation} from "react-i18next"
 import {RouteComponentProps} from "react-router"

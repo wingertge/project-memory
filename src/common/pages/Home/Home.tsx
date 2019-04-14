@@ -1,13 +1,14 @@
-import {Button, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {Button, Typography} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
 import {WithTranslation, withTranslation} from "react-i18next"
 import {Redirect, RouteComponentProps, withRouter} from "react-router"
 import {compose, pure} from "recompose"
 import {oc} from "ts-optchain"
-import {withLessonsCount} from "../../generated/graphql"
-import Heading from "../components/common/Heading"
-import {withHandlers, WithUser, withUser} from "../enhancers"
-import Logo from "../assets/logo.png"
+import {withLessonsCount} from "../../../generated/graphql"
+import {withHandlers, WithUser, withUser} from "../../enhancers"
+import StageCounts from "./StageCounts"
+import UpcomingReviews from "./UpcomingReviews"
 
 const styles = createStyles({
     logo: {
@@ -28,7 +29,6 @@ type Props = WithTranslation & WithUser & LessonsCountTypes & HandlerTypes & Rou
 
 const Home = ({t, classes, user, lessonsCount, openLessons}: Props) => (
     <div>
-        <Heading>{t("Home")}</Heading>
         {(user && (!user.introStep || user.introStep !== -1)) && (
             <Redirect to="/intro" />
         )}
@@ -40,7 +40,8 @@ const Home = ({t, classes, user, lessonsCount, openLessons}: Props) => (
                 <Button onClick={openLessons}>{t("Review now")}</Button>
             </div>
         )}
-        <img src={Logo} alt={t("Logo")} className={classes.logo} />
+        {user && <UpcomingReviews />}
+        {user && <StageCounts />}
     </div>
 )
 

@@ -1,4 +1,4 @@
-import {createStyles, WithStyles, withStyles} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose, pure} from "recompose"

@@ -1,13 +1,11 @@
 import {
     Avatar,
     CircularProgress,
-    createStyles,
     IconButton,
     Theme,
-    Tooltip,
-    withStyles,
-    WithStyles
+    Tooltip
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose} from "recompose"
@@ -39,7 +37,7 @@ const styles = (theme: Theme) => createStyles({
     },
     languageButton: {
         padding: 0,
-        margin: theme.spacing.unit
+        margin: theme.spacing(1)
     },
     languageIcon: {
         width: 60,
@@ -48,17 +46,15 @@ const styles = (theme: Theme) => createStyles({
 })
 
 export const LargeLanguagePickerRaw = ({t, classes, languages, updateLanguage}: Props) => (
-    <>
-        <div className={classes.languageButtons}>
-            {languages && languages.map(language => (
-                <Tooltip title={`${t(language.name)} (${language.nativeName})`} key={language.id}>
-                    <IconButton className={classes.languageButton} onClick={() => updateLanguage(language)}>
-                        <Avatar src={`/static/media/flags/${language.languageCode}.png`} className={classes.languageIcon} />
-                    </IconButton>
-                </Tooltip>
-            ))}
-        </div>
-    </>
+    <div className={classes.languageButtons}>
+        {languages && languages.map(language => (
+            <Tooltip title={`${t(language.name)} (${language.nativeName})`} key={language.id}>
+                <IconButton className={classes.languageButton} onClick={() => updateLanguage(language)}>
+                    <Avatar src={`/static/media/flags/${language.languageCode}.png`} className={classes.languageIcon} />
+                </IconButton>
+            </Tooltip>
+        ))}
+    </div>
 )
 
 export default compose<Props, PropTypes>(

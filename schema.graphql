@@ -63,6 +63,7 @@ type Mutation {
     editUser(id: ID!, input: UserInput!): User
     initUser(id: ID!): User
     logout: Boolean
+    removeLanguageFromUser(id: ID!, language: ID!): User
     submitReview(correct: Boolean!, field: ReviewFields!, id: ID!): Review
     updateDeck(id: ID!, input: DeckInput!): Deck
 }
@@ -174,7 +175,7 @@ input DeckInput {
 }
 
 input ReviewFilterInput {
-    box: Int
+    boxes: [Int]
     deck: ID
     limit: Int
     offset: Int

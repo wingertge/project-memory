@@ -9,6 +9,10 @@ export interface WithDialog<TModalProps> {
     closeDialog: () => void
 }
 
+export interface DialogProps {
+    closeDialog: () => void
+}
+
 interface ModalUpdaters<TModalProps> {
     dialogOpen: boolean
     dialogProps?: Partial<TModalProps>

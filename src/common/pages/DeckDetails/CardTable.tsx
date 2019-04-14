@@ -1,17 +1,16 @@
 import {
     Checkbox,
-    createStyles, IconButton,
+    IconButton,
     Paper,
     Table,
     TableBody,
     TableCell,
     TablePagination,
     TableRow,
-    Theme,
-    withStyles,
-    WithStyles
+    Theme
 } from "@material-ui/core"
 import {Edit} from "@material-ui/icons"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {RouteComponentProps, withRouter} from "react-router"
@@ -84,7 +83,7 @@ type Props =
 const styles = (theme: Theme) => createStyles({
     root: {
         width: "100%",
-        marginTop: theme.spacing.unit * 3,
+        marginTop: theme.spacing(3),
     },
     table: {
         minWidth: 1020,

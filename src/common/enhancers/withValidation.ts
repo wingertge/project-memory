@@ -1,4 +1,4 @@
-import {compose, withProps} from "recompose"
+import {compose, withProps, mapper} from "recompose"
 import {withState} from "./index"
 
 export type ValidatorMap<TProps> = {
@@ -28,9 +28,9 @@ export interface FormWithErrors<TForm> {
 
 export type ValidatorFn<TProps> = (props: TProps, options: ValidateOptions<TProps>) => void
 
-export const eventHandlerWithValidation = <TProps extends FormWithErrors<TProps>>(propName: keyof TProps, updateHandler: keyof TProps) => (props: TProps) => {
+export const eventHandlerWithValidation = <TProps extends FormWithErrors<TProps>>(propName: keyof TProps, updateHandler: keyof TProps, transformer?: mapper<TProps, (value: any) => any>) => (props: TProps) => {
     return event => {
-        (props[updateHandler] as any)(event.target.value)
+        (props[updateHandler] as any)(transformer ? transformer(props)(event.target.value) : event.target.value)
         props.validate(props, {[propName]: event.target.value} as any)
     }
 }

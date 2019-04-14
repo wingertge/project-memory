@@ -1,4 +1,4 @@
-import {WithStyles} from "@material-ui/core"
+import {WithStyles} from "@material-ui/styles"
 import {WithTranslation} from "react-i18next"
 import {WithUser} from "../../enhancers"
 import styles from "./styles"

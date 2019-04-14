@@ -1,4 +1,5 @@
-import {Button, createStyles, Grid, TextField, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import {Button, Grid, TextField, Theme, Typography} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose} from "recompose"
@@ -26,8 +27,8 @@ const styles = (theme: Theme) => createStyles({
         maxWidth: 600
     },
     textField: {
-        margin: theme.spacing.unit * 2,
-        marginTop: theme.spacing.unit * 3,
+        margin: theme.spacing(2),
+        marginTop: theme.spacing(3),
         width: "100%"
     },
     button: {

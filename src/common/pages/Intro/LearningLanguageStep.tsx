@@ -1,4 +1,5 @@
-import {createStyles, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import {Theme, Typography} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {MutationFn} from "react-apollo"
 import {withTranslation, WithTranslation} from "react-i18next"
@@ -45,7 +46,7 @@ const styles = (theme: Theme) => createStyles({
         justifyContent: "center"
     },
     spacer: {
-        width: theme.spacing.unit * 2
+        width: theme.spacing(2)
     }
 })
 

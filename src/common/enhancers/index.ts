@@ -72,11 +72,14 @@ export const withFormState = <TFormProps, TProps>(defaultState: TFormProps | map
  * The properties in the result are the form fields that should be created.
  * Note: When using a mapper, all props will be undefined the first time around so be careful with accessors.
  * @param validators Validator Object
+ * @param changeTransformers transformers run on field change
  */
 export const withValidatedFormState = <TFormProps extends FormWithErrors<TFormProps>, TProps>(
     defaultState: Partial<Omit<TFormProps, keyof FormWithErrors<TFormProps>>> | mapper<TProps, Partial<Omit<TFormProps, keyof FormWithErrors<TFormProps>>>>,
-    validators: ValidatorMap<TFormProps>
+    validators: ValidatorMap<TFormProps>,
+    changeTransformers?: {[Key in keyof TFormProps]?: mapper<TProps, (value: string) => string>}
 ) => {
+    changeTransformers = changeTransformers || {}
     const stateEnhancers: any[] = []
     const callbacks = {}
     const defaultIsStatic = typeof defaultState === "object"
@@ -87,7 +90,7 @@ export const withValidatedFormState = <TFormProps extends FormWithErrors<TFormPr
         const handlerName = `on${uppercaseFirstLetter(key)}Change`
         const def = defaultIsStatic ? defaultState[key] : (props: TProps) => defaultStateFun!(props)[key]
         stateEnhancers.push(withState<TProps>(key as keyof TProps, updater as keyof TProps, def))
-        callbacks[handlerName] = eventHandlerWithValidation<TFormProps>(key as any, updater as any)
+        callbacks[handlerName] = eventHandlerWithValidation<TFormProps>(key as any, updater as any, changeTransformers![key])
     })
     return compose(
         withValidation(validators),

@@ -1,15 +1,12 @@
 import {
     Avatar,
-    createStyles,
     Grid,
     IconButton,
-    PropTypes,
     Theme,
-    Tooltip,
-    withStyles,
-    WithStyles
+    Tooltip
 } from "@material-ui/core"
 import {Close} from "@material-ui/icons"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {WithTranslation, withTranslation} from "react-i18next"
 import {compose, pure} from "recompose"
@@ -28,8 +25,7 @@ const styles = (theme: Theme) => createStyles({
         flexWrap: "nowrap"
     },
     removeButton: {
-        marginLeft: theme.spacing.unit * -2.5,
-        marginTop: theme.spacing.unit * 0.5
+        margin: theme.spacing(-2.5, 0.5, 0, 0)
     },
     iconButton: {
         padding: 1

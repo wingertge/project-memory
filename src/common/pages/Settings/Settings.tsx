@@ -1,10 +1,11 @@
-import {createStyles, Grid, Theme, WithStyles, withStyles} from "@material-ui/core"
+import {Theme} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
 import {compose, pure} from "recompose"
-import ResponsiveDrawer from "../components/common/ResponsiveDrawer"
-import Spacer from "../components/common/Spacer"
-import DecksOverview from "../components/profile/DecksOverview"
-import ProfileSettings from "../components/profile/ProfileSettings"
+import ResponsiveDrawer from "../../components/common/ResponsiveDrawer"
+import Spacer from "../../components/common/Spacer"
+import DecksOverview from "../../components/profile/DecksOverview"
+import ProfileSettings from "../../components/profile/ProfileSettings"
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -14,8 +15,7 @@ const styles = (theme: Theme) => createStyles({
         display: "flex",
         flexDirection: "column",
         width: "calc(100% - 400px)",
-        paddingLeft: theme.spacing.unit * 2,
-        paddingRight: theme.spacing.unit * 2
+        padding: theme.spacing(0, 2)
     },
     toolbar: theme.mixins.toolbar
 })

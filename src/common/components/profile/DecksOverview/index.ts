@@ -1,4 +1,5 @@
-import {CircularProgress, withStyles} from "@material-ui/core"
+import {CircularProgress} from "@material-ui/core"
+import {withStyles} from "@material-ui/styles"
 import {withRouter} from "react-router"
 import {compose, pure} from "recompose"
 import {oc} from "ts-optchain"

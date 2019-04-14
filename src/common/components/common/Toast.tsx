@@ -1,5 +1,6 @@
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
-import {withStyles, Snackbar, Button, IconButton, WithStyles, createStyles, Theme} from "@material-ui/core"
+import {Snackbar, Button, IconButton, Theme} from "@material-ui/core"
 import {Close as CloseIcon} from "@material-ui/icons"
 import * as PropTypes from "prop-types"
 import {WithTranslation, withTranslation} from "react-i18next"
@@ -7,7 +8,7 @@ import {compose, pure} from "recompose"
 
 const styles = (theme: Theme) => createStyles({
     close: {
-        padding: theme.spacing.unit / 2,
+        padding: theme.spacing(0.5),
     }
 })
 

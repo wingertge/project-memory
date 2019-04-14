@@ -1,4 +1,5 @@
 /* tslint:disable:no-console no-var-requires */
+import "./typings/index.d.ts"
 import express from "express"
 import Loadable from "react-loadable"
 

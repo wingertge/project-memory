@@ -1,12 +1,13 @@
 import {
     Button,
-    CircularProgress, createStyles,
+    CircularProgress,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    TextField, Theme, withStyles, WithStyles
+    TextField, Theme
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose} from "recompose"
@@ -63,7 +64,7 @@ const styles = (theme: Theme) => createStyles({
         }
     },
     textField: {
-        marginTop: theme.spacing.unit
+        marginTop: theme.spacing(1)
     }
 })
 

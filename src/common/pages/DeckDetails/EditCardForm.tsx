@@ -1,12 +1,12 @@
 import {
     Button,
-    createStyles,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    TextField, Theme, WithStyles, withStyles
+    TextField, Theme
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose, pure, withHandlers, withProps} from "recompose"

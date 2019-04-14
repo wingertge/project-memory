@@ -1,14 +1,12 @@
 import {
     Button,
     CircularProgress,
-    createStyles,
     Grid,
     TextField,
     Theme,
-    Typography,
-    withStyles,
-    WithStyles
+    Typography
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose} from "recompose"
@@ -60,20 +58,16 @@ const styles = (theme: Theme) => createStyles({
     },
     textField: {
         width: "calc(60% - 8px)",
-        marginLeft: theme.spacing.unit * 0.5,
-        marginRight: theme.spacing.unit * 0.5,
+        margin: theme.spacing(0.5, 0.5, 2, 0),
         maxWidth: 400,
-        marginTop: theme.spacing.unit * 2
     },
     select: {
         width: "calc(40% - 8px)",
-        marginLeft: theme.spacing.unit * 0.5,
-        marginRight: theme.spacing.unit * 0.5,
-        maxWidth: 300,
-        marginTop: theme.spacing.unit * 1.5
+        margin: theme.spacing(0.5, 1.5, 0.5, 0),
+        maxWidth: 300
     },
     button: {
-        margin: theme.spacing.unit * 2
+        margin: theme.spacing(2)
     }
 })
 

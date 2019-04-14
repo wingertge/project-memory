@@ -1,3 +1,4 @@
+import {createGenerateClassName, ThemeProvider} from "@material-ui/styles"
 import {ApolloLink} from "apollo-link"
 import {withClientState} from "apollo-link-state"
 import localTypeDefs from "../common/localTypeDefs"
@@ -5,7 +6,7 @@ import i18n from "./i18n"
 import React, {Suspense} from "react"
 import {hydrate} from "react-dom"
 import {I18nextProvider, useSSR} from "react-i18next"
-import {MuiThemeProvider, CssBaseline, Theme, createGenerateClassName} from "@material-ui/core"
+import {CssBaseline, Theme} from "@material-ui/core"
 import theme from "../common/theme"
 import {JssProvider} from "react-jss"
 import {createHttpLink} from "apollo-link-http"
@@ -74,10 +75,10 @@ const RootApp = generateClassName => (
         <ApolloProvider client={client}>
             <BrowserRouter>
                 <JssProvider generateClassName={generateClassName}>
-                    <MuiThemeProvider theme={theme as Theme}>
+                    <ThemeProvider theme={theme as Theme}>
                         <CssBaseline/>
                         <MainApp/>
-                    </MuiThemeProvider>
+                    </ThemeProvider>
                 </JssProvider>
             </BrowserRouter>
         </ApolloProvider>

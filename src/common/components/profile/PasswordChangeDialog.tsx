@@ -1,8 +1,6 @@
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
 import {
-    withStyles,
-    WithStyles,
-    createStyles,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -15,11 +13,12 @@ import {
     UpdateProfileMutationVariables as MutationVariables
 } from "../../../generated/graphql"
 import {
-    FormWithErrors, MutateFn,
+    FormWithErrors,
+    MutateFn,
     MutationProps,
-    ValidatorMap,
-    withMutation,
-    WithToast, withToast,
+    ValidatorMap, withMutation,
+    withToast,
+    WithToast,
     withValidatedFormState
 } from "../../enhancers"
 import {isEqualTo, passwordStrongEnough} from "../../util/validationUtils"
@@ -65,7 +64,7 @@ type Form = FormState & UpdaterProps & HandlerProps & FormWithErrors<FormState> 
 type Props = WithStyles<typeof styles> & Form & PropTypes & MutationProps<Mutation, MutationVariables> & WithTranslation & WithToast
 
 const PasswordChangeDialog = (
-    {open, passwordExists, close, onSave, oldPassword, onOldPasswordChange, newPassword, onNewPasswordChange, newPasswordConfirm, onNewPasswordConfirmChange, errors, mutationData, t}: Props
+    {open, passwordExists, close, onSave, onOldPasswordChange, onNewPasswordChange, onNewPasswordConfirmChange, errors, mutationData, t}: Props
 ) => (
     <>
         <Dialog open={open} onClose={close} aria-labelledby="form-dialog-title">

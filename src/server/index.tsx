@@ -1,10 +1,10 @@
-import {createGenerateClassName, CssBaseline, MuiThemeProvider, Theme} from "@material-ui/core"
+import {CssBaseline, Theme} from "@material-ui/core"
+import {ThemeProvider} from "@material-ui/styles"
+import ServerStyleSheets from "@material-ui/styles/ServerStyleSheets"
 import cookieParser from "cookie-parser"
 import express from "express"
-import {SheetsRegistry} from "jss"
 import React from "react"
 import {ApolloProvider, getDataFromTree} from "react-apollo"
-import {createMemoryHistory} from "history"
 import {renderToString} from "react-dom/server"
 import morgan from "morgan"
 import {I18nextProvider} from "react-i18next"
@@ -20,7 +20,6 @@ import {manageCookies} from "./Cookies"
 import {appSrc, initI18n, preloadI18n} from "./i18n"
 import {Layout} from "./Layout"
 import {getBundleScripts} from "./ReactLoadable"
-import {JssProvider} from "react-jss"
 import jwt from "jsonwebtoken"
 
 
@@ -42,38 +41,37 @@ initI18n(() => {
 
             const __auth__ = req.signedCookies.__auth__
             const decoded = __auth__ && jwt.decode(__auth__)
-            const id = decoded && decoded[`${process.env.REACT_APP_OAUTH_NAMESPACE}/uuid`] || "none"
+            const id = decoded && decoded[`${process.env.REACT_APP_OAUTH_NAMESPACE}/id`] || "none"
             let apollo = createApollo({auth: __auth__, id})
 
             apollo = await handleCallback(routeParams[0], req, res, apollo)
 
             // Create the server side style sheet
-            const sheetRegistry = new SheetsRegistry()
+            const sheets = new ServerStyleSheets()
             const context = {} as any
 
             const modules: string[] = []
-            const generateClassNames = createGenerateClassName()
 
-            const Root = ({disableStyles = false}) => (
+            const Root = () => (
                 <I18nextProvider i18n={req.i18n}>
                     <ApolloProvider client={apollo.client}>
                         <StaticRouter location={req.url} context={context}>
-                            <JssProvider registry={sheetRegistry} generateClassName={generateClassNames}>
-                                <MuiThemeProvider theme={theme as Theme} sheetsManager={new Map()} disableStylesGeneration={disableStyles}>
-                                    <CssBaseline />
-                                    <App />
-                                </MuiThemeProvider>
-                            </JssProvider>
+                            <ThemeProvider theme={theme as Theme}>
+                                <CssBaseline />
+                                <App />
+                            </ThemeProvider>
                         </StaticRouter>
                     </ApolloProvider>
                 </I18nextProvider>
             )
 
-            await getDataFromTree(<Root disableStyles />)
+            await getDataFromTree(<Root />)
             const markup = await renderToString(
-                <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-                    <Root />
-                </Loadable.Capture>
+                sheets.collect(
+                    <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+                        <Root />
+                    </Loadable.Capture>
+                )
             )
 
             const {url} = context
@@ -89,7 +87,7 @@ initI18n(() => {
                 lang: initialLanguage,
                 initialState: apollo.client.extract(),
                 i18Store: initialI18nStore,
-                css: sheetRegistry.toString(),
+                css: sheets.toString(),
                 bundle: getBundleScripts(modules)
             })
             res.send(result)

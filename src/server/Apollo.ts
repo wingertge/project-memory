@@ -40,12 +40,10 @@ const initErrorLink = () => onError(({graphQLErrors, networkError}) => {
 })
 
 export interface Apollo {
-    client: ApolloClient<NormalizedCacheObject>,
-    cache: InMemoryCache,
-    stateLink: ApolloLink,
-    errorLink: ApolloLink,
-    retryLink: ApolloLink,
-    httpLink: ApolloLink
+    client: ApolloClient<NormalizedCacheObject>
+    cache: InMemoryCache
+    errorLink: ApolloLink
+    retryLink: ApolloLink
 }
 
 export const createApollo = (parameters: { auth: string, id?: string, cache?: InMemoryCache, errorLink?: ApolloLink, retryLink?: ApolloLink, stateLink?: ApolloLink, httpLink?: ApolloLink }
@@ -60,9 +58,7 @@ export const createApollo = (parameters: { auth: string, id?: string, cache?: In
             cache
         }),
         cache: cache || new InMemoryCache(),
-        stateLink,
         errorLink,
-        retryLink,
-        httpLink
+        retryLink
     }
 }

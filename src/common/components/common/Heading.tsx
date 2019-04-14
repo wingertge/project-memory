@@ -1,5 +1,6 @@
-import React, {ComponentType} from "react"
-import {createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import React from "react"
+import {Typography} from "@material-ui/core"
 import * as PropTypes from "prop-types"
 import {compose, pure} from "recompose"
 

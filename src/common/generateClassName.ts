@@ -1,3 +1,3 @@
-import {createGenerateClassName} from "@material-ui/core"
+import {createGenerateClassName} from "@material-ui/styles"
 
 export default createGenerateClassName

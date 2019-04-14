@@ -1,4 +1,5 @@
-import {createStyles, Drawer, Hidden, Theme, withStyles, WithStyles, WithTheme} from "@material-ui/core"
+import {Drawer, Hidden, Theme} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles, WithTheme} from "@material-ui/styles"
 import * as React from "react"
 import {compose, pure, withHandlers} from "recompose"
 import {withState} from "../../enhancers"
@@ -20,7 +21,7 @@ interface UpdaterTypes {
     updateIsOpen: (state: boolean) => boolean
 }
 
-type Props = PropTypes & StateTypes & HandlerTypes & UpdaterTypes & WithStyles<typeof styles> & WithTheme
+type Props = PropTypes & StateTypes & HandlerTypes & UpdaterTypes & WithStyles<typeof styles> & WithTheme<Theme>
 
 const styles = (theme: Theme) => createStyles({
     drawer: {

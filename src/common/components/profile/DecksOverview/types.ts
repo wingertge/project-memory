@@ -1,4 +1,4 @@
-import {WithStyles} from "@material-ui/core"
+import {WithStyles} from "@material-ui/styles"
 import {RouteComponentProps} from "react-router"
 import {Deck} from "../../../../generated/graphql"
 import {WithDialog} from "../../../enhancers"

@@ -1,4 +1,5 @@
-import {Button, createStyles, TextField, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import {Button, TextField, Theme, Typography} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as _ from "lodash"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
@@ -48,19 +49,18 @@ type Props = PropTypes & ExtraTypes & WithTranslation & FormTypes & FormHandlerT
 const styles = (theme: Theme) => createStyles({
     responseField: {
         width: "100%",
-        marginTop: theme.spacing.unit * 2,
-        marginBottom: theme.spacing.unit * 4
+        margin: theme.spacing(0, 2, 0, 4)
     },
     review: {
-        padding: theme.spacing.unit * 2,
+        padding: theme.spacing(2),
         background: theme.palette.background.paper,
-        marginTop: theme.spacing.unit * -2
+        marginTop: theme.spacing(-2)
     },
     shownValue: {
-        marginBottom: theme.spacing.unit * 2
+        marginBottom: theme.spacing(2)
     },
     button: {
-        marginRight: theme.spacing.unit * 2
+        marginRight: theme.spacing(2)
     },
     nav: {
         display: "flex",

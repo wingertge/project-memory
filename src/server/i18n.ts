@@ -4,6 +4,7 @@ import path from "path"
 import {baseOptions} from "../common/i18n"
 import i18next from "i18next"
 import NodeBackend from "i18next-node-fs-backend"
+import moment from "moment"
 
 const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath)
@@ -32,4 +33,6 @@ export const initI18n = (serverCallback: () => void) => {
             debug: false,
             ...baseOptions
         }, serverCallback)
+
+    i18next.on("languageChanged", lang => moment.locale(lang))
 }

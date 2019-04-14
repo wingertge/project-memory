@@ -1,4 +1,5 @@
-import {withStyles, WithTheme} from "@material-ui/core"
+import {Theme} from "@material-ui/core"
+import {withStyles, WithTheme} from "@material-ui/styles"
 import * as React from "react"
 import {compose, pure} from "recompose"
 
@@ -6,11 +7,11 @@ interface PropTypes {
     multiplier?: number
 }
 
-type Props = WithTheme & PropTypes
+type Props = WithTheme<Theme> & PropTypes
 
 const Spacer = ({multiplier, theme}: Props) => (
     <div style={{
-        minHeight: theme.spacing.unit * (multiplier || 1)
+        minHeight: theme.spacing(multiplier || 1)
     }} />
 )
 

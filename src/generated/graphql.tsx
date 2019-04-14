@@ -111,6 +111,7 @@ export type Mutation = {
   editUser?: Maybe<User>;
   deleteUser?: Maybe<User>;
   addLanguageToUser?: Maybe<User>;
+  removeLanguageFromUser?: Maybe<User>;
   addDeck?: Maybe<User>;
   updateDeck?: Maybe<Deck>;
   deleteDeck?: Maybe<Deck>;
@@ -142,6 +143,11 @@ export type MutationDeleteUserArgs = {
 export type MutationAddLanguageToUserArgs = {
   id: Scalars["ID"];
   input: Scalars["ID"];
+};
+
+export type MutationRemoveLanguageFromUserArgs = {
+  id: Scalars["ID"];
+  language: Scalars["ID"];
 };
 
 export type MutationAddDeckArgs = {
@@ -243,7 +249,7 @@ export type ReviewFilterInput = {
   toBeReviewedBy?: Maybe<Scalars["Date"]>;
   sortBy?: Maybe<ReviewSortOptions>;
   sortDirection?: Maybe<SortDirection>;
-  box?: Maybe<Scalars["Int"]>;
+  boxes?: Maybe<Array<Maybe<Scalars["Int"]>>>;
 };
 
 export type ReviewSortOptions = "reviewDate" | "box";
@@ -490,6 +496,28 @@ export type LoginMutation = { __typename?: "Mutation" } & {
       AuthResult,
       "accessToken" | "expiresIn"
     >
+  >;
+};
+
+export type RemoveLanguageFromUserMutationVariables = {
+  userId: Scalars["ID"];
+  languageId: Scalars["ID"];
+};
+
+export type RemoveLanguageFromUserMutation = { __typename?: "Mutation" } & {
+  removeLanguageFromUser: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        languages: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Language" } & Pick<
+                Language,
+                "id" | "name" | "nativeName" | "languageCode"
+              >
+            >
+          >
+        >;
+      }
   >;
 };
 
@@ -1313,6 +1341,68 @@ export function withLogin<TProps, TChildProps = {}>(
     LoginMutationVariables,
     LoginProps<TChildProps>
   >(LoginDocument, operationOptions);
+}
+export const RemoveLanguageFromUserDocument = gql`
+  mutation RemoveLanguageFromUser($userId: ID!, $languageId: ID!) {
+    removeLanguageFromUser(id: $userId, language: $languageId) {
+      id
+      languages {
+        id
+        name
+        nativeName
+        languageCode
+      }
+    }
+  }
+`;
+
+export class RemoveLanguageFromUserComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<
+      RemoveLanguageFromUserMutation,
+      RemoveLanguageFromUserMutationVariables
+    >
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<
+        RemoveLanguageFromUserMutation,
+        RemoveLanguageFromUserMutationVariables
+      >
+        mutation={RemoveLanguageFromUserDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type RemoveLanguageFromUserProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables
+  >
+> &
+  TChildProps;
+export type RemoveLanguageFromUserMutationFn = ReactApollo.MutationFn<
+  RemoveLanguageFromUserMutation,
+  RemoveLanguageFromUserMutationVariables
+>;
+export function withRemoveLanguageFromUser<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        RemoveLanguageFromUserMutation,
+        RemoveLanguageFromUserMutationVariables,
+        RemoveLanguageFromUserProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables,
+    RemoveLanguageFromUserProps<TChildProps>
+  >(RemoveLanguageFromUserDocument, operationOptions);
 }
 export const UpdateProfileDocument = gql`
   mutation UpdateProfile($id: ID!, $profile: UserInput!) {

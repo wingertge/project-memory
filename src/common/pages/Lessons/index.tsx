@@ -1,14 +1,12 @@
 import {
     Button,
     CircularProgress,
-    createStyles,
     Step,
     StepLabel,
     Stepper,
-    Theme,
-    withStyles,
-    WithStyles
+    Theme
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose, lifecycle} from "recompose"
@@ -42,7 +40,7 @@ type Props = WithStyles<typeof styles> & WithTranslation & StateTypes & WithID &
 const styles = (theme: Theme) => createStyles({
     root: {
         [theme.breakpoints.up("sm")]: {
-            marginTop: theme.spacing.unit * -2
+            marginTop: theme.spacing(-2)
         }
     },
     nav: {
@@ -52,7 +50,7 @@ const styles = (theme: Theme) => createStyles({
         flex: "1 1 100%"
     },
     button: {
-        margin: theme.spacing.unit
+        margin: theme.spacing(1)
     }
 })
 

@@ -1,9 +1,6 @@
 import {createMuiTheme} from "@material-ui/core/styles"
-import green from "@material-ui/core/colors/green"
-import grey from "@material-ui/core/colors/grey"
-import red from "@material-ui/core/colors/red"
 
-const rawTheme = createMuiTheme({
+/*const rawTheme = createMuiTheme({
     palette: {
         primary: {
             light: "#69696a",
@@ -11,9 +8,9 @@ const rawTheme = createMuiTheme({
             dark: "#1e1e1f",
         },
         secondary: {
-/*            light: "#fff5f8",
+/!*            light: "#fff5f8",
             main: "#ff3366",
-            dark: "#e62958",*/
+            dark: "#e62958",*!/
             light: "#ffb6c1",
             main: "#ff69b4",
             dark: "#ff1493",
@@ -56,7 +53,7 @@ const fontHeader = {
     fontWeight: rawTheme.typography.fontWeightMedium,
     // @ts-ignore
     fontFamily: rawTheme.typography.fontFamilySecondary,
-    /*    textTransform: "uppercase",*/
+    /!*    textTransform: "uppercase",*!/
 }
 
 // @ts-ignore
@@ -72,7 +69,6 @@ const theme = {
     },
     typography: {
         ...rawTheme.typography,
-        fontHeader,
         h1: {
             ...rawTheme.typography.h1,
             ...fontHeader,
@@ -119,11 +115,10 @@ const theme = {
             fontSize: 14,
         },
     },
-}
+}*/
 
 export default createMuiTheme({
     typography: {
-        useNextVariants: true,
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif",
     },
     palette: {

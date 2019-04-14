@@ -1,4 +1,5 @@
-import {Card, CardContent, createStyles, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import {Card, CardContent, Theme, Typography} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose, pure} from "recompose"
@@ -18,16 +19,14 @@ type Props = PropTypes & WithTranslation & WithStyles<typeof styles>
 const styles = (theme: Theme) => createStyles({
     icon: {
         width: 20,
-        marginTop: theme.spacing.unit * 2
+        marginTop: theme.spacing(2)
     },
     card: {
         width: 110,
         height: 140,
-        marginRight: theme.spacing.unit * 2,
-        marginBottom: theme.spacing.unit * 2,
+        margin: theme.spacing(0, 0, 2, 2),
         textAlign: "center",
-        padding: theme.spacing.unit,
-        paddingBottom: theme.spacing.unit * 2
+        padding: theme.spacing(1, 1, 1, 2)
     },
     cardList: {
         display: "flex",
@@ -36,8 +35,7 @@ const styles = (theme: Theme) => createStyles({
     },
     allCards: {
         textAlign: "left",
-        padding: theme.spacing.unit * 2,
-        paddingRight: 0
+        padding: theme.spacing(2, 2, 0, 2)
     },
     spacer: {
         flexGrow: 1
@@ -63,7 +61,7 @@ export const ReviewsFinishedRaw = ({t, classes, reviews}: Props) => (
                 {reviews.filter(review => review.correct).map(review => (
                     <Card className={classes.card}>
                         <CardContent className={classes.cardContent}>
-                            <Typography variant="subheading">{review.review.card.meaning}</Typography>
+                            <Typography variant="subtitle1">{review.review.card.meaning}</Typography>
                             <div className={classes.spacer} />
                             <img src={Checkmark} alt={t("Correct")} className={classes.icon} />
                         </CardContent>
@@ -75,7 +73,7 @@ export const ReviewsFinishedRaw = ({t, classes, reviews}: Props) => (
                 {reviews.filter(review => !review.correct).map(review => (
                     <Card className={classes.card}>
                         <CardContent className={classes.cardContent}>
-                            <Typography variant="subheading">{review.review.card.meaning}</Typography>
+                            <Typography variant="subtitle1">{review.review.card.meaning}</Typography>
                             <div className={classes.spacer} />
                             <img src={Error} alt={t("Wrong")} className={classes.icon} />
                         </CardContent>

@@ -1,4 +1,5 @@
-import {Button, createStyles, Theme, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {Button, Theme, Typography} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {RouteComponentProps, withRouter} from "react-router"
@@ -10,7 +11,7 @@ type Props = WithTranslation & WithUser & WithMutation & RouteComponentProps<{}>
 
 const styles = (theme: Theme) => createStyles({
     button: {
-        marginTop: theme.spacing.unit * 4
+        marginTop: theme.spacing(4)
     }
 })
 

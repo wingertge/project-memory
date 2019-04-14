@@ -10,7 +10,7 @@ import Intro from "./pages/Intro"
 import TestBed from "./pages/TestBed"
 
 const Home = Loadable({
-    loader: () => import("./pages/Home"),
+    loader: () => import("./pages/Home/Home"),
     loading: Loading,
     timeout: 10000
 })
@@ -22,7 +22,7 @@ const Callback = Loadable({
 })
 
 const Settings = Loadable({
-    loader: () => import("./pages/Settings"),
+    loader: () => import("./pages/Settings/Settings"),
     loading: Loading,
     timeout: 10000
 })

@@ -1,6 +1,7 @@
-import {createStyles, IconButton, Theme, Toolbar, Tooltip, Typography, withStyles, WithStyles} from "@material-ui/core"
+import {IconButton, Theme, Toolbar, Tooltip, Typography} from "@material-ui/core"
 import {lighten} from "@material-ui/core/styles/colorManipulator"
 import {Delete, FilterList} from "@material-ui/icons"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import classNames from "classnames"
 import {withTranslation, WithTranslation} from "react-i18next"
@@ -15,7 +16,7 @@ type Props = WithStyles<typeof styles> & PropTypes & WithTranslation
 
 const styles = (theme: Theme) => createStyles({
     root: {
-        paddingRight: theme.spacing.unit
+        paddingRight: theme.spacing(1)
     },
     highlight: theme.palette.type === "light" ?
         {

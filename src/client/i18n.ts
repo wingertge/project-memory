@@ -3,6 +3,7 @@ import LanguageDetector from "i18next-browser-languagedetector"
 //import Backend from "i18next-chained-backend"
 //import CacheBackend from "i18next-localstorage-backend"
 import XhrBackend from "i18next-xhr-backend"
+import moment from "moment"
 import {baseOptions} from "../common/i18n"
 
 i18n
@@ -27,5 +28,7 @@ i18n
         debug: true,
         ...baseOptions
     })
+
+i18n.on("languageChanged", lang => moment.locale(lang))
 
 export default i18n

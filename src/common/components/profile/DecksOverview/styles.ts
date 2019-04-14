@@ -1,4 +1,5 @@
-import {createStyles, Theme} from "@material-ui/core"
+import {Theme} from "@material-ui/core"
+import {createStyles} from "@material-ui/styles"
 import Color from "color"
 import NewDeckDark from "../../../assets/new_deck_dark.svg"
 import NewDeckLight from "../../../assets/new_deck_light.svg"
@@ -7,7 +8,7 @@ export default (theme: Theme) => createStyles({
     card: {
     },
     cardContent: {
-        marginBottom: theme.spacing.unit * -1
+        marginBottom: theme.spacing(-1)
     },
     newDeck: {
         width: 144,
@@ -22,17 +23,6 @@ export default (theme: Theme) => createStyles({
         }
     },
     deckList: {
-/*        display: "flex",
-        flexWrap: "wrap",
-        flexDirection: "row",
-        paddingLeft: theme.spacing.unit * 0.5,
-        paddingRight: theme.spacing.unit * 0.5,
-        "& > *": {
-            marginLeft: theme.spacing.unit * 1.5,
-            marginRight: theme.spacing.unit * 1.5
-        }*/
-/*        flexWrap: "nowrap",
-        transform: "translateZ(0)"*/
         display: "flex",
         flexDirection: "row",
         padding: 0,

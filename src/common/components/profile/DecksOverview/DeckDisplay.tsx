@@ -1,15 +1,13 @@
 import {
     Avatar,
-    createStyles,
     Grid,
     IconButton,
     Theme,
     Tooltip,
-    Typography,
-    withStyles,
-    WithStyles
+    Typography
 } from "@material-ui/core"
 import {Edit, Favorite, FavoriteBorder, ThumbUp, ThumbUpOutlined} from "@material-ui/icons"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {WithTranslation, withTranslation} from "react-i18next"
 import {RouteComponentProps, withRouter} from "react-router"
@@ -64,11 +62,8 @@ const styles = (theme: Theme) => createStyles({
         flexDirection: "column",
         justifyContent: "center",
         textAlign: "center",
-        paddingRight: theme.spacing.unit * 3,
-        paddingTop: theme.spacing.unit * 3,
-        paddingLeft: theme.spacing.unit * 1.5,
-        paddingBottom: theme.spacing.unit * 2,
-        margin: theme.spacing.unit * 0.5
+        padding: theme.spacing(1.5, 3, 3, 2),
+        margin: theme.spacing(0.5)
     },
     deckActions: {
         display: "flex"
@@ -78,10 +73,6 @@ const styles = (theme: Theme) => createStyles({
         height: "inherit",
         padding: 4
     },
-    cardNumber: {
-/*        marginLeft: -12,
-        marginTop: -32*/
-    },
     deckName: {
         marginLeft: -12
     },
@@ -89,7 +80,7 @@ const styles = (theme: Theme) => createStyles({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: theme.spacing.unit * 0.5
+        paddingTop: theme.spacing(0.5)
     },
     languageIcon: {
         width: 24,
@@ -111,7 +102,7 @@ const DeckDisplay = ({classes, t, cards, rating, owned, subscribed, liked, name,
             <Grid item xs>
                 <Grid container direction="column" alignItems="center" justify="center" style={{height: "100%"}}>
                     <Grid item>
-                        <Typography variant="h4" className={classes.cardNumber}>{cards + ""}</Typography>
+                        <Typography variant="h4">{cards + ""}</Typography>
                     </Grid>
                 </Grid>
             </Grid>

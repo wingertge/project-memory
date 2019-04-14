@@ -1,4 +1,5 @@
-import {Avatar, createStyles, Theme, Typography, withStyles, WithStyles, Zoom} from "@material-ui/core"
+import {Avatar, Theme, Typography, Zoom} from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {compose, pure} from "recompose"
@@ -14,7 +15,8 @@ const styles = (theme: Theme) => createStyles({
     root: {
         position: "relative",
         width: 220,
-        height: 60
+        height: 60,
+        marginLeft: theme.spacing(1)
     },
     container: {
         backgroundColor: theme.palette.background.paper,
@@ -33,7 +35,7 @@ const styles = (theme: Theme) => createStyles({
     languageName: {
         width: 160,
         textAlign: "start",
-        marginLeft: theme.spacing.unit
+        marginLeft: theme.spacing(1)
     }
 })
 

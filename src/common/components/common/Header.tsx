@@ -1,14 +1,14 @@
 import {
     AppBar, Badge,
-    createStyles, Hidden,
+    Hidden,
     IconButton,
     Menu,
     MenuItem, Theme,
-    Toolbar,
-    Typography, WithStyles,
-    withStyles
+    Toolbar, Tooltip,
+    Typography
 } from "@material-ui/core"
 import {AccountCircle, AssignmentLate} from "@material-ui/icons"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
 import {withTranslation, WithTranslation} from "react-i18next"
 import {RouteComponentProps, withRouter} from "react-router"
@@ -16,7 +16,7 @@ import {compose, lifecycle, pure, withHandlers} from "recompose"
 import {oc} from "ts-optchain"
 import Auth from "../../../client/Auth"
 import {withReviewsCount} from "../../../generated/graphql"
-import {withProps, withState, withUser, WithUser} from "../../enhancers"
+import {withProps, withState, WithUser, withUser} from "../../enhancers"
 import LinkButton from "./LinkButton"
 import Logo from "../../assets/logo.png"
 
@@ -26,16 +26,10 @@ const styles = (theme: Theme) => createStyles({
     },
     navbarLink: {
         fontSize: 16,
-        marginRight: theme.spacing.unit * 3
+        marginRight: theme.spacing(3)
     },
     grow: {
         flexGrow: 1
-    },
-    badge: {
-        //backgroundColor: "#434343"
-/*        borderWidth: 1.5,
-        borderColor: "#fff",
-        borderStyle: "solid"*/
     },
     reviewsButton: {
         padding: 4
@@ -47,8 +41,7 @@ const styles = (theme: Theme) => createStyles({
     logo: {
         width: 40,
         height: 40,
-        marginLeft: theme.spacing.unit * -1.5,
-        marginRight: theme.spacing.unit
+        margin: theme.spacing(0, 1, 0, -1.5)
     }
 })
 
@@ -82,11 +75,13 @@ const Header = ({classes, t, username, anchorEl, openMenu, closeMenu, openSettin
                 <LinkButton to="/" className={classes.navbarLink}>{t("Home")}</LinkButton>
             </Typography>
             {typeof pendingReviews !== "undefined" && (
-                <IconButton onClick={openReviews} className={classes.reviewsButton}>
-                    <Badge badgeContent={pendingReviews} max={42} color="secondary" classes={{badge: classes.badge}} invisible={pendingReviews <= 0}>
-                        <AssignmentLate className={classes.reviewsIcon} />
-                    </Badge>
-                </IconButton>
+                <Tooltip title={t("Reviews")}>
+                    <IconButton onClick={openReviews} className={classes.reviewsButton}>
+                        <Badge badgeContent={pendingReviews} max={42} color="secondary" invisible={pendingReviews <= 0}>
+                            <AssignmentLate className={classes.reviewsIcon} />
+                        </Badge>
+                    </IconButton>
+                </Tooltip>
             )}
             <div className={classes.grow} />
             <div>

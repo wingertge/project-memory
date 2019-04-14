@@ -16,7 +16,9 @@ export const handleCallback = async (basePath: string, req, res, apollo: Apollo)
         if(authResult.data && authResult.data.authenticate) {
             const token = authResult.data.authenticate.accessToken
             const decoded = jwt.decode(token)
-            const id = decoded![`${process.env.REACT_APP_OAUTH_NAMESPACE}/uuid`]
+            const id = decoded![`${process.env.REACT_APP_OAUTH_NAMESPACE}/id`]
+            // tslint:disable-next-line:no-console
+            console.log("id: " + id)
             const {cache, errorLink, retryLink} = apollo
             newApollo = createApollo({auth: token, id, cache, errorLink, retryLink})
             res.cookie("__auth__", token, {...authCookieOptions, maxAge: authResult.data.authenticate.expiresIn * 1000})

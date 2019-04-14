@@ -1,13 +1,12 @@
 import {
     Button,
     CircularProgress,
-    createStyles, Divider,
+    Divider,
     Grid,
     TextField,
-    Theme,
-    withStyles,
-    WithStyles
+    Theme
 } from "@material-ui/core"
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import * as React from "react"
 import {WithTranslation, withTranslation} from "react-i18next"
 import {compose, pure, withHandlers} from "recompose"
@@ -65,8 +64,7 @@ type Props = Form & StateProps & HandlerProps & WithUser & WithStyles<typeof sty
 
 const styles = (theme: Theme) => createStyles({
     textField: {
-        marginLeft: theme.spacing.unit * 0.5,
-        marginRight: theme.spacing.unit * 0.5,
+        margin: theme.spacing(0.5, 0),
         width: "100%"
     },
     container: {
@@ -74,21 +72,18 @@ const styles = (theme: Theme) => createStyles({
         flexDirection: "row"
     },
     form: {
-        padding: theme.spacing.unit * 1.5,
-        paddingLeft: theme.spacing.unit
+        padding: theme.spacing(0, 1.5, 1.5, 1.5)
     },
     buttonContainer: {
         height: 47.2,
-        margin: 0,
-        marginBottom: -4,
-        marginTop: 4
+        margin: theme.spacing(0, 0.5, 0, -0.5)
     },
     header: {
         textAlign: "left",
         padding: 12
     },
     formWrapper: {
-        paddingLeft: theme.spacing.unit
+        paddingLeft: theme.spacing(1)
     }
 })
 
@@ -102,7 +97,7 @@ const ProfileSettings = ({t, classes, user, errors, username, email, name, onUse
                 <Heading>{t("Profile")}</Heading>
             </Grid>
             <Grid item>
-                <Grid container direction="row" justify="flex-end" alignItems="stretch" className={classes.form} spacing={24}>
+                <Grid container direction="row" justify="flex-end" alignItems="stretch" className={classes.form} spacing={3}>
                     <Grid item xs>
                         <Grid container direction="column" justify="flex-end" alignItems="stretch">
                             <Grid item xs>

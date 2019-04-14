@@ -1,5 +1,6 @@
+import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
 import React from "react"
-import {Button, Card, CardContent, CardActions, createStyles, Theme, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {Button, Card, CardContent, CardActions, Theme, Typography} from "@material-ui/core"
 import {WithTranslation, withTranslation} from "react-i18next"
 import {compose, pure} from "recompose"
 import Heading from "./Heading"
@@ -12,8 +13,7 @@ const styles = (theme: Theme) => createStyles({
         borderStyle: "solid"
     },
     cardContent: {
-        padding: theme.spacing.unit * 0.5,
-        paddingBottom: 0
+        padding: theme.spacing(0.5, 0.5, 0.5, 0)
     },
     cardActions: {
         padding: 0,
