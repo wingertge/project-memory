@@ -40,7 +40,7 @@ const Login = Loadable({
 })
 
 const Lessons = Loadable({
-    loader: () => import("./pages/Lessons"),
+    loader: () => import("./pages/Lessons/Lessons"),
     loading: Loading,
     timeout: 1000
 })

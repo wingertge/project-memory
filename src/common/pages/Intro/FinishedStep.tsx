@@ -1,40 +1,40 @@
 import {Button, Theme, Typography} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {RouteComponentProps, withRouter} from "react-router"
-import {compose} from "recompose"
-import {UpdateProfileDocument, UpdateProfileMutation, UpdateProfileMutationVariables} from "../../../generated/graphql"
-import {WithMutation, withMutation, withUser, WithUser} from "../../enhancers"
+import {useTranslation} from "react-i18next"
+import useRouter from "use-react-router/use-react-router"
+import {useUpdateProfileMutation} from "../../../generated/graphql"
+import {useUser} from "../../hooks"
 
-type Props = WithTranslation & WithUser & WithMutation & RouteComponentProps<{}> & WithStyles<typeof styles>
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     button: {
         marginTop: theme.spacing(4)
     }
-})
+}))
 
-export const FinishedStepRaw = ({classes, t, submitMutation}: Props) => (
-    <>
-        <Typography variant="h6">
-            {t("Aaand - Done! You're good to go now, enjoy Project Memory! If you have any more questions feel free to look at our beginner's guide or ask it on the forum.")}
-        </Typography>
-        <Button variant="contained" color="primary" onClick={submitMutation} className={classes.button}>{t("Will do!")}</Button>
-    </>
-)
-
-export default compose<Props, {}>(
-    withStyles(styles),
-    withTranslation(),
-    withRouter,
-    withUser(),
-    withMutation<Props, UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, ({user}) => ({
-        id: user.id,
-        profile: {
-            introStep: -1
+export const FinishedStep = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const user = useUser()
+    const {history} = useRouter()
+    const mutate = useUpdateProfileMutation({
+        variables: {
+            id: user.id,
+            profile: {
+                introStep: -1
+            }
         }
-    }), ({history}) => {
-        history.push("/")
     })
-)(FinishedStepRaw)
+    const save = () => mutate().then(() => history.push("/"))
+
+    return (
+        <>
+            <Typography variant="h6">
+                {t("Aaand - Done! You're good to go now, enjoy Project Memory! If you have any more questions feel free to look at our beginner's guide or ask it on the forum.")}
+            </Typography>
+            <Button variant="contained" color="primary" onClick={save} className={classes.button}>{t("Will do!")}</Button>
+        </>
+    )
+}
+
+export default FinishedStep

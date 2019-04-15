@@ -1,10 +1,7 @@
-import {Dispatch, SetStateAction, useState} from "react"
+import {useState} from "react"
 import {useTranslation} from "react-i18next"
 import _ from "lodash"
-
-export type Updater<T> = Dispatch<SetStateAction<T>>
-export type ChangeListener = (event: any) => void
-export type Transformer<T> = (value: T) => T
+import {ChangeListener, TransformerMap, Updater} from "./useFormState"
 
 export interface Validator<TProp, TProps> {
     fun: (value: TProp, context: State<TProps>) => boolean
@@ -20,37 +17,33 @@ export type ErrorMap<TProps> = {
 }
 
 
-export type FormState<T> = {
+export type ValidatedFormState<T> = {
     [P in keyof T]: {
-        value: P
-        updater: Updater<P>
+        value: T[P]
+        set: Updater<T[P]>
         onChange: ChangeListener
         error?: string
     }
 } & {valid: boolean}
 
-export type TransformerMap<T> = {
-    [TProp in keyof T]?: Transformer<TProp>
-}
-
 type State<T> = {
     [P in keyof T]: {
         prop: string
-        value: P
-        updater: Updater<P>
+        value: T[P]
+        set: Updater<T[P]>
     }
 }
 
-export const useValidatedFormState = <T extends object = any>(defaults: T, validatorMap: ValidatorMap<T>, transformers: TransformerMap<T> = {}): FormState<T> => {
+export const useValidatedFormState = <T extends object = any>(defaults: T, validatorMap: ValidatorMap<T>, transformers: TransformerMap<T> = {}): ValidatedFormState<T> => {
     const keys = Object.keys(defaults)
     const state = keys.map(prop => {
-        const [value, updater] = useState(defaults[prop])
-        return {prop, value, updater}
+        const [value, set] = useState(defaults[prop])
+        return {prop, value, set}
     })
     const [errors, setErrors] = useState<ErrorMap<T>>({})
     const [valid, setValid] = useState<boolean>(true)
 
-    const withChangeHandlers = state.map(({prop, value, updater}) => {
+    const withChangeHandlers = state.map(({prop, value, set}) => {
         const checkValid = () => {
             const error = validate(prop, value, validatorMap[prop] || [], state)
             if(error !== errors[prop]) {
@@ -65,7 +58,7 @@ export const useValidatedFormState = <T extends object = any>(defaults: T, valid
             checkValid()
             const transformer = transformers[prop] || (val => val)
             const eventValue = transformer(event.target.value)
-            updater(eventValue)
+            set(eventValue)
         }
 
         checkValid()
@@ -73,22 +66,22 @@ export const useValidatedFormState = <T extends object = any>(defaults: T, valid
         return {
             prop,
             value,
-            updater,
+            set,
             onChange
         }
     })
 
-    const result: FormState<T> | object = {valid}
-    withChangeHandlers.forEach(({prop, value, updater, onChange}) => {
+    const result: ValidatedFormState<T> | object = {valid}
+    withChangeHandlers.forEach(({prop, value, set, onChange}) => {
         result[prop] = {
             value,
-            updater,
+            set,
             onChange,
             error: errors[prop]
         }
     })
 
-    return result as FormState<T>
+    return result as ValidatedFormState<T>
 }
 
 export const validate = <TProp, TState>(name: string, value: TProp, validators: Array<Validator<TProp, TState>>, state: State<TState>) => {

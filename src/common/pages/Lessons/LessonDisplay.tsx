@@ -3,19 +3,16 @@ import {
     Theme,
     Typography
 } from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose} from "recompose"
-import {Card as GQLCard} from "../../../generated/graphql"
+import {createStyles, makeStyles} from "@material-ui/styles"
+import {useTranslation} from "react-i18next"
+import {Card} from "../../../generated/graphql"
 import * as React from "react"
 
 interface PropTypes {
-    card: GQLCard
+    card: Card
 }
 
-type Props = PropTypes & WithStyles<typeof styles> & WithTranslation
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     lesson: {
         width: "100%",
         backgroundColor: theme.palette.primary.light,
@@ -26,28 +23,30 @@ const styles = (theme: Theme) => createStyles({
     formControl: {
         margin: theme.spacing(0.5)
     }
-})
+}))
 
-export const LessonDisplayRaw = ({t, classes, card}: Props) => (
-    <div className={classes.lesson}>
-        <FormControl className={classes.formControl}>
-            <FormLabel>{t("Meaning")}</FormLabel>
-            <Typography variant="h5">{card.meaning}</Typography>
-        </FormControl>
-        {card.pronunciation && (
+export const LessonDisplay = ({card}: PropTypes) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+
+    return (
+        <div className={classes.lesson}>
             <FormControl className={classes.formControl}>
-                <FormLabel>{t("Pronunciation")}</FormLabel>
-                <Typography variant="h5">{card.pronunciation}</Typography>
+                <FormLabel>{t("Meaning")}</FormLabel>
+                <Typography variant="h5">{card.meaning}</Typography>
             </FormControl>
-        )}
-        <FormControl className={classes.formControl}>
-            <FormLabel>{t("Translation")}</FormLabel>
-            <Typography variant="h5">{card.translation}</Typography>
-        </FormControl>
-    </div>
-)
+            {card.pronunciation && (
+                <FormControl className={classes.formControl}>
+                    <FormLabel>{t("Pronunciation")}</FormLabel>
+                    <Typography variant="h5">{card.pronunciation}</Typography>
+                </FormControl>
+            )}
+            <FormControl className={classes.formControl}>
+                <FormLabel>{t("Translation")}</FormLabel>
+                <Typography variant="h5">{card.translation}</Typography>
+            </FormControl>
+        </div>
+    )
+}
 
-export default compose<Props, PropTypes>(
-    withStyles(styles),
-    withTranslation()
-)(LessonDisplayRaw)
+export default LessonDisplay

@@ -6,53 +6,21 @@ import {
     Theme,
     Typography
 } from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose} from "recompose"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {
-    AddDeckDocument,
-    AddDeckMutation,
-    AddDeckMutationVariables, Language, UpdateProfileDocument, UpdateProfileMutation, UpdateProfileMutationVariables,
-    withUserLanguages
-} from "../../../generated/graphql"
-import ErrorBox from "../../components/common/ErrorBox"
-import {
-    renderOnError,
-    renderWhileLoading,
-    withFormState,
-    WithID,
-    withID,
-    WithMutation,
-    withMutation
-} from "../../enhancers"
+import {Language, useAddDeckMutation, useUpdateProfileMutation, useUserLanguagesQuery} from "../../../generated/graphql"
+import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import {useFormState, useID} from "../../hooks"
 import PopularDecks from "./PopularDecks"
 
-interface FormTypes {
+interface Form {
     name: string,
     language: string
 }
 
-interface FormHandlerTypes {
-    onNameChange: (event) => void
-    onLanguageChange: (event) => void
-}
-
-interface UserLanguageTypes {
-    languages: Language[]
-    nativeLanguage: Language
-}
-
-interface UpdateProfileTypes {
-    submitProfileMutation: () => void
-}
-
-type Form = FormTypes & FormHandlerTypes
-
-type Props = WithTranslation & WithStyles<typeof styles> & WithMutation & Form & WithID & UserLanguageTypes & UpdateProfileTypes
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     form: {
         height: 64
     },
@@ -69,64 +37,65 @@ const styles = (theme: Theme) => createStyles({
     button: {
         margin: theme.spacing(2)
     }
-})
+}))
 
-export const FirstDeckStepRaw = ({t, classes, name, onNameChange, languages, language, onLanguageChange, submitMutation}: Props) => (
-    <Grid container direction="column">
-        <Grid item xs>
-            <Typography variant="h6">
-                {t("Alright, done. Let's create our first deck!")}
-            </Typography>
-        </Grid>
-        <Grid item xs className={classes.form}>
-            <TextField label={t("Deck Name")} className={classes.textField} value={name} onChange={onNameChange} inputProps={{style: {height: 19}}} />
-            <TextField label={t("Language")} className={classes.textField} value={language} onChange={onLanguageChange} select>
-                {languages.map(lang => (
-                    <option key={lang.id} value={lang.id}>
-                        {`${t(lang.name)} (${lang.nativeName})`}
-                    </option>
-                ))}
-            </TextField>
-        </Grid>
-        <Grid item xs>
-            <Button className={classes.button} onClick={submitMutation}>{t("Create")}</Button>
-        </Grid>
-        <Grid item xs>
-            <Typography variant="h6">
-                {t("Or you can pick from one of these highly rated community ones.")}
-            </Typography>
-        </Grid>
-        <PopularDecks />
-    </Grid>
-)
-
-export default compose<Props, {}>(
-    withStyles(styles),
-    withTranslation(),
-    withID<Props>(),
-    withUserLanguages<Props, UserLanguageTypes>({
-        options: ({id}) => ({
-            variables: {
-                userId: id
-            }
-        }),
-        props: ({data}) => ({
-            data,
-            languages: oc(data).user.languages([]) as Language[],
-            nativeLanguage: oc(data).user.nativeLanguage() as Language
-        })
-    }),
-    renderWhileLoading(CircularProgress),
-    renderOnError(ErrorBox),
-    withFormState<FormTypes, Props>(({languages}) => ({name: "", language: oc(languages)[0].id("")})),
-    withMutation<Props, UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, ({id}) => ({id, profile: {introStep: 3}}), undefined, undefined, {submitName: "submitProfileMutation"}),
-    withMutation<Props, AddDeckMutation, AddDeckMutationVariables>(AddDeckDocument, ({id, name, language, nativeLanguage}) => ({
-        input: {
-            name,
-            language,
-            nativeLanguage: nativeLanguage.id,
-            owner: id,
-            cards: []
+export const FirstDeckStep = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const id = useID()
+    const {data, loading, error} = useUserLanguagesQuery({
+        variables: {
+            userId: id
         }
-    }), ({submitProfileMutation}) => submitProfileMutation())
-)(FirstDeckStepRaw)
+    })
+    const languages = oc(data).user.languages([]) as Language[]
+    const nativeLanguage = oc(data).user.nativeLanguage() as Language
+    const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
+
+    if(error) return <ApolloErrorBox error={error} />
+    if(loading) return <CircularProgress />
+
+    const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
+    const addDeck = () => useAddDeckMutation({
+        variables: {
+            input: {
+                name: name.value,
+                language: language.value,
+                nativeLanguage: nativeLanguage.id,
+                owner: id,
+                cards: []
+            }
+        }
+    })().then(updateProfile)
+
+    return (
+        <Grid container direction="column">
+            <Grid item xs>
+                <Typography variant="h6">
+                    {t("Alright, done. Let's create our first deck!")}
+                </Typography>
+            </Grid>
+            <Grid item xs className={classes.form}>
+                <TextField label={t("Deck Name")} className={classes.textField} value={name.value} onChange={name.onChange} inputProps={{style: {height: 19}}}/>
+                <TextField label={t("Language")} className={classes.textField} value={language.value} onChange={language.onChange} select>
+                    {languages.map(lang => (
+                        <option key={lang.id} value={lang.id}>
+                            {`${t(lang.name)} (${lang.nativeName})`}
+                        </option>
+                    ))}
+                </TextField>
+            </Grid>
+            <Grid item xs>
+                <Button className={classes.button} onClick={addDeck}>{t("Create")}</Button>
+            </Grid>
+            <Grid item xs>
+                <Typography variant="h6">
+                    {t("Or you can pick from one of these highly rated community ones.")}
+                </Typography>
+            </Grid>
+            <PopularDecks/>
+        </Grid>
+    )
+}
+
+export default FirstDeckStep

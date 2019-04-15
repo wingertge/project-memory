@@ -1,21 +1,17 @@
 import {CircularProgress} from "@material-ui/core"
 import {parse} from "qs"
-import React from "react"
-import {RouteComponentProps, withRouter} from "react-router"
-import {compose, lifecycle, pure} from "recompose"
+import React, {useEffect} from "react"
+import useRouter from "use-react-router/use-react-router"
 import Auth from "../../client/Auth"
 
-const Login = () => (
-    <CircularProgress/>
-)
+export const Login = () => {
+    const {location: {search}} = useRouter()
+    useEffect(() => Auth.login(true, parse(search.replace("?", "")).redirect || "/"), [])
+
+    return (
+        <CircularProgress/>
+    )
+}
 
 // noinspection JSUnusedGlobalSymbols
-export default compose<RouteComponentProps<{}>, {}>(
-    pure,
-    withRouter,
-    lifecycle<RouteComponentProps<{}>, {}>({
-        componentDidMount(this) {
-            Auth.login(true, parse(this.props.location.search.replace("?", "")).redirect || "/")
-        }
-    })
-)(Login)
+export default Login

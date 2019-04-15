@@ -8,38 +8,17 @@ import {
     Typography
 } from "@material-ui/core"
 import {Add} from "@material-ui/icons"
-import {createStyles, WithStyles, withStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {
-    Language, RemoveLanguageFromUserDocument,
-    RemoveLanguageFromUserMutation,
-    RemoveLanguageFromUserMutationVariables,
-    withUserLanguages
-} from "../../../generated/graphql"
-import ErrorBox from "../../components/common/ErrorBox"
+import {Language, useRemoveLanguageFromUserMutation, useUserLanguagesQuery} from "../../../generated/graphql"
+import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import LanguageDisplay from "../../components/profile/LanguageDisplay"
-import {
-    renderOnError,
-    renderWhileLoading,
-    WithDialog,
-    withDialog,
-    withID,
-    WithID, WithMutation,
-    withMutation
-} from "../../enhancers"
+import {useDialog, useID} from "../../hooks"
 import LanguagePicker from "./LanguagePicker"
 
-interface GQLTypes {
-    nativeLanguage: Language
-    languages: Language[]
-}
-
-type Props = WithTranslation & WithID & GQLTypes & WithStyles<typeof styles> & WithDialog<{}> & WithMutation
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     languageList: {
         display: "flex",
         flexDirection: "row",
@@ -63,53 +42,19 @@ const styles = (theme: Theme) => createStyles({
     card: {
         padding: theme.spacing(1)
     }
-})
+}))
 
-export const LanguageSettingsRaw = ({t, classes, nativeLanguage, languages, openDialog, submitMutation}: Props) => (
-    <CardMedia className={classes.card}>
-        {/*<Heading>{t("Languages")}</Heading>*/}
-        <div className={classes.content}>
-            <Typography variant="subtitle1" className={classes.label}>{t("Native Language")}</Typography>
-            <LanguageDisplay language={nativeLanguage} />
-            <Typography variant="subtitle1" className={classes.label}>{t("Learning Languages")}</Typography>
-            <List className={classes.languageList}>
-                {languages.map(lang => (
-                    <ListItem key={lang.id} className={classes.languageListItem}>
-                        <LanguageDisplay language={lang} onDelete={() => submitMutation(lang)} />
-                    </ListItem>
-                ))}
-                <ListItem key="new" className={classes.languageListItem}>
-                    <Chip avatar={<Avatar><Add /></Avatar>} onClick={() => openDialog({languages})} label={t("Add")} />
-                </ListItem>
-            </List>
-        </div>
-    </CardMedia>
-)
+export const LanguageSettings = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const id = useID()
+    const {data, loading, error} = useUserLanguagesQuery({variables: {userId: id}})
+    const nativeLanguage = oc(data).user.nativeLanguage() as Language
+    const languages = oc(data).user.languages([]) as Language[]
 
-export default compose<Props, {}>(
-    pure,
-    withStyles(styles),
-    withTranslation(),
-    withID(),
-    withUserLanguages<Props, GQLTypes>({
-        options: ({id}) => ({
-            variables: {
-                userId: id
-            }
-        }),
-        props: ({data}) => ({
-            data,
-            nativeLanguage: oc(data).user.nativeLanguage() as Language,
-            languages: oc(data).user.languages([]) as Language[]
-        })
-    }),
-    renderWhileLoading(CircularProgress),
-    renderOnError(ErrorBox),
-    withMutation<Props, RemoveLanguageFromUserMutation, RemoveLanguageFromUserMutationVariables>(RemoveLanguageFromUserDocument, ({id}) => (language: Language) => ({
-        userId: id,
-        languageId: language.id
-    }), undefined, undefined, {
-        optimisticResponse: ({id, languages}) => (language: Language) => ({
+    const removeLanguage = (language: Language) => useRemoveLanguageFromUserMutation({
+        variables: {userId: id, languageId: language.id},
+        optimisticResponse: {
             __typename: "Mutation",
             removeLanguageFromUser: {
                 __typename: "User",
@@ -122,7 +67,37 @@ export default compose<Props, {}>(
                     languageCode: lang.languageCode
                 }))
             }
-        } as RemoveLanguageFromUserMutation)
-    }),
-    withDialog<Props, {languages: Language[]}>(LanguagePicker)
-)(LanguageSettingsRaw)
+        }
+    })
+
+    const {Dialog, openDialog} = useDialog(LanguagePicker)
+
+    if(error) return <ApolloErrorBox error={error} />
+    if(loading) return <CircularProgress />
+
+    return (
+        <>
+            <Dialog />
+            <CardMedia className={classes.card}>
+                <div className={classes.content}>
+                    <Typography variant="subtitle1" className={classes.label}>{t("Native Language")}</Typography>
+                    <LanguageDisplay language={nativeLanguage}/>
+                    <Typography variant="subtitle1" className={classes.label}>{t("Learning Languages")}</Typography>
+                    <List className={classes.languageList}>
+                        {languages.map(lang => (
+                            <ListItem key={lang.id} className={classes.languageListItem}>
+                                <LanguageDisplay language={lang} onDelete={() => removeLanguage(lang)}/>
+                            </ListItem>
+                        ))}
+                        <ListItem key="new" className={classes.languageListItem}>
+                            <Chip avatar={<Avatar><Add/></Avatar>} onClick={() => openDialog({languages})}
+                                  label={t("Add")}/>
+                        </ListItem>
+                    </List>
+                </div>
+            </CardMedia>
+        </>
+    )
+}
+
+export default LanguageSettings

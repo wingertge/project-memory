@@ -1,146 +1,86 @@
 import {CircularProgress, Theme} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {compose} from "recompose"
 import {oc} from "ts-optchain"
 import {
     Deck,
     Language,
-    withGlobalDecks,
-    withUserLanguages,
-    ChangeSubscriptionStatusMutation as Mutation,
-    ChangeSubscriptionStatusMutationVariables as MutationVariables,
-    ChangeSubscriptionStatusDocument,
-    UpdateProfileMutation,
-    UpdateProfileMutationVariables,
-    UpdateProfileDocument,
-    withShallowDecks
+    useUserLanguagesQuery,
+    useGlobalDecksQuery,
+    useShallowDecksQuery,
+    useUpdateProfileMutation,
+    useChangeSubscriptionStatusMutation
 } from "../../../generated/graphql"
-import ErrorBox from "../../components/common/ErrorBox"
+import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import DeckDisplay from "../../components/profile/DecksOverview/DeckDisplay"
-import {
-    renderOnError,
-    renderWhileLoading,
-    WithID,
-    withID,
-    WithMutation,
-    withMutation
-} from "../../enhancers"
+import {useID} from "../../hooks"
 import {isSubscribed} from "../../selectors"
 
-interface UserLanguagesTypes {
-    languagesData: any
-    languages: Language[]
-    nativeLanguage: Language
-}
-
-interface UserDecksTypes {
-    userDecksData: any
-    subscribedDecks: Deck[]
-    ownedDecks: Deck[]
-}
-
-interface DecksTypes {
-    decksData: any
-    decks: Deck[]
-}
-
-interface ProfileMutationTypes {
-    submitProfileMutation: () => void
-}
-
-type Props = WithStyles<typeof styles> & WithID & UserLanguagesTypes & DecksTypes & WithMutation & ProfileMutationTypes & UserDecksTypes
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     deckContainer: {
         display: "flex",
         flexWrap: "wrap",
         overflowY: "auto",
         padding: theme.spacing(0.5, 2, 0.5, 0.5)
     }
-})
+}))
 
-export const PopularDecksRaw = ({classes, submitMutation, decks, subscribedDecks, ownedDecks}: Props) => (
-    <div className={classes.deckContainer}>
-        {decks.map(deck => (
-            <DeckDisplay
-                key={deck.id}
-                id={deck.id}
-                name={deck.name}
-                cards={deck.cardCount!}
-                rating={deck.rating}
-                onFavoriteClicked={() => submitMutation(deck)}
-                owned={ownedDecks.some(otherDeck => otherDeck.id === deck.id)}
-                liked={deck.isLikedBy}
-                language={deck.language}
-                subscribed={subscribedDecks.some(otherDeck => otherDeck.id === deck.id)}
-            />
-            ))}
-    </div>
-)
+export const PopularDecks = () => {
+    const classes = useStyles()
+    const id = useID()
+    const userLangs = useUserLanguagesQuery({variables: {userId: id}})
+    const languages = oc(userLangs.data).user.languages([]) as Language[]
+    const nativeLanguage = oc(userLangs.data).user.nativeLanguage() as Language
+    const globalDecks = useGlobalDecksQuery({
+        variables: {
+            filter: {
+                sortBy: "rating",
+                sortDirection: "desc",
+                limit: 20,
+                languages: languages.map(language => language.id),
+                nativeLanguage: nativeLanguage.id
+            },
+            userId: id
+        }
+    })
+    const decks = oc(globalDecks.data).decks([]) as Deck[]
+    const userDecks = useShallowDecksQuery({variables: {id}})
+    const ownedDecks = oc(userDecks.data).user.ownedDecks([]) as Deck[]
+    const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
 
-export default compose<Props, {}>(
-    withStyles(styles),
-    withID<Props>(),
-    withUserLanguages<Props, UserLanguagesTypes>({
-        options: ({id}) => ({
-            variables: {
-                userId: id
-            }
-        }),
-        props: ({data}) => ({
-            languagesData: data,
-            languages: oc(data).user.languages([]) as Language[],
-            nativeLanguage: oc(data).user.nativeLanguage() as Language
-        })
-    }),
-    withGlobalDecks<Props, DecksTypes>({
-        options: ({id, languages, nativeLanguage}) => ({
-            variables: {
-                filter: {
-                    sortBy: "rating",
-                    sortDirection: "desc",
-                    limit: 20,
-                    languages: languages.map(language => language.id),
-                    nativeLanguage: nativeLanguage.id
-                },
-                userId: id
-            }
-        }),
-        props: ({data}) => ({
-            decksData: data,
-            decks: oc(data).decks([]) as Deck[]
-        })
-    }),
-    withShallowDecks<Props, UserDecksTypes>({
-        options: ({id}) => ({
-            variables: {
-                id
-            }
-        }),
-        props: ({data}) => ({
-            userDecksData: data,
-            subscribedDecks: oc(data).user.subscribedDecks([]) as Deck[],
-            ownedDecks: oc(data).user.ownedDecks([]) as Deck[]
-        })
-    }),
-    renderOnError(ErrorBox),
-    renderOnError(ErrorBox, "decksData"),
-    renderOnError(ErrorBox, "userDecksData"),
-    renderWhileLoading(CircularProgress),
-    renderWhileLoading(CircularProgress, "decksData"),
-    renderWhileLoading(CircularProgress, "userDecksData"),
-    withMutation<Props, UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, ({id}) => ({id, profile: {introStep: 3}}), undefined, undefined, {submitName: "submitProfileMutation"}),
-    withMutation<Props, Mutation, MutationVariables>(ChangeSubscriptionStatusDocument,
-        ({id, subscribedDecks}) => (deck: Deck) => ({userId: id, deckId: deck.id, value: !isSubscribed({decks: subscribedDecks, id: deck.id})}),
-        ({submitProfileMutation}) => submitProfileMutation(), undefined, {
-        optimisticResponse: ({id, subscribedDecks}) => (deck: Deck) => ({
+    const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
+    const updateSubscriptionStatus = (deck: Deck) => useChangeSubscriptionStatusMutation({
+        variables: {
+            userId: id,
+            deckId: deck.id,
+            value: !isSubscribed({decks: subscribedDecks, id: deck.id})
+        },
+        optimisticResponse: {
             __typename: "Mutation",
             changeSubscriptionStatus: {
                 __typename: "User",
                 id,
                 subscribedDecks: isSubscribed({decks: subscribedDecks, id: deck.id}) ? subscribedDecks.filter(d => d.id !== deck.id) : [...subscribedDecks, deck]
             }
-        })
-    }),
-)(PopularDecksRaw)
+        }
+    })().then(updateProfile)
+
+    if(userLangs.error || globalDecks.error || userDecks.error) return <ApolloErrorBox error={userLangs.error || globalDecks.error || userDecks.error!} />
+    if(userLangs.loading || globalDecks.loading || userDecks.loading) return <CircularProgress />
+
+    return (
+        <div className={classes.deckContainer}>
+            {decks.map(deck => (
+                <DeckDisplay
+                    key={deck.id}
+                    deck={deck}
+                    onFavoriteClicked={() => updateSubscriptionStatus(deck)}
+                    owned={ownedDecks.some(otherDeck => otherDeck.id === deck.id)}
+                    subscribed={subscribedDecks.some(otherDeck => otherDeck.id === deck.id)}
+                />
+            ))}
+        </div>
+    )
+}
+
+export default PopularDecks

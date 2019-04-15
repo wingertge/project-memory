@@ -1,10 +1,8 @@
 import {Button, Theme, Typography} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {RouteComponentProps, withRouter} from "react-router"
-import {compose} from "recompose"
-import {withHandlers} from "../../enhancers"
+import {useTranslation} from "react-i18next"
+import useRouter from "use-react-router/use-react-router"
 import Checkmark from "../../assets/checkmark.png"
 
 interface PropTypes {
@@ -12,13 +10,7 @@ interface PropTypes {
     lessonCount: number
 }
 
-interface HandlerTypes {
-    goToHome: () => void
-}
-
-type Props = WithTranslation & RouteComponentProps<{}> & HandlerTypes & PropTypes & WithStyles<typeof styles>
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     all: {
         margin: theme.spacing(1, 1, 1, 2)
     },
@@ -26,25 +18,25 @@ const styles = (theme: Theme) => createStyles({
         width: 250,
         margin: theme.spacing(0, 2)
     }
-})
+}))
 
-export const SectionFinishedRaw = ({t, classes, goToHome, lessonCount}: Props) => (
-    <div>
-        <Typography variant="h5" className={classes.all}>{t("Done!")}</Typography>
-        <img src={Checkmark} alt={t("Done")} className={classes.image} />
-        <Typography variant="body1" className={classes.all}>
-            {t("You can do more lessons, or go back to the home page.")}
-        </Typography>
-        <Button onClick={goToHome} className={classes.all}>{t("Home")}</Button>
-        <Button disabled={lessonCount === 0} title={lessonCount === 0 ? t("No more lessons available") : undefined} className={classes.all}>{t("More lessons")}</Button>
-    </div>
-)
+export const SectionFinished = ({lessonCount}: PropTypes) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const {history} = useRouter()
 
-export default compose<Props, PropTypes>(
-    withStyles(styles),
-    withTranslation(),
-    withRouter,
-    withHandlers<Props>({
-        goToHome: ({history}) => () => history.push("/")
-    })
-)(SectionFinishedRaw)
+    return (
+        <div>
+            <Typography variant="h5" className={classes.all}>{t("Done!")}</Typography>
+            <img src={Checkmark} alt={t("Done")} className={classes.image}/>
+            <Typography variant="body1" className={classes.all}>
+                {t("You can do more lessons, or go back to the home page.")}
+            </Typography>
+            <Button onClick={() => history.push("/")} className={classes.all}>{t("Home")}</Button>
+            <Button disabled={lessonCount === 0} title={lessonCount === 0 ? t("No more lessons available") : undefined}
+                    className={classes.all}>{t("More lessons")}</Button>
+        </div>
+    )
+}
+
+export default SectionFinished

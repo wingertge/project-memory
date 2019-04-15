@@ -1,17 +1,14 @@
 import {Avatar, Theme, Typography, Zoom} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import {Language} from "../../../generated/graphql"
 
 interface PropTypes {
     language?: Language
 }
 
-type Props = WithTranslation & PropTypes & WithStyles<typeof styles>
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         position: "relative",
         width: 220,
@@ -37,29 +34,31 @@ const styles = (theme: Theme) => createStyles({
         textAlign: "start",
         marginLeft: theme.spacing(1)
     }
-})
+}))
 
-export const LargeLanguageDisplayRaw = ({t, classes, language}: Props) => (
-    <div className={classes.root}>
-        <div className={classes.container}>
-            <Avatar src="" className={classes.languageIcon} />
-            <div className={classes.languageName} />
+export const LargeLanguageDisplay = ({language}: PropTypes) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+
+    return (
+        <div className={classes.root}>
+            <div className={classes.container}>
+                <Avatar src="" className={classes.languageIcon}/>
+                <div className={classes.languageName}/>
+            </div>
+            {language && (
+                <Zoom in={true} timeout={300}>
+                    <div className={classes.container}>
+                        <Avatar src={`/static/media/flags/${language.languageCode}.png`}
+                                className={classes.languageIcon}/>
+                        <Typography variant="body1" className={classes.languageName}>
+                            {`${t(language.name)} (${language.nativeName})`}
+                        </Typography>
+                    </div>
+                </Zoom>
+            )}
         </div>
-        {language && (
-            <Zoom in={true} timeout={300}>
-                <div className={classes.container}>
-                    <Avatar src={`/static/media/flags/${language.languageCode}.png`} className={classes.languageIcon} />
-                    <Typography variant="body1" className={classes.languageName}>
-                        {`${t(language.name)} (${language.nativeName})`}
-                    </Typography>
-                </div>
-            </Zoom>
-        )}
-    </div>
-)
+    )
+}
 
-export default compose<Props, PropTypes>(
-    pure,
-    withStyles(styles),
-    withTranslation()
-)(LargeLanguageDisplayRaw)
+export default LargeLanguageDisplay

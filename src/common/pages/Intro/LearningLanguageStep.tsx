@@ -1,43 +1,14 @@
 import {Theme, Typography} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
+import {useState} from "react"
 import * as React from "react"
-import {MutationFn} from "react-apollo"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose} from "recompose"
-import {
-    Language,
-    AddLanguageToUserDocument,
-    AddLanguageToUserMutation as Mutation,
-    AddLanguageToUserMutationVariables as MutationVariables,
-    withUpdateProfile,
-    UpdateProfileMutation,
-    UpdateProfileMutationVariables
-} from "../../../generated/graphql"
-import {withHandlers, withMutation, WithMutation, withState, withUser, WithUser} from "../../enhancers"
+import {useTranslation} from "react-i18next"
+import {Language, useAddLanguageToUserMutation, useUpdateProfileMutation} from "../../../generated/graphql"
+import {useID} from "../../hooks"
 import LargeLanguageDisplay from "./LargeLanguageDisplay"
 import LargeLanguagePicker from "./LargeLanguagePicker"
 
-interface FormTypes {
-    language?: Language
-}
-
-interface FormHandlerTypes {
-    updateLanguage: (state?: Language) => Language | undefined
-}
-
-interface HandlerTypes {
-    pickLanguage: (language: Language) => void
-}
-
-interface UpdateProfileTypes {
-    updateProfile: MutationFn<UpdateProfileMutation, UpdateProfileMutationVariables>
-}
-
-type Form = FormTypes & FormHandlerTypes
-
-type Props = WithTranslation & WithUser & WithStyles<typeof styles> & Form & WithMutation & HandlerTypes & UpdateProfileTypes
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     titleContainer: {
         display: "flex",
         flexDirection: "row",
@@ -48,55 +19,50 @@ const styles = (theme: Theme) => createStyles({
     spacer: {
         width: theme.spacing(2)
     }
-})
+}))
 
-export const LearningLanguageStepRaw = ({t, classes, language, pickLanguage}: Props) => (
-    <>
-        <div className={classes.titleContainer}>
-            <Typography variant="h6">
-                {t("Great! Now for a language you'd like to learn. Don't worry, you can change this or add more later.")}
-            </Typography>
-            <div className={classes.spacer} />
-            <LargeLanguageDisplay language={language} />
-        </div>
-        <LargeLanguagePicker updateLanguage={pickLanguage} exclusive />
-    </>
-)
-
-export default compose<Props, {}>(
-    withStyles(styles),
-    withTranslation(),
-    withUser<Props>(),
-    withState<Props, Language | undefined>("language", "updateLanguage", undefined),
-    withMutation<Props, Mutation, MutationVariables>(AddLanguageToUserDocument, ({language, user: {id}}) => ({
-        userId: id,
-        languageId: language!.id
-    })),
-    withUpdateProfile<Props>({
-        options: ({user}) => ({
-            variables: {
-                id: user.id,
-                profile: {
-                    introStep: 2
-                }
+export const LearningLanguageStep = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const id = useID()
+    const [language, setLanguage] = useState<Language | undefined>(undefined)
+    const addLanguage = useAddLanguageToUserMutation({variables: {userId: id, languageId: language!.id}})
+    const updateProfile = useUpdateProfileMutation({
+        variables: {
+            id,
+            profile: {
+                introStep: 2
             }
-        }),
-        name: "updateProfile"
-    }),
-    withHandlers<Props>({
-        pickLanguage: ({updateLanguage, submitMutation, updateProfile, user}) => language => {
-            updateLanguage(language)
-            setTimeout(() => {
-                submitMutation()
-                updateProfile({
-                    variables: {
-                        id: user.id,
-                        profile: {
-                            introStep: 2
-                        }
-                    }
-                })
-            }, 800)
         }
     })
-)(LearningLanguageStepRaw)
+
+    const pickLanguage = (lang: Language) => {
+        setLanguage(lang)
+        setTimeout(() => {
+            addLanguage()
+            updateProfile({
+                variables: {
+                    id,
+                    profile: {
+                        introStep: 2
+                    }
+                }
+            })
+        }, 800)
+    }
+
+    return (
+        <>
+            <div className={classes.titleContainer}>
+                <Typography variant="h6">
+                    {t("Great! Now for a language you'd like to learn. Don't worry, you can change this or add more later.")}
+                </Typography>
+                <div className={classes.spacer}/>
+                <LargeLanguageDisplay language={language}/>
+            </div>
+            <LargeLanguagePicker updateLanguage={pickLanguage} exclusive/>
+        </>
+    )
+}
+
+export default LearningLanguageStep

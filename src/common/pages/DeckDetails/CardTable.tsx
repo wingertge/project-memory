@@ -10,24 +10,18 @@ import {
     Theme
 } from "@material-ui/core"
 import {Edit} from "@material-ui/icons"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
+import {Dispatch, SetStateAction, useState} from "react"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {RouteComponentProps, withRouter} from "react-router"
-import {compose, pure, withHandlers, withProps} from "recompose"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {
-    Card,
-    DeleteCardsDocument,
-    DeleteCardsMutation,
-    DeleteCardsMutationVariables,
-    withCards
-} from "../../../generated/graphql"
-import {withDialog, WithDialog, WithMutation, withMutation, withRouteProps, withState} from "../../enhancers"
-import EditCardForm, {PropTypes as CardFormPropTypes} from "./EditCardForm"
+import useRouter from "use-react-router/use-react-router"
+import {useCardsQuery, useDeleteCardsMutation} from "../../../generated/graphql"
+import {useDialog} from "../../hooks"
+import EditCardForm from "./EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
-import {Column, RouteTypes, SortDirection} from "./types"
+import {Column, SortDirection} from "./DeckDetails"
 
 const rows = [
     {id: "meaning", numeric: false, disablePadding: true, label: "Meaning"},
@@ -37,50 +31,11 @@ const rows = [
 ]
 
 interface PropTypes {
-    deckId: string
     rowsPerPage: number
-    updateRowsPerPage: (state: number) => number
+    setRowsPerPage: Dispatch<SetStateAction<number>>
 }
 
-interface StateTypes {
-    selected: string[]
-}
-
-interface UpdaterTypes {
-    updateSelected: (state: string[]) => string[]
-}
-
-interface HandlerTypes {
-    isSelected: (id: string) => boolean
-    onRowClicked: (event, id: string) => void
-    onChangePage: (event, page: number) => void
-    onChangeRowsPerPage: (event) => void
-    onSelectAllClick: (event) => void
-    onRequestSort: (event, prop: Column) => void
-    onEditClicked: (card: Pick<Card, "id" | "meaning" | "pronunciation" | "translation">) => void
-}
-
-interface StateUpdaterTypes {
-    updatePage: (page: number) => void
-    updateSortBy: (sortBy: Column) => void
-    updateSortDirection: (sortDirection: SortDirection) => void
-}
-
-interface InjectedPropTypes {
-    emptyRows: number
-}
-
-interface GraphQLTypes {
-    cards: Array<Pick<Card, "id" | "meaning" | "pronunciation" | "translation">>
-    cardCount: number
-}
-
-// @ts-ignore
-type Props =
-    PropTypes & StateTypes & UpdaterTypes & HandlerTypes & InjectedPropTypes & RouteTypes & StateUpdaterTypes &
-    WithStyles<typeof styles> & WithTranslation & RouteComponentProps<{}> & GraphQLTypes & WithDialog<CardFormPropTypes> & WithMutation
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         width: "100%",
         marginTop: theme.spacing(3),
@@ -91,155 +46,161 @@ const styles = (theme: Theme) => createStyles({
     tableWrapper: {
         overflowX: "auto",
     }
-})
+}))
 
-const CardTable = (
-    {t, classes, cards, cardCount, onRowClicked, isSelected, emptyRows, rowsPerPage, page, onChangePage, onChangeRowsPerPage, onSelectAllClick, selected, sortDirection, sortBy, onRequestSort, onEditClicked, submitMutation}: Props
-) => (
-    <Paper className={classes.root}>
-        <CardTableToolbar numSelected={selected.length} onDeleteClicked={submitMutation} />
-        <div className={classes.tableWrapper}>
-            <Table className={classes.table} aria-labelledby="tableTitle">
-                <CardTableHead numSelected={selected.length} order={sortDirection || "asc"} orderBy={sortBy || "meaning"} onSelectAllClick={onSelectAllClick} onRequestSort={onRequestSort} rowCount={rowsPerPage - emptyRows} rows={rows}/>
-                <TableBody>
-                    {cards.map(card => (
-                        <TableRow hover role="checkbox" aria-checked={false} tabIndex={-1} key={card.id} selected={false}>
-                            <TableCell padding="checkbox" onClick={event => onRowClicked(event, card.id)}>
-                                <Checkbox checked={isSelected(card.id)} />
-                            </TableCell>
-                            <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
-                                {card.meaning}
-                            </TableCell>
-                            <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
-                                {card.pronunciation}
-                            </TableCell>
-                            <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
-                                {card.translation}
-                            </TableCell>
-                            <TableCell padding="none" align="right">
-                                <IconButton onClick={() => onEditClicked(card)}>
-                                    <Edit />
-                                </IconButton>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                    {emptyRows > 0 && (
-                        <TableRow style={{height: 49 * emptyRows}}>
-                            <TableCell colSpan={6}/>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-        </div>
-        <TablePagination
-            rowsPerPageOptions={[5, 10, 30, 50, 100]}
-            component="div"
-            count={cardCount} rowsPerPage={rowsPerPage} page={page as number}
-            backIconButtonProps={{
-                "aria-label": t("Previous Page")
-            }}
-            nextIconButtonProps={{
-                "aria-label": t("Next Page")
-            }}
-            onChangePage={onChangePage}
-            onChangeRowsPerPage={onChangeRowsPerPage}
-        />
-    </Paper>
-)
-
-const formatPath = (id: string, page: number, sortDirection: "asc" | "desc", sortBy: "meaning" | "pronunciation" | "translation") => {
-    let path = sortDirection !== "asc" ? `/sortDirection/${sortDirection}` : ""
-    if(sortBy !== "meaning" || path !== "")
-        path = `/sortBy/${sortBy}` + path
-    return `/deck/${id}/page/${page}` + path
+interface RouteTypes {
+    id: string
+    page: string
+    sortBy: Column
+    sortDirection: SortDirection
 }
 
-const toInt = (str?: string) => parseInt(str || "0", 10)
+const CardTable = (
+    {rowsPerPage, setRowsPerPage}: PropTypes
+) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const {history, match: {params: {id, page: initialPage, sortBy: initialSortBy, sortDirection: initialSortDirection}}} = useRouter<RouteTypes>()
 
-export default compose<Props, PropTypes>(
-    pure,
-    withStyles(styles),
-    withTranslation(),
-    withRouter,
-    withState<Props, string[]>("selected", "updateSelected", []),
-    withRouteProps<Props>([page => toInt(page), "page"], [sortBy => sortBy || "meaning", "sortBy"], [sortDir => sortDir || "asc", "sortDirection"]),
-    withState<Props, number>("page", "updatePage", ({page}) => page),
-    withState<Props, Column>("sortBy", "updateSortBy", ({sortBy}) => sortBy),
-    withState<Props, SortDirection>("sortDirection", "updateSortDirection", ({sortDirection}) => sortDirection),
-    withDialog<Props, CardFormPropTypes>(EditCardForm),
-    withCards<Props, GraphQLTypes>({
-        options: ({deckId, rowsPerPage, page, sortBy, sortDirection}) => ({
-            variables: {
-                deckID: deckId,
-                filter: {
-                    limit: rowsPerPage,
-                    offset: page * rowsPerPage,
-                    sortBy,
-                    sortDirection
-                }
+    const [selected, setSelected] = useState<string[]>([])
+    const [page, setPage] = useState<number>(parseInt(initialPage || "0", 10))
+    const [sortBy, setSortBy] = useState<Column>(initialSortBy || "meaning")
+    const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortDirection || "asc")
+
+    const {Dialog, openDialog} = useDialog(EditCardForm)
+    const {data} = useCardsQuery({
+        variables: {
+            deckID: id,
+            filter: {
+                limit: rowsPerPage,
+                offset: page * rowsPerPage,
+                sortBy,
+                sortDirection
             }
-        }),
-        props: ({data}) => ({
-            data,
-            cards: oc(data).deck.cards([]).filter(a => !!a) as any,
-            cardCount: oc(data).deck.cardCount(0)
-        })
-    }),
-    withHandlers<Props, HandlerTypes>({
-        isSelected: ({selected}) => (id: string) => selected.indexOf(id) !== -1,
-        onRowClicked: ({selected, updateSelected}) => (event, id: string) => {
-            const selectedIndex = selected.indexOf(id)
-            const newSelected = selectedIndex === -1 ? [...selected, id] : selected.filter(selectedId => selectedId !== id)
+        }
+    })
 
-            updateSelected(newSelected)
-        },
-        onChangePage: ({history, deckId, sortDirection, sortBy, updatePage}) => (_, page) => {
-            history.push(formatPath(deckId, page, sortDirection || "asc", sortBy || "meaning"))
-            updatePage(page)
-        },
-        onChangeRowsPerPage: ({updateRowsPerPage, selected, updateSelected, cards}) => event => {
-            updateRowsPerPage(event.target.value)
-            updateSelected(selected.filter(id => cards.findIndex(card => card.id === id) < event.target.value))
-        },
-        onSelectAllClick: ({updateSelected, cards}) => event => event.target.checked ? updateSelected(cards.map(card => card.id)) : updateSelected([]),
-        onRequestSort: ({sortDirection, sortBy, history, deckId, page, updateSortBy, updateSortDirection}) => (event, prop) => {
-            updateSortBy(prop)
-            if(sortBy === prop && sortDirection === "asc") {
-                history.push(formatPath(deckId, page, "desc", prop))
-                updateSortDirection("desc")
-            } else {
-                history.push(formatPath(deckId, page, "asc", prop))
-                updateSortDirection("asc")
+    const cards = oc(data).deck.cards([]).filter(a => !!a) as any
+    const cardCount = oc(data).deck.cardCount(0)
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, cardCount - page * rowsPerPage)
+
+    const deleteCards = useDeleteCardsMutation({
+        variables: {
+            deckId: id,
+            cardIds: selected,
+            cardFilter: {
+                limit: rowsPerPage,
+                offset: page * rowsPerPage,
+                sortBy,
+                sortDirection
             }
         },
-        onEditClicked: ({openDialog, deckId}) => card => {
-            openDialog({deckId, card})
-        }
-    }),
-    withProps<InjectedPropTypes, Props>(({rowsPerPage, page, cardCount}) => ({
-        emptyRows: rowsPerPage - Math.min(rowsPerPage, cardCount - page * rowsPerPage)
-    })),
-    withMutation<Props, DeleteCardsMutation, DeleteCardsMutationVariables>(DeleteCardsDocument, ({deckId, selected, rowsPerPage, page, sortBy, sortDirection}) => ({
-        deckId,
-        cardIds: selected,
-        cardFilter: {
-            limit: rowsPerPage,
-            offset: page * rowsPerPage,
-            sortBy,
-            sortDirection
-        }
-    }), undefined, undefined, {
-        optimisticResponse: ({deckId, selected, cards, updateSelected}) => {
+        optimisticResponse: () => {
             const response = {
                 __typename: "Mutation",
                 deleteCards: {
                     __typename: "Deck",
-                    id: deckId,
+                    id,
                     cards: cards.filter(card => !selected.includes(card.id))
                 }
             }
-            updateSelected([])
+            setSelected([])
             return response as any
         }
     })
-)(CardTable)
+
+    const formatPath = () => {
+        let path = sortDirection !== "asc" ? `/sortDirection/${sortDirection}` : ""
+        if(sortBy !== "meaning" || path !== "")
+            path = `/sortBy/${sortBy}` + path
+        return `/deck/${id}/page/${page}` + path
+    }
+
+    const changeRowsPerPage = event => {
+        setRowsPerPage(event.target.value)
+        setSelected(selected.filter(cardId => cards.findIndex(card => card.id === cardId) < event.target.value))
+    }
+
+    const changePage = (_, newPage: number) => {
+        history.push(formatPath())
+        setPage(newPage)
+    }
+
+    const onRowClicked = (event, rowId: string) => {
+        const selectedIndex = selected.indexOf(rowId)
+        const newSelected = selectedIndex === -1 ? [...selected, rowId] : selected.filter(selectedId => selectedId !== rowId)
+
+        setSelected(newSelected)
+    }
+
+    const requestSort = (event, prop) => {
+        setSortBy(prop)
+        if(sortBy === prop && sortDirection === "asc") {
+            history.push(formatPath())
+            setSortDirection("desc")
+        } else {
+            history.push(formatPath())
+            setSortDirection("asc")
+        }
+    }
+
+    return (
+        <>
+            <Dialog />
+            <Paper className={classes.root}>
+                <CardTableToolbar numSelected={selected.length} onDeleteClicked={deleteCards}/>
+                <div className={classes.tableWrapper}>
+                    <Table className={classes.table} aria-labelledby="tableTitle">
+                        <CardTableHead numSelected={selected.length} order={sortDirection || "asc"}
+                                       orderBy={sortBy || "meaning"} onSelectAllClick={event => event.target.checked ? setSelected(cards.map(card => card.id)) : setSelected([])}
+                                       onRequestSort={requestSort} rowCount={rowsPerPage - emptyRows} rows={rows}/>
+                        <TableBody>
+                            {cards.map(card => (
+                                <TableRow hover role="checkbox" aria-checked={false} tabIndex={-1} key={card.id}
+                                          selected={false}>
+                                    <TableCell padding="checkbox" onClick={event => onRowClicked(event, card.id)}>
+                                        <Checkbox checked={selected.indexOf(card.id) !== -1}/>
+                                    </TableCell>
+                                    <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
+                                        {card.meaning}
+                                    </TableCell>
+                                    <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
+                                        {card.pronunciation}
+                                    </TableCell>
+                                    <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
+                                        {card.translation}
+                                    </TableCell>
+                                    <TableCell padding="none" align="right">
+                                        <IconButton onClick={() => openDialog({deckId: id, card})}>
+                                            <Edit/>
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {emptyRows > 0 && (
+                                <TableRow style={{height: 49 * emptyRows}}>
+                                    <TableCell colSpan={6}/>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 30, 50, 100]}
+                    component="div"
+                    count={cardCount} rowsPerPage={rowsPerPage} page={page as number}
+                    backIconButtonProps={{
+                        "aria-label": t("Previous Page")
+                    }}
+                    nextIconButtonProps={{
+                        "aria-label": t("Next Page")
+                    }}
+                    onChangePage={changePage}
+                    onChangeRowsPerPage={changeRowsPerPage}
+                />
+            </Paper>
+        </>
+    )
+}
+
+export default CardTable

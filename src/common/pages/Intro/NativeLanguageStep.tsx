@@ -1,35 +1,15 @@
 import {Theme, Typography} from "@material-ui/core"
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
+import {useState} from "react"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
-import {
-    Language,
-    UpdateProfileDocument,
-    UpdateProfileMutation as Mutation,
-    UpdateProfileMutationVariables as MutationVariables
-} from "../../../generated/graphql"
-import {withHandlers, WithMutation, withMutation, withState, WithUser, withUser} from "../../enhancers"
+import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
+import {Language, useUpdateProfileMutation} from "../../../generated/graphql"
+import {useUser} from "../../hooks"
 import LargeLanguageDisplay from "./LargeLanguageDisplay"
 import LargeLanguagePicker from "./LargeLanguagePicker"
 
-interface FormTypes {
-    language?: Language
-}
-
-interface FormHandlerTypes {
-    updateLanguage: (state?: Language) => Language | undefined
-}
-
-interface HandlerTypes {
-    pickLanguage: (language: Language) => void
-}
-
-type Form = FormTypes & FormHandlerTypes
-
-type Props = WithTranslation & WithUser & WithStyles<typeof styles> & Form & WithMutation & HandlerTypes
-
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     titleContainer: {
         display: "flex",
         flexDirection: "row",
@@ -40,38 +20,39 @@ const styles = (theme: Theme) => createStyles({
     spacer: {
         width: theme.spacing(2)
     }
-})
+}))
 
-export const NativeLanguageStepRaw = ({t, classes, user: {username}, language, pickLanguage}: Props) => (
-    <>
-        <div className={classes.titleContainer}>
-            <Typography variant="h6">
-                {t("Hello, {{username}}! Welcome to Project Memory (dun dun dun). How about you pick your native language to start with?", {username})}
-            </Typography>
-            <div className={classes.spacer} />
-            <LargeLanguageDisplay language={language} />
-        </div>
-        <LargeLanguagePicker updateLanguage={pickLanguage} />
-    </>
-)
-
-export default compose<Props, {}>(
-    pure,
-    withStyles(styles),
-    withTranslation(),
-    withUser<Props>(),
-    withState<Props, Language | undefined>("language", "updateLanguage", undefined),
-    withMutation<Props, Mutation, MutationVariables>(UpdateProfileDocument, ({language, user: {id}}) => ({
-        id,
-        profile: {
-            nativeLanguage: language!.id,
-            introStep: 1
-        }
-    })),
-    withHandlers<Props>({
-        pickLanguage: ({updateLanguage, submitMutation}) => language => {
-            updateLanguage(language)
-            setTimeout(submitMutation, 800)
+export const NativeLanguageStep = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const {id, username} = useUser()
+    const [language, setLanguage] = useState<Language | undefined>(undefined)
+    const updateProfile = useUpdateProfileMutation({
+        variables: {
+            id,
+            profile: {
+                nativeLanguage: oc(language).id(""),
+                introStep: 1
+            }
         }
     })
-)(NativeLanguageStepRaw)
+    const pickLanguage = (lang: Language) => {
+        setLanguage(lang)
+        setTimeout(updateProfile, 800)
+    }
+
+    return (
+        <>
+            <div className={classes.titleContainer}>
+                <Typography variant="h6">
+                    {t("Hello, {{username}}! Welcome to Project Memory (dun dun dun). How about you pick your native language to start with?", {username})}
+                </Typography>
+                <div className={classes.spacer}/>
+                <LargeLanguageDisplay language={language}/>
+            </div>
+            <LargeLanguagePicker updateLanguage={pickLanguage}/>
+        </>
+    )
+}
+
+export default NativeLanguageStep

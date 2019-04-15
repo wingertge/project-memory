@@ -1,26 +1,24 @@
-import {createStyles, withStyles, WithStyles} from "@material-ui/styles"
+import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {withTranslation, WithTranslation} from "react-i18next"
-import {compose, pure} from "recompose"
+import {useTranslation} from "react-i18next"
 import Heading from "../components/common/Heading"
 
-type Props = WithTranslation & WithStyles<typeof styles>
-
-const styles = createStyles({
+const useStyles = makeStyles(createStyles({
     image: {
         width: 500
     }
-})
+}))
 
-const NotFound = ({t, classes}: Props) => (
-    <div>
-        <Heading>{t("I'm sorry Dave, I'm afraid I can't let you do that.")}</Heading>
-        <img src={"/static/media/notfound.png"} alt={t("Disappointed Tapir")} className={classes.image} />
-    </div>
-)
+export const NotFound = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
 
-export default compose<Props, {}>(
-    pure,
-    withStyles(styles),
-    withTranslation()
-)(NotFound)
+    return (
+        <div>
+            <Heading>{t("I'm sorry Dave, I'm afraid I can't let you do that.")}</Heading>
+            <img src={"/static/media/notfound.png"} alt={t("Disappointed Tapir")} className={classes.image}/>
+        </div>
+    )
+}
+
+export default NotFound
