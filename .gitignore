@@ -12,3 +12,7 @@ public/static
 .env.test.local
 .env.production.local
 .env
+
+schema.graphql
+graphql-schema.json
+*.lock
