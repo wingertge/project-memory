@@ -1,12 +1,12 @@
-import {Button, CircularProgress, TextField, Theme} from "@material-ui/core"
-import {createStyles, makeStyles} from "@material-ui/styles"
+import {Button, TextField, Theme} from "@material-ui/core"
+import {makeStyles} from "@material-ui/styles"
 import {ApolloError} from "apollo-client"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
-import {useDeckDetailsQuery, useUpdateDeckMutation} from "../../../generated/graphql"
+import {Deck, useDeckDetailsQuery, useUpdateDeckMutation} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Heading from "../../components/common/Heading"
 import WithErrorBox from "../../components/common/WithErrorBox"
@@ -30,7 +30,7 @@ export interface Form {
     name: string
 }
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => ({
     textField: {
         width: 400
     },
@@ -60,7 +60,8 @@ export const DeckDetails = () => {
             deckID: id
         }
     })
-    const deck = data!.deck
+
+    const deck = data!.deck as Deck
 
     const {name} = useValidatedFormState<Form>({name: oc(deck).name("")}, deckPropsValidators)
 
@@ -76,7 +77,7 @@ export const DeckDetails = () => {
     })
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
+    if(loading) return null
 
     return (
         <>
@@ -92,13 +93,15 @@ export const DeckDetails = () => {
                         <Button onClick={save}>{t("Save")}</Button>
                         <Button onClick={() => openDialog({
                             deckId: id,
+                            language: deck.language,
+                            nativeLanguage: deck.nativeLanguage,
                             rowsPerPage,
                             page,
                             sortBy,
                             sortDirection
                         })}>{t("Add Cards")}</Button>
                     </form>
-                    <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage}/>
+                    <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} deck={deck} />
                 </div>
             </WithErrorBox>
         </>

@@ -1,6 +1,5 @@
 import {
     Button,
-    CircularProgress,
     Grid,
     TextField,
     Theme,
@@ -53,7 +52,7 @@ export const FirstDeckStep = () => {
     const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
+    if(loading) return null
 
     const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
     const addDeck = () => useAddDeckMutation({

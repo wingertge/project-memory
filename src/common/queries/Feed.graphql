@@ -1,0 +1,9 @@
+query Feed($userId: ID! $filter: PostFilterInput) {
+    user(id: $userId) {
+        id
+        feed(filter: $filter) {
+            ...shallowPostFields
+            originalPost {...shallowPostFields}
+        }
+    }
+}

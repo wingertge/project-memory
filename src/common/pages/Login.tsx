@@ -6,7 +6,7 @@ import Auth from "../../client/Auth"
 
 export const Login = () => {
     const {location: {search}} = useRouter()
-    useEffect(() => Auth.login(true, parse(search.replace("?", "")).redirect || "/"), [])
+    useEffect(() => {if(window) Auth.login(true, parse(search.replace("?", "")).redirect || "/")}, [])
 
     return (
         <CircularProgress/>

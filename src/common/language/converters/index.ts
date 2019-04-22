@@ -1,17 +1,20 @@
+/* tslint:disable:object-literal-key-quotes */
 import japanese from "./japanese"
+import vietnamese from "./vietnamese"
 
 export interface Converter {
-    onPronunciationChange: (value: string, expected: string) => string
-    onTranslationChange: (value: string, expected: string) => string
+    transformPronunciation?: (value: string) => string
+    transformTranslation: (value: string) => string
 }
 
 const languages: {[languageCode: string]: Converter} = {
-    "jp-JP": japanese
+    "ja-JP": japanese,
+    "vi": vietnamese
 }
 
 const defaultConverter: Converter = {
-    onTranslationChange: value => value,
-    onPronunciationChange: value => value
+    transformTranslation: value => value,
+    transformPronunciation: value => value
 }
 
 export const converter = (languageCode: string) => languages[languageCode] || defaultConverter

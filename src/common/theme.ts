@@ -117,7 +117,7 @@ const theme = {
     },
 }*/
 
-export default createMuiTheme({
+const theme = createMuiTheme({
     typography: {
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif",
     },
@@ -134,5 +134,16 @@ export default createMuiTheme({
             dark: "#882d9e"
         }
     },
-    direction: "ltr"
+    direction: "ltr",
+
 })
+
+theme.overrides = {
+    MuiTooltip: {
+        tooltip: {
+            fontSize: theme.typography.pxToRem(14)
+        }
+    }
+}
+
+export default theme

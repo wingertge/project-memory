@@ -45,14 +45,12 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
               window.__AUTH__ = "${authToken}"
               window.__PRELOADED_I18N__ = ${serialize(i18Store)}
               window.__INITIAL_LANG__ = "${lang}"
-              process = process || {}
-              env = env || {}
-              process.env.REACT_APP_API_ENDPOINT = "${process.env.REACT_APP_API_ENDPOINT}"
-              process.env.REACT_APP_AUTH0_LOGOUT_CALLBACK = "${process.env.REACT_APP_AUTH0_LOGOUT_CALLBACK}"
-              process.env.REACT_APP_AUTH0_DOMAIN = "${process.env.REACT_APP_AUTH0_DOMAIN}"
-              process.env.REACT_APP_AUTH0_CLIENT_ID = "${process.env.REACT_APP_AUTH0_CLIENT_ID}"
-              process.env.REACT_APP_AUTH0_CALLBACK = "${process.env.REACT_APP_AUTH0_CALLBACK}"
-              process.env.REACT_APP_AUTH0_AUDIENCE = "${process.env.REACT_APP_AUTH0_AUDIENCE}"
+              window.__REACT_APP_API_ENDPOINT__ = "${process.env.REACT_APP_API_ENDPOINT}"
+              window.__REACT_APP_AUTH0_LOGOUT_CALLBACK__ = "${process.env.REACT_APP_AUTH0_LOGOUT_CALLBACK}"
+              window.__REACT_APP_AUTH0_DOMAIN__ = "${process.env.REACT_APP_AUTH0_DOMAIN}"
+              window.__REACT_APP_AUTH0_CLIENT_ID__ = "${process.env.REACT_APP_AUTH0_CLIENT_ID}"
+              window.__REACT_APP_AUTH0_CALLBACK__ = "${process.env.REACT_APP_AUTH0_CALLBACK}"
+              window.__REACT_APP_AUTH0_AUDIENCE__ = "${process.env.REACT_APP_AUTH0_AUDIENCE}"
             </script>
             ${bundle}
         </body>

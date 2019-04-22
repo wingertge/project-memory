@@ -7,5 +7,6 @@ query Profile($id: ID) {
         picture
         introStep
         isSocial
+        badges
     }
 }

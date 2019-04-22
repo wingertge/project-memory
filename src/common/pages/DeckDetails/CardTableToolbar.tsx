@@ -2,8 +2,8 @@ import {IconButton, Theme, Toolbar, Tooltip, Typography} from "@material-ui/core
 import {lighten} from "@material-ui/core/styles/colorManipulator"
 import {Delete, FilterList} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import clsx from "clsx"
 import * as React from "react"
-import classNames from "classnames"
 import {useTranslation} from "react-i18next"
 
 interface PropTypes {
@@ -39,7 +39,7 @@ const CardTableToolbar = ({numSelected, onDeleteClicked}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     return (
-        <Toolbar className={classNames(classes.root, {[classes.highlight]: numSelected > 0})}>
+        <Toolbar className={clsx(classes.root, {[classes.highlight]: numSelected > 0})}>
             <div className={classes.title}>
                 {numSelected > 0 ? (
                     <Typography color="inherit" variant="subtitle1">

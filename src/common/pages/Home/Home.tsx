@@ -1,4 +1,4 @@
-import {Button, Typography} from "@material-ui/core"
+import {Button, makeStyles, Theme, Typography} from "@material-ui/core"
 import React from "react"
 import {useTranslation} from "react-i18next"
 import {Redirect} from "react-router"
@@ -9,7 +9,14 @@ import {useUser} from "../../hooks"
 import StageCounts from "./StageCounts"
 import UpcomingReviews from "./UpcomingReviews"
 
+const useStyles = makeStyles((theme: Theme) => ({
+    lessonsBox: {
+        margin: theme.spacing(2)
+    }
+}))
+
 const Home = () => {
+    const classes = useStyles()
     const {t} = useTranslation()
     const {history} = useRouter()
     const user = useUser()
@@ -17,8 +24,7 @@ const Home = () => {
         skip: !user,
         variables: {
             userId: oc(user).id()!
-        },
-        fetchPolicy: "cache-and-network"
+        }
     })
 
     const lessonsCount = oc(data).user.lessonsCount(0)
@@ -30,8 +36,8 @@ const Home = () => {
                 <Redirect to="/intro"/>
             )}
             {lessonsCount > 0 && (
-                <div>
-                    <Typography variant="h6">
+                <div className={classes.lessonsBox}>
+                    <Typography variant="h6" gutterBottom>
                         {t("You have {{lessonsCount}} unreviewed lessons", {lessonsCount})}
                     </Typography>
                     <Button onClick={openLessons}>{t("Review now")}</Button>

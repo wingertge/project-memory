@@ -1,9 +1,10 @@
 import {Converter} from "./index"
-import wanakana from "wanakana"
+import * as wanakana from "wanakana"
 
 const converter: Converter = {
-    onPronunciationChange: value => wanakana.toHiragana(value),
-    onTranslationChange: value => wanakana.toKana(value)
+    transformPronunciation: value => wanakana.toHiragana(value),
+    transformTranslation: value => wanakana.toKana(value)
 }
 
 export default converter
+

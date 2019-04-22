@@ -3,6 +3,7 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import {Language, useAddLanguageToUserMutation} from "../../../generated/graphql"
 import {useID} from "../../hooks"
 import LargeLanguageDisplay from "../Intro/LargeLanguageDisplay"
@@ -27,24 +28,26 @@ export const LanguagePicker = ({languages, closeDialog}: PropTypes) => {
     const {t} = useTranslation()
     const id = useID()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
-    const addLanguage = () => {
-        useAddLanguageToUserMutation({
-            variables: {userId: id, languageId: language!.id},
-            optimisticResponse: {
-                __typename: "Mutation",
-                addLanguageToUser: {
-                    __typename: "User",
-                    id,
-                    languages: [...languages, language!].map(lang => ({
-                        __typename: "Language",
-                        id: lang.id,
-                        name: lang.name,
-                        nativeName: lang.nativeName,
-                        languageCode: lang.languageCode
-                    })) as any
-                }
+    const addLanguageMutate = useAddLanguageToUserMutation({
+        variables: {userId: id, languageId: oc(language).id("")},
+        optimisticResponse: () => ({
+            __typename: "Mutation",
+            addLanguageToUser: {
+                __typename: "User",
+                id,
+                languages: [...languages, language!].map(lang => ({
+                    __typename: "Language",
+                    id: lang.id,
+                    name: lang.name,
+                    nativeName: lang.nativeName,
+                    languageCode: lang.languageCode
+                })) as any
             }
-        })()
+        })
+    })
+
+    const addLanguage = () => {
+        addLanguageMutate()
         closeDialog()
     }
 

@@ -1,6 +1,13 @@
 import {Dispatch, SetStateAction, useEffect, useState} from "react"
 import {oc} from "ts-optchain"
-import {useCurrentUserIdQuery, useProfileQuery, User} from "../../generated/graphql"
+import {
+    ReviewsCountDocument,
+    ReviewsDocument,
+    useCurrentUserIdQuery, useNowQuery,
+    useProfileQuery,
+    User,
+    useUpdateNowMutation
+} from "../../generated/graphql"
 
 export const useUser = (id?: string) => {
     id = id || useID()
@@ -27,6 +34,20 @@ export const useStateOnChange = <T>(setter: () => T, changeProps: any[]): [T, Di
     )
 
     return [value, setValue]
+}
+
+export const useNow = (): Date => {
+    const {data} = useNowQuery()
+    return new Date(data!.now)
+}
+
+export const useUpdateNow = () => {
+    return useUpdateNowMutation({
+        refetchQueries: [
+            {query: ReviewsCountDocument},
+            {query: ReviewsDocument}
+        ]
+    })
 }
 
 export * from "./useDialog"

@@ -12,7 +12,7 @@ i18n
     .init({
         backend: {
             loadPath: "/locales/{{lng}}/{{ns}}.json",
-            addPath: "/locales/add/{{lng}}/{{ns}}"
+            //addPath: "/locales/add/{{lng}}/{{ns}}"
 /*            backends: [CacheBackend, XhrBackend],
             backendOptions: [{
                 prefix: "i18next_res_",
@@ -25,8 +25,9 @@ i18n
             }],*/
         },
         keySeparator: false,
-        debug: true,
-        ...baseOptions
+        debug: false,
+        ...baseOptions,
+        saveMissing: false
     })
 
 i18n.on("languageChanged", lang => moment.locale(lang))

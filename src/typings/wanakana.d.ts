@@ -1,6 +1,6 @@
 declare module "wanakana" {
     interface WanaKanaOptions {
-        IMEMode?: boolean
+        IMEMode?: boolean | string
         useObsoleteKana?: boolean
         passRomaji?: boolean
         upcaseKatakana?: boolean

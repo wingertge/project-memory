@@ -47,8 +47,7 @@ export const Lessons = () => {
             filter: {
                 limit: 5
             }
-        },
-        fetchPolicy: "no-cache"
+        }
     })
     const lessons = oc(data).user.lessonQueue([]) as Review[]
 
@@ -67,8 +66,8 @@ export const Lessons = () => {
     }
 
     const onQuizFinished = async () => {
-        setDone(true)
         await refetch()
+        setDone(true)
     }
 
     useEffect(() => {

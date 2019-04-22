@@ -1,11 +1,15 @@
-import {CircularProgress} from "@material-ui/core"
 import {ApolloError} from "apollo-client"
-import {useEffect, useState} from "react"
+import {useState} from "react"
 import * as React from "react"
 import {oc} from "ts-optchain"
-import {Review, ReviewFields, useReviewsQuery, useSubmitReviewMutation} from "../../../generated/graphql"
+import {
+    Review,
+    ReviewFields,
+    useReviewsQuery,
+    useSubmitReviewMutation
+} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {useID} from "../../hooks"
+import {useID, useNow, useUpdateNow} from "../../hooks"
 import {randomElement} from "../../util"
 import ReviewDisplay from "./ReviewDisplay"
 import ReviewsFinished from "./ReviewsFinished"
@@ -17,6 +21,7 @@ type ReviewMap = Array<{
 
 export const Reviews = () => {
     const id = useID()
+    const now = useNow()
     const {data, loading, error} = useReviewsQuery({
         variables: {
             userId: id,
@@ -32,9 +37,13 @@ export const Reviews = () => {
     const [currentReview, setCurrentReview] = useState<Review | undefined>(randomElement(reviews))
     const [mutationError, setMutationError] = useState<ApolloError | undefined>(undefined)
     const [saving, setSaving] = useState(false)
+    const updateNow = useUpdateNow()
+    const submitReviewMutate = useSubmitReviewMutation()
+
     const submitReview = (testedField: ReviewFields, correct: boolean) => {
         setSaving(true)
-        useSubmitReviewMutation({
+        updateNow()
+        submitReviewMutate({
             variables: {reviewId: currentReview!.id, field: testedField, correct},
             optimisticResponse: () => {
                 const newReviewedFields = [...currentReview!.reviewedFields!, testedField]
@@ -60,16 +69,14 @@ export const Reviews = () => {
                 setCurrentReview(randomElement(newReviews))
                 return response as any
             }
-        })().then(({errors}) => {
+        }).then(({errors}) => {
             setSaving(false)
             setMutationError((errors && errors.length > 0 && errors[0] as any) || undefined)
         })
     }
 
-    useEffect(() => {now = new Date()}, [])
-
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
+    if(loading) return null
 
     return (
         <>
@@ -81,7 +88,5 @@ export const Reviews = () => {
         </>
     )
 }
-
-let now = new Date()
 
 export default Reviews

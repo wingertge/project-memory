@@ -1,0 +1,11 @@
+fragment shallowPostFields on Post {
+    id
+    createdAt
+    type
+    by {
+        id
+        username
+        picture
+    }
+    content
+}

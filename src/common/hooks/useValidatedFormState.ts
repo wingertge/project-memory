@@ -42,10 +42,11 @@ export const useValidatedFormState = <T extends object = any>(defaults: T, valid
     })
     const [errors, setErrors] = useState<ErrorMap<T>>({})
     const [valid, setValid] = useState<boolean>(true)
+    const {t} = useTranslation()
 
     const withChangeHandlers = state.map(({prop, value, set}) => {
         const checkValid = () => {
-            const error = validate(prop, value, validatorMap[prop] || [], state)
+            const error = validate(prop, value, validatorMap[prop] || [], state, t)
             if(error !== errors[prop]) {
                 if(!error) delete errors[prop]
                 else errors[prop] = error
@@ -84,8 +85,8 @@ export const useValidatedFormState = <T extends object = any>(defaults: T, valid
     return result as ValidatedFormState<T>
 }
 
-export const validate = <TProp, TState>(name: string, value: TProp, validators: Array<Validator<TProp, TState>>, state: State<TState>) => {
-    const {t} = useTranslation()
+export const validate = <TProp, TState>(name: string, value: TProp, validators: Array<Validator<TProp, TState>>, state: State<TState>, t: (val: string) => string) => {
+    if(typeof value === "undefined") value = "" as any
     for(const validator of validators) {
         if(!validator.fun(value, state)) {
             return t(validator.message)

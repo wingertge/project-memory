@@ -16,7 +16,7 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
-import {useCardsQuery, useDeleteCardsMutation} from "../../../generated/graphql"
+import {Deck, useCardsQuery, useDeleteCardsMutation} from "../../../generated/graphql"
 import {useDialog} from "../../hooks"
 import EditCardForm from "./EditCardForm"
 import CardTableHead from "./CardTableHead"
@@ -33,6 +33,7 @@ const rows = [
 interface PropTypes {
     rowsPerPage: number
     setRowsPerPage: Dispatch<SetStateAction<number>>
+    deck: Deck
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -56,7 +57,7 @@ interface RouteTypes {
 }
 
 const CardTable = (
-    {rowsPerPage, setRowsPerPage}: PropTypes
+    {rowsPerPage, setRowsPerPage, deck}: PropTypes
 ) => {
     const classes = useStyles()
     const {t} = useTranslation()
@@ -171,7 +172,16 @@ const CardTable = (
                                         {card.translation}
                                     </TableCell>
                                     <TableCell padding="none" align="right">
-                                        <IconButton onClick={() => openDialog({deckId: id, card})}>
+                                        <IconButton onClick={() => openDialog({
+                                            deckId: id,
+                                            card,
+                                            language: deck.language,
+                                            nativeLanguage: deck.nativeLanguage,
+                                            rowsPerPage,
+                                            page,
+                                            sortBy,
+                                            sortDirection
+                                        })}>
                                             <Edit/>
                                         </IconButton>
                                     </TableCell>
@@ -187,7 +197,6 @@ const CardTable = (
                 </div>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 30, 50, 100]}
-                    component="div"
                     count={cardCount} rowsPerPage={rowsPerPage} page={page as number}
                     backIconButtonProps={{
                         "aria-label": t("Previous Page")

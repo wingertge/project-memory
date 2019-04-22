@@ -5,7 +5,6 @@ import Loading from "./components/common/Loading"
 import AuthenticatedRoute from "./components/routing/AuthenticatedRoute"
 import UnauthenticatedRoute from "./components/routing/UnauthenticatedRoute"
 import Loadable from "react-loadable"
-import DeckDetails from "./pages/DeckDetails"
 import Intro from "./pages/Intro"
 import TestBed from "./pages/TestBed"
 
@@ -27,8 +26,8 @@ const Settings = Loadable({
     timeout: 10000
 })
 
-const Profile = Loadable({
-    loader: () => import("./pages/Profile"),
+const UserProfile = Loadable({
+    loader: () => import("./pages/UserProfile"),
     loading: Loading,
     timeout: 10000
 })
@@ -45,12 +44,10 @@ const Lessons = Loadable({
     timeout: 1000
 })
 
-/*
 const DeckDetails = Loadable({
     loader: () => import("./pages/DeckDetails"),
-    saving: Loading
+    loading: Loading
 })
-*/
 
 const NotFound = Loadable({
     loader: () => import("./pages/NotFound"),
@@ -75,8 +72,7 @@ const Routes = () => (
         <AuthenticatedRoute path="/intro" component={Intro} />
         <Route path="/callback" component={Callback} />
         <AuthenticatedRoute path="/settings" component={Settings} />
-        <AuthenticatedRoute path="/profile" component={Profile} />
-        <AuthenticatedRoute path="/user/:username" />
+        <AuthenticatedRoute path="/profile/:id([a-zA-Z0-9]+)?" component={UserProfile} />
         <AuthenticatedRoute exact path="/deck/:id([a-zA-Z0-9\\-]+)/(page)?/:page([0-9]+)?/(sortBy)?/:sortBy(meaning|pronunciation|translation)?/(sortDirection)?/:sortDirection(asc|desc)?" component={DeckDetails}/>
         <AuthenticatedRoute path="/logout" render={() => {
             if(typeof window === "undefined") { return <Redirect to="/"/> }

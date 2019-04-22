@@ -5,7 +5,7 @@ export type ChangeListener = (event: any) => void
 export type Transformer<T> = (value: T) => T
 
 export type TransformerMap<T> = {
-    [TProp in keyof T]?: Transformer<TProp>
+    [P in keyof T]?: Transformer<T[P]>
 }
 
 export type FormState<T> = {

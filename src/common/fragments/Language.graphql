@@ -3,4 +3,7 @@ fragment languageFields on Language {
     languageCode
     name
     nativeName
+    hasConverter
+    requiresIME
+    hasPronunciation
 }

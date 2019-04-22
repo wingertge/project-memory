@@ -1,11 +1,9 @@
-import {CssBaseline, Theme} from "@material-ui/core"
-import {ThemeProvider} from "@material-ui/styles"
-import ServerStyleSheets from "@material-ui/styles/ServerStyleSheets"
+import {CssBaseline} from "@material-ui/core"
+import {ThemeProvider, ServerStyleSheets} from "@material-ui/styles"
 import cookieParser from "cookie-parser"
 import express from "express"
 import React from "react"
-import {ApolloProvider, getDataFromTree} from "react-apollo"
-import {ApolloProvider as ApolloHooksProvider} from "react-apollo-hooks"
+import {ApolloProvider, getMarkupFromTree} from "react-apollo-hooks"
 import {renderToString} from "react-dom/server"
 import morgan from "morgan"
 import {I18nextProvider} from "react-i18next"
@@ -56,26 +54,24 @@ initI18n(() => {
             const Root = () => (
                 <I18nextProvider i18n={req.i18n}>
                     <ApolloProvider client={apollo.client}>
-                        <ApolloHooksProvider client={apollo.client}>
-                            <StaticRouter location={req.url} context={context}>
-                                <ThemeProvider theme={theme as Theme}>
-                                    <CssBaseline />
-                                    <App />
-                                </ThemeProvider>
-                            </StaticRouter>
-                        </ApolloHooksProvider>
+                        <StaticRouter location={req.url} context={context}>
+                            <ThemeProvider theme={theme}>
+                                <CssBaseline />
+                                <App />
+                            </ThemeProvider>
+                        </StaticRouter>
                     </ApolloProvider>
                 </I18nextProvider>
             )
 
-            await getDataFromTree(<Root />)
-            const markup = await renderToString(
-                sheets.collect(
+            const markup = await getMarkupFromTree({
+                renderFunction: tree => renderToString(sheets.collect(tree)),
+                tree: (
                     <Loadable.Capture report={moduleName => modules.push(moduleName)}>
                         <Root />
                     </Loadable.Capture>
                 )
-            )
+            })
 
             const {url} = context
             if(url) {

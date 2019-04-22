@@ -1,4 +1,4 @@
-import {Button, Divider, Grid, TextField, Theme} from "@material-ui/core"
+import {Button, CircularProgress, Grid, Hidden, TextField, Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {ApolloError} from "apollo-client"
 import {useState} from "react"
@@ -26,14 +26,20 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     container: {
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "row",
+        width: "100%"
+    },
+    mobileRoot: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
     },
     form: {
-        padding: theme.spacing(0, 1.5, 1.5, 1.5)
+        padding: theme.spacing(1.5)
     },
     buttonContainer: {
         height: 47.2,
-        margin: theme.spacing(0, 0.5, 0, -0.5)
+        margin: theme.spacing(0.5, 0, -0.5, 0)
     },
     header: {
         textAlign: "left",
@@ -41,6 +47,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     formWrapper: {
         paddingLeft: theme.spacing(1)
+    },
+    mobileFormWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        paddingLeft: theme.spacing(1),
+        flex: "1 1 100%"
+    },
+    button: {
+        [theme.breakpoints.down("xs")]: {
+            marginTop: theme.spacing(1)
+        }
     }
 }))
 
@@ -77,96 +94,124 @@ export const ProfileSettingsContent = () => {
 
     const {Toast, openToast} = useToast("Successfully updated profile")
 
-    const updateProfile = useUpdateProfileMutation({
-        variables: {
-            id: user.id,
-            profile: {
-                name: name.value,
-                username: username.value,
-                email: email.value
-            }
-        }
-    })
+    const updateProfile = useUpdateProfileMutation()
 
     const submit = () => {
         setSaving(true)
-        updateProfile().then(({errors}) => {
+        updateProfile({
+            variables: {
+                id: user.id,
+                profile: {
+                    name: name.value,
+                    username: username.value,
+                    email: email.value
+                }
+            }
+        }).then(({errors}) => {
             setSaving(false)
             setError((errors && errors.length > 0 && errors[0] as any) || undefined)
             openToast()
         })
     }
 
+    if(!user) return <CircularProgress />
+
     return (
         <>
             <Toast/>
-            <ApolloErrorBox error={error} retry={submit}/>
-            <div className={classes.container}>
-                <ProfilePictureSelector/>
-                <Divider/>
-                <Grid container direction="column" justify="space-between" alignItems="stretch"
-                      className={classes.formWrapper}>
-                    <Grid item className={classes.header}>
-                        <Heading>{t("Profile")}</Heading>
-                    </Grid>
-                    <Grid item>
-                        <Grid container direction="row" justify="flex-end" alignItems="stretch" className={classes.form}
-                              spacing={3}>
-                            <Grid item xs>
-                                <Grid container direction="column" justify="flex-end" alignItems="stretch">
-                                    <Grid item xs>
-                                        <TextField name="nickname" label={t("Username")} className={classes.textField}
-                                                   value={username.value}
-                                                   onChange={username.onChange} error={!!username.error}
-                                                   helperText={t(username.error!)}/>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <TextField name="email"
-                                                   label={t("Email")}
-                                                   className={classes.textField}
-                                                   value={email.value}
-                                                   onChange={email.onChange}
-                                                   disabled={user.isSocial}
-                                                   helperText={user.isSocial ? t("Can't change email on a social connection login") : t(email.error!)}
-                                                   error={!!email.error}/>
-                                    </Grid>
+            {error && <ApolloErrorBox error={error} retry={submit}/>}
+            <PasswordChangeDialog id={user.id} passwordExists={!user.isSocial}
+                                  open={passwordChangeOpen}
+                                  close={() => setPasswordChangeOpen(false)}/>
+            <Hidden xsDown>
+                <div className={classes.container}>
+                    <ProfilePictureSelector/>
+                    <Grid container direction="column" justify="space-between" alignItems="stretch"
+                          className={classes.formWrapper}>
+                        <Grid item className={classes.header}>
+                            <Heading>{t("Profile")}</Heading>
+                        </Grid>
+                        <Grid item container direction="row" justify="flex-end" alignItems="stretch" className={classes.form} spacing={3}>
+                            <Grid item xs container direction="column" justify="flex-end" alignItems="stretch">
+                                <Grid item xs>
+                                    <TextField name="nickname" label={t("Username")} className={classes.textField}
+                                               value={username.value}
+                                               onChange={username.onChange} error={!!username.error}
+                                               helperText={t(username.error!)}/>
+                                </Grid>
+                                <Grid item xs>
+                                    <TextField name="email"
+                                               label={t("Email")}
+                                               className={classes.textField}
+                                               value={email.value}
+                                               onChange={email.onChange}
+                                               disabled={user.isSocial}
+                                               helperText={user.isSocial ? t("Can't change email on a social connection login") : t(email.error!)}
+                                               error={!!email.error}/>
                                 </Grid>
                             </Grid>
-                            <Grid item xs>
-                                <Grid container direction="column" justify="flex-end" alignItems="stretch">
-                                    <Grid item xs>
-                                        <TextField name="name" label={t("Name")} className={classes.textField}
-                                                   value={name.value}
-                                                   onChange={name.onChange}
-                                                   error={!!name.error} helperText={t(name.error!)}/>
+                            <Grid item xs container direction="column" justify="flex-end" alignItems="stretch">
+                                <Grid item xs>
+                                    <TextField name="name" label={t("Name")} className={classes.textField}
+                                               value={name.value}
+                                               onChange={name.onChange}
+                                               error={!!name.error} helperText={t(name.error!)}/>
+                                </Grid>
+                                <Grid item xs container direction="row" justify="space-between" alignItems="flex-end" className={classes.buttonContainer} spacing={1}>
+                                    <Grid item xs={8}>
+                                        <Button variant="outlined" color="primary"
+                                                onClick={() => setPasswordChangeOpen(true)}
+                                                fullWidth>
+                                            {t("Change Password")}
+                                        </Button>
                                     </Grid>
-                                    <Grid item xs>
-                                        <Grid container direction="row" justify="space-between" alignItems="flex-end"
-                                              className={classes.buttonContainer} spacing={8}>
-                                            <Grid item xs={8}>
-                                                <Button variant="outlined" color="primary"
-                                                        onClick={() => setPasswordChangeOpen(true)}
-                                                        fullWidth>
-                                                    {t("Change Password")}
-                                                </Button>
-                                                <PasswordChangeDialog id={user.id} passwordExists={!user.isSocial}
-                                                                      open={passwordChangeOpen}
-                                                                      close={() => setPasswordChangeOpen(false)}/>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Button onClick={submit} disabled={(saving || !valid)}
-                                                        variant="contained" color="primary" fullWidth>
-                                                    {saving ? "Saving..." : "Save"}
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                    <Grid item xs={4}>
+                                        <Button onClick={submit} disabled={(saving || !valid)}
+                                                variant="contained" color="primary" fullWidth>
+                                            {saving ? "Saving..." : "Save"}
+                                        </Button>
                                     </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-            </div>
+                </div>
+            </Hidden>
+            <Hidden smUp>
+                <div className={classes.mobileRoot}>
+                    <Heading>{t("Profile")}</Heading>
+                    <div className={classes.container}>
+                        <ProfilePictureSelector/>
+                        <div className={classes.mobileFormWrapper}>
+                            <TextField name="nickname" label={t("Username")} className={classes.textField}
+                                       value={username.value}
+                                       onChange={username.onChange} error={!!username.error}
+                                       helperText={username.error}/>
+                            <TextField name="email"
+                                       label={t("Email")}
+                                       className={classes.textField}
+                                       value={email.value}
+                                       onChange={email.onChange}
+                                       disabled={user.isSocial}
+                                       helperText={user.isSocial ? t("Can't change email on a social connection login") : email.error}
+                                       error={!!email.error}/>
+                            <TextField name="name" label={t("Name")} className={classes.textField}
+                                       value={name.value}
+                                       onChange={name.onChange}
+                                       error={!!name.error} helperText={name.error}/>
+                        </div>
+                    </div>
+                    <Button variant="outlined" color="primary"
+                            onClick={() => setPasswordChangeOpen(true)}
+                            fullWidth className={classes.button}>
+                        {t("Change Password")}
+                    </Button>
+                    <Button onClick={submit} disabled={(saving || !valid)}
+                            variant="contained" color="primary" fullWidth className={classes.button}>
+                        {saving ? "Saving..." : "Save"}
+                    </Button>
+                </div>
+            </Hidden>
         </>
     )
 

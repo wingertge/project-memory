@@ -8,7 +8,7 @@ import moment from "moment"
 import {oc} from "ts-optchain"
 import {Review, useReviewsCountQuery, useReviewsQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {useID} from "../../hooks"
+import {useID, useNow} from "../../hooks"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     container: {
@@ -38,12 +38,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-const now = new Date()
-
 export const UpcomingReviews = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const id = useID()
+    const now = useNow()
     const {data: nextReviewData, loading: nextReviewLoading, error: nextReviewError} = useReviewsQuery({
         variables: {
             userId: id,
@@ -66,7 +65,7 @@ export const UpcomingReviews = () => {
         variables: {
             userId: id,
             filter: {
-                toBeReviewedBy: new Date(now.getTime() + 60 * 60 * 1000)
+                toBeReviewedBy: new Date(now.getTime() + 24 * 60 * 60 * 1000)
             }
         }
     })
@@ -86,7 +85,7 @@ export const UpcomingReviews = () => {
                         <Grid item xs={4} className={classes.container}>
                             <Alarm className={classes.icon}/>
                             <Typography variant="h6" display="inline">
-                                {t("Next review {{time}}", {time: nextReview ? nextReview.nextReviewAt.getTime() < now.getTime() ? t("available now") : moment(nextReview.nextReviewAt).fromNow() : t("n/a")})}
+                                {t("Next review {{time}}", {time: nextReview ? new Date(nextReview.nextReviewAt).getTime() < now.getTime() ? t("available now") : moment(nextReview.nextReviewAt).fromNow() : t("n/a")})}
                             </Typography>
                         </Grid>
                         <Grid item xs={4} className={clsx(classes.container, classes.middle)}>

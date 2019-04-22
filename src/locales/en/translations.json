@@ -103,5 +103,6 @@
   "{{num}} reviews in the next hour": "{{num}} reviews in the next hour",
   "{{num}} reviews in the next day": "{{num}} reviews in the next day",
   "Reviews": "Reviews",
-  "n/a": "n/a"
+  "n/a": "n/a",
+  "Name can't be empty": "Name can't be empty"
 }

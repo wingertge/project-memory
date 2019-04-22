@@ -1,0 +1,9 @@
+mutation AddPost($input: PostInput!, $filter: PostFilterInput) {
+    createPost(input: $input, filter: $filter) {
+        ...shallowPostFields
+        originalPost {
+            ...shallowPostFields
+        }
+    }
+}
+

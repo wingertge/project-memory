@@ -1,4 +1,4 @@
-import {Button, Card, CardContent, CircularProgress, List, ListItem, Theme} from "@material-ui/core"
+import {Button, Card, CardContent, Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {oc} from "ts-optchain"
@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             border: "none",
             "&:hover": {
                 backgroundColor: Color(theme.palette.text.primary).alpha(0.2).string()
+            },
+            margin: theme.spacing(0.5, 0, 0, 0),
+            [theme.breakpoints.up("sm")]: {
+                marginLeft: theme.spacing(1)
             }
         },
         deckList: {
@@ -35,7 +39,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             flexDirection: "row",
             padding: 0,
             maxWidth: "100%",
-            overflow: "auto"
+            overflow: "auto",
+            flexWrap: "wrap"
         },
         deckListItem: {
             width: "inherit"
@@ -45,16 +50,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export const DecksOverview = () => {
     const classes = useStyles()
-    const id = useID()!
+    const id = useID()
     const {data, error, loading} = useShallowDecksQuery({
         variables: {id}
     })
     const ownedDecks = oc(data).user.ownedDecks([]) as Deck[]
     const subscribedDecks = oc(data).user.subscribedDecks([]) as Deck[]
-    if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
-
     const {Dialog, openDialog} = useDialog(CreateDeckForm)
+
+    if(error) return <ApolloErrorBox error={error} />
+    if(loading) return null
 
     return (
         <>
@@ -62,26 +67,15 @@ export const DecksOverview = () => {
             <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
                     <Heading>Decks</Heading>
-                    <List className={classes.deckList}>
+                    <div className={classes.deckList}>
                         {ownedDecks.map(deck => (
-                            <ListItem key={deck!.id} className={classes.deckListItem}>
-                                <DeckDisplay
-                                    deck={deck}
-                                    owned={true}
-                                    subscribed={false}/>
-                            </ListItem>
+                            <DeckDisplay key={deck!.id} deck={deck} owned={true} subscribed={false}/>
                         ))}
                         {subscribedDecks.map(deck => (
-                            <ListItem key={deck!.id} className={classes.deckListItem}>
-                                <DeckDisplay id={deck!.id} name={deck!.name} cards={deck!.cardCount!} rating={deck!.rating}
-                                             owned={false} subscribed={true} liked={deck!.isLikedBy}
-                                             language={deck!.language}/>
-                            </ListItem>
+                            <DeckDisplay deck={deck} owned={false} subscribed={true} />
                         ))}
-                        <ListItem key="new_deck">
-                            <Button onClick={() => openDialog()} className={classes.newDeck}>{""}</Button>
-                        </ListItem>
-                    </List>
+                        <Button onClick={() => openDialog()} className={classes.newDeck}>{""}</Button>
+                    </div>
                 </CardContent>
             </Card>
         </>

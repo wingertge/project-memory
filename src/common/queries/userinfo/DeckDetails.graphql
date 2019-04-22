@@ -2,5 +2,7 @@ query DeckDetails($deckID: ID!) {
     deck(id: $deckID) {
         id
         name
+        language {...languageFields}
+        nativeLanguage {...languageFields}
     }
 }

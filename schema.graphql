@@ -43,10 +43,13 @@ type Identity {
 }
 
 type Language {
+    hasConverter: Boolean!
+    hasPronunciation: Boolean!
     id: ID!
     languageCode: String!
     name: String!
     nativeName: String!
+    requiresIME: Boolean!
 }
 
 type Mutation {
@@ -56,16 +59,28 @@ type Mutation {
     changeLikeStatus(id: ID!, userID: ID!, value: Boolean): Deck
     changeSubscriptionStatus(deckID: ID!, id: ID!, value: Boolean!): User
     createCard(input: CardInput!): Deck
+    createPost(filter: PostFilterInput, input: PostInput!): [Post]
     deleteCards(deck: ID!, ids: [ID]!): Deck
     deleteDeck(id: ID!): Deck
+    deletePost(filter: PostFilterInput, id: ID!): [Post]
     deleteUser(id: ID!): User
     editCard(id: ID!, input: CardInput!): Card
+    editPost(id: ID!, input: PostInput!): Post
     editUser(id: ID!, input: UserInput!): User
     initUser(id: ID!): User
     logout: Boolean
     removeLanguageFromUser(id: ID!, language: ID!): User
     submitReview(correct: Boolean!, field: ReviewFields!, id: ID!): Review
     updateDeck(id: ID!, input: DeckInput!): Deck
+}
+
+type Post {
+    by: User!
+    content: String
+    createdAt: Date!
+    id: ID!
+    originalPost: Post
+    type: PostType!
 }
 
 type Query {
@@ -89,7 +104,9 @@ type Review {
 }
 
 type User {
+    badges: [String]!
     email: String
+    feed(filter: PostFilterInput): [Post]
     gender: String!
     id: ID!
     identities: [Identity]
@@ -97,7 +114,7 @@ type User {
     isSocial: Boolean!
     languages: [Language]
     lessonQueue(filter: ReviewFilterInput): [Review]
-    lessonsCount: Int
+    lessonsCount: Int!
     locale: String
     name: String
     nativeLanguage: Language
@@ -108,6 +125,8 @@ type User {
     reviewsCount(filter: ReviewFilterInput): Int
     sub: ID
     subscribedDecks: [Deck]
+    totalRating: Int!
+    totalSubscribers: Int!
     username: String!
 }
 
@@ -122,6 +141,17 @@ enum DeckSortBy {
     name
     rating
     subscribers
+}
+
+enum PostSortOption {
+    createdAt
+    likes
+    reposts
+}
+
+enum PostType {
+    post
+    repost
 }
 
 enum ReviewFields {
@@ -174,6 +204,20 @@ input DeckInput {
     owner: String
 }
 
+input PostFilterInput {
+    limit: Int
+    offset: Int
+    sortBy: PostSortOption
+    sortDirection: SortDirection
+    type: PostType
+}
+
+input PostInput {
+    content: String
+    originalPost: Int
+    type: PostType
+}
+
 input ReviewFilterInput {
     boxes: [Int]
     deck: ID
@@ -205,3 +249,5 @@ input UserInput {
 
 "Represents a date in time"
 scalar Date
+
+scalar JSON

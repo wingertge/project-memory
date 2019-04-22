@@ -18,8 +18,11 @@ const CardTableHead = ({onSelectAllClick, onRequestSort, order, orderBy, numSele
         <TableHead>
             <TableRow>
                 <TableCell padding="checkbox">
-                    <Checkbox indeterminate={numSelected > 0 && numSelected < rowCount}
-                              checked={numSelected === rowCount} onChange={onSelectAllClick}/>
+                    <Checkbox
+                        indeterminate={(numSelected > 0 && numSelected < rowCount) || rowCount === 0}
+                        checked={numSelected === rowCount && numSelected > 0} onChange={onSelectAllClick}
+                        disabled={rowCount === 0}
+                    />
                 </TableCell>
                 {rows.map(row => (
                     <TableCell key={row.id} align={row.numeric ? "right" : "left"}

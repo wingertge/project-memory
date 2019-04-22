@@ -14,15 +14,22 @@ import {useUser} from "../../hooks"
 const useStyles = makeStyles((theme: Theme) => createStyles({
     avatar: {
         width: 160,
-        height: 160
+        height: 160,
+        [theme.breakpoints.down("xs")]: {
+            width: 100,
+            height: 100
+        }
     },
     root: {
         display: "inline-flex",
-        width: "inherit",
-        flexWrap: "nowrap"
+        flexWrap: "nowrap",
+        width: "fit-content"
     },
     removeButton: {
-        margin: theme.spacing(-2.5, 0.5, 0, 0)
+        margin: theme.spacing(0.5, 0, 0, -2.5),
+        [theme.breakpoints.down("xs")]: {
+            margin: theme.spacing(-1, 0, 0, -2)
+        }
     },
     iconButton: {
         padding: 1

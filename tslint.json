@@ -3,7 +3,11 @@
     "extends": [
         "tslint:recommended"
     ],
-    "jsRules": {},
+    "jsRules": {
+        "object-literal-sort-keys": false,
+        "trailing-comma": false,
+        "semicolon": [true, "never"]
+    },
     "rules": {
         "semicolon": [true, "never"],
         "trailing-comma": false,
@@ -37,7 +41,10 @@
             "node_modules/**",
             "src/generated/**",
             "build/**",
-            "razzle.config.js"
+            "razzle.config.js",
+            "src/client/index.tsx",
+            "src/client/Auth.ts",
+            "node_modules/@storybook/**"
         ]
     }
 }

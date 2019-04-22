@@ -42,8 +42,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         flexDirection: "column",
         justifyContent: "center",
         textAlign: "center",
-        padding: theme.spacing(1.5, 3, 3, 2),
-        margin: theme.spacing(0.5)
+        padding: theme.spacing(3, 3, 2, 1.5),
+        margin: theme.spacing(0.5),
+        [theme.breakpoints.up("sm")]: {
+            margin: theme.spacing(1)
+        }
     },
     deckActions: {
         display: "flex"
@@ -68,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const DeckDisplay = ({deck: {id, cards, rating, isLikedBy: liked, name, language}, owned, subscribed, onEditClicked, onFavoriteClicked, onLikeClicked}: PropTypes) => {
+export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, name, language}, owned, subscribed, onEditClicked, onFavoriteClicked, onLikeClicked}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {history} = useRouter()
@@ -131,7 +134,7 @@ export const DeckDisplay = ({deck: {id, cards, rating, isLikedBy: liked, name, l
                 <Grid item xs>
                     <Grid container direction="column" alignItems="center" justify="center" style={{height: "100%"}}>
                         <Grid item>
-                            <Typography variant="h4">{cards + ""}</Typography>
+                            <Typography variant="h4">{cardCount + ""}</Typography>
                         </Grid>
                     </Grid>
                 </Grid>

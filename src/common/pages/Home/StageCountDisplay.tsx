@@ -1,4 +1,4 @@
-import {CircularProgress, Theme, Tooltip, Typography} from "@material-ui/core"
+import {Theme, Tooltip, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
@@ -98,10 +98,10 @@ const StageCountDisplay = ({stage}: PropTypes) => {
         }
     })
 
-    const reviewsCount = oc(data).user.reviewsCount(0)
+    const reviewsCount = oc(data).user.reviewsCount()
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
+    if(loading) return null
 
     return (
         <div className={classes.root}>

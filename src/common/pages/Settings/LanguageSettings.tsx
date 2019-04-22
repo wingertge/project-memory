@@ -1,8 +1,6 @@
 import {
     Avatar,
-    CardMedia,
     Chip,
-    CircularProgress,
     List,
     ListItem, Theme,
     Typography
@@ -34,7 +32,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     content: {
         display: "flex",
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
+        flexWrap: "wrap",
+        [theme.breakpoints.down("xs")]: {
+            flexDirection: "column",
+            alignItems: "flex-start"
+        }
     },
     label: {
         margin: theme.spacing(1)
@@ -73,12 +76,12 @@ export const LanguageSettings = () => {
     const {Dialog, openDialog} = useDialog(LanguagePicker)
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
+    if(loading || !nativeLanguage) return null
 
     return (
         <>
             <Dialog />
-            <CardMedia className={classes.card}>
+            <div className={classes.card}>
                 <div className={classes.content}>
                     <Typography variant="subtitle1" className={classes.label}>{t("Native Language")}</Typography>
                     <LanguageDisplay language={nativeLanguage}/>
@@ -95,7 +98,7 @@ export const LanguageSettings = () => {
                         </ListItem>
                     </List>
                 </div>
-            </CardMedia>
+            </div>
         </>
     )
 }

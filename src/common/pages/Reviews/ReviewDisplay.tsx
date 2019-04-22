@@ -1,10 +1,12 @@
 import {Button, TextField, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import clsx from "clsx"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {Review, ReviewFields} from "../../../generated/graphql"
 import {useStateOnChange, useValidatedFormState} from "../../hooks"
+//import {converter} from "../../language/converters"
 import {notEmpty} from "../../util/validationUtils"
 
 interface PropTypes {
@@ -18,7 +20,7 @@ interface PropTypes {
 const useStyles = makeStyles((theme: Theme) => createStyles({
     responseField: {
         width: "100%",
-        margin: theme.spacing(0, 2, 0, 4)
+        margin: theme.spacing(2, 0, 4, 0)
     },
     review: {
         padding: theme.spacing(2),
@@ -37,16 +39,29 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     spacer: {
         flexGrow: 1
+    },
+    useIme: {
+        imeMode: "active",
+        "-webkit-ime-mode": "active",
+        "-moz-ime-mode": "active",
+        "-ms-ime-mode": "active"
+    },
+    disableIme: {
+        imeMode: "inactive",
+        "-webkit-ime-mode": "inactive",
+        "-moz-ime-mode": "inactive",
+        "-ms-ime-mode": "inactive"
     }
 }))
 
 export const ReviewDisplay = ({review, submitDisabled, onExit, exitDisabled, onSubmit}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {response, valid} = useValidatedFormState({response: ""}, {response: [{fun: notEmpty, message: "Response can't be empty"}]})
     const [isWrong, setWrong] = useState(false)
     const [fieldToTest, setFieldToTest] = useStateOnChange(() => selectTestableField(review), [review])
     const fieldToShow = fieldToTest === "meaning" ? "translation" : fieldToTest === "pronunciation" ? "translation" : "meaning"
+    //const langConverter = converter(review.card.deck!.language.languageCode)
+    const {response, valid} = useValidatedFormState({response: ""}, {response: [{fun: notEmpty, message: "Response can't be empty"}]})
 
     const checkAnswer = () => {
         if(isWrong) {
@@ -82,7 +97,8 @@ export const ReviewDisplay = ({review, submitDisabled, onExit, exitDisabled, onS
                 onKeyPress={onKeyPress}
                 error={!!response.error || isWrong}
                 helperText={response.error}
-                autoFocus className={classes.responseField}/>
+                type={fieldToTest === "meaning" ? "tel" : "text"}
+                autoFocus className={clsx(classes.responseField, {[classes.useIme]: fieldToTest !== "meaning", [classes.disableIme]: fieldToTest === "meaning"})}/>
             {isWrong && <Typography variant="h6"
                                     color="error">{t("Your answer was wrong. Correct answer: {{answer}}", {answer: review.card[fieldToTest]})}</Typography>}
             <div className={classes.nav}>

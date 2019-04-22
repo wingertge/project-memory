@@ -15,7 +15,7 @@ import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import Auth from "../../../client/Auth"
 import {useReviewsCountQuery} from "../../../generated/graphql"
-import {useUser} from "../../hooks"
+import {useNow, useUser} from "../../hooks"
 import LinkButton from "./LinkButton"
 import Logo from "../../assets/logo.png"
 
@@ -54,13 +54,15 @@ export const Header = () => {
     const user = useUser()
     const authenticated = !!user
     const username = oc(user).username() || null
+    const now = useNow()
 
     const {data: reviewsData} = useReviewsCountQuery({
         skip: !user,
         variables: {
             userId: user && user.id,
-            filter: {toBeReviewedBy: date}
-        }
+            filter: {toBeReviewedBy: now}
+        },
+        ssr: false
     })
 
     const pendingReviews = oc(reviewsData).user.reviewsCount(0)
@@ -117,7 +119,5 @@ export const Header = () => {
         </AppBar>
     )
 }
-
-const date = new Date().toISOString()
 
 export default Header

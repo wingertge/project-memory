@@ -8,6 +8,9 @@ query Lessons($userId: ID!, $filter: ReviewFilterInput) {
                 meaning
                 pronunciation
                 translation
+                deck {
+                    language {...languageFields}
+                }
             }
             reviewedFields
         }

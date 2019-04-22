@@ -1,7 +1,14 @@
 /* tslint:disable:prefer-const */
 import {useState} from "react"
 import * as React from "react"
-import {Review, ReviewFields, useSubmitReviewMutation} from "../../../generated/graphql"
+import {
+    LessonsCountDocument,
+    Review,
+    ReviewFields,
+    ReviewsCountDocument,
+    useSubmitReviewMutation
+} from "../../../generated/graphql"
+import {useID} from "../../hooks"
 import ReviewDisplay from "../Reviews/ReviewDisplay"
 
 interface PropTypes {
@@ -13,7 +20,8 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
     let [finishedReviews, setFinishedReviews] = useState<Review[]>([])
     let [remainingReviews, setRemainingReviews] = useState(reviews)
     let [currentReview, setCurrentReview] = useState(randomElement(remainingReviews))
-    const submitReviewMutate = ({id}: Review, field: ReviewFields) => useSubmitReviewMutation({variables: {reviewId: id, field, correct: true}})().then(onQuizFinished)
+    const submitReviewMutate = useSubmitReviewMutation()
+    const userId = useID()
 
     const submitReview = (testedField: ReviewFields, correct: boolean) => {
         if(correct) {
@@ -33,7 +41,11 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
             finishedReviews = [...finishedReviews, currentReview]
             finishedReviews.forEach(review => {
                 review.reviewedFields!.forEach(field => {
-                    submitReviewMutate(review, field!)
+                    const id = review.id
+                    submitReviewMutate({
+                        variables: {reviewId: id, field: field!, correct: true},
+                        refetchQueries: [{query: LessonsCountDocument, variables: {userId}}, {query: ReviewsCountDocument}]
+                    }).then(onQuizFinished)
                 })
             })
             onQuizFinished()

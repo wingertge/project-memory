@@ -8,6 +8,7 @@ export type Scalars = {
   Float: number;
   /** Represents a date in time */
   Date: any;
+  JSON: any;
 };
 
 export type AuthResult = {
@@ -102,6 +103,9 @@ export type Language = {
   name: Scalars["String"];
   nativeName: Scalars["String"];
   languageCode: Scalars["String"];
+  hasConverter: Scalars["Boolean"];
+  requiresIME: Scalars["Boolean"];
+  hasPronunciation: Scalars["Boolean"];
 };
 
 export type Mutation = {
@@ -121,6 +125,10 @@ export type Mutation = {
   editCard?: Maybe<Card>;
   deleteCards?: Maybe<Deck>;
   submitReview?: Maybe<Review>;
+  createPost?: Maybe<Array<Maybe<Post>>>;
+  editPost?: Maybe<Post>;
+  deletePost?: Maybe<Array<Maybe<Post>>>;
+  updateNow: Scalars["ID"];
 };
 
 export type MutationAuthenticateArgs = {
@@ -195,6 +203,48 @@ export type MutationSubmitReviewArgs = {
   field: ReviewFields;
 };
 
+export type MutationCreatePostArgs = {
+  input: PostInput;
+  filter?: Maybe<PostFilterInput>;
+};
+
+export type MutationEditPostArgs = {
+  id: Scalars["ID"];
+  input: PostInput;
+};
+
+export type MutationDeletePostArgs = {
+  id: Scalars["ID"];
+  filter?: Maybe<PostFilterInput>;
+};
+
+export type Post = {
+  id: Scalars["ID"];
+  createdAt: Scalars["Date"];
+  type: PostType;
+  by: User;
+  content?: Maybe<Scalars["String"]>;
+  originalPost?: Maybe<Post>;
+};
+
+export type PostFilterInput = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  type?: Maybe<PostType>;
+  sortBy?: Maybe<PostSortOption>;
+  sortDirection?: Maybe<SortDirection>;
+};
+
+export type PostInput = {
+  type?: Maybe<PostType>;
+  content?: Maybe<Scalars["String"]>;
+  originalPost?: Maybe<Scalars["Int"]>;
+};
+
+export type PostSortOption = "likes" | "reposts" | "createdAt";
+
+export type PostType = "post" | "repost";
+
 export type Query = {
   users?: Maybe<Array<Maybe<User>>>;
   user?: Maybe<User>;
@@ -204,6 +254,7 @@ export type Query = {
   deck?: Maybe<Deck>;
   review?: Maybe<Review>;
   currentUserID: Scalars["ID"];
+  now: Scalars["ID"];
 };
 
 export type QueryUsersArgs = {
@@ -279,8 +330,12 @@ export type User = {
   reviewsCount?: Maybe<Scalars["Int"]>;
   nextReview?: Maybe<Review>;
   lessonQueue?: Maybe<Array<Maybe<Review>>>;
-  lessonsCount?: Maybe<Scalars["Int"]>;
+  lessonsCount: Scalars["Int"];
+  totalRating: Scalars["Int"];
+  totalSubscribers: Scalars["Int"];
+  badges: Array<Maybe<Scalars["String"]>>;
   introStep?: Maybe<Scalars["Int"]>;
+  feed?: Maybe<Array<Maybe<Post>>>;
 };
 
 export type UserReviewQueueArgs = {
@@ -293,6 +348,10 @@ export type UserReviewsCountArgs = {
 
 export type UserLessonQueueArgs = {
   filter?: Maybe<ReviewFilterInput>;
+};
+
+export type UserFeedArgs = {
+  filter?: Maybe<PostFilterInput>;
 };
 
 export type UserFilterInput = {
@@ -310,8 +369,38 @@ export type UserInput = {
 };
 export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
   Language,
-  "id" | "languageCode" | "name" | "nativeName"
+  | "id"
+  | "languageCode"
+  | "name"
+  | "nativeName"
+  | "hasConverter"
+  | "requiresIME"
+  | "hasPronunciation"
 >;
+
+export type ShallowPostFieldsFragment = { __typename?: "Post" } & Pick<
+  Post,
+  "id" | "createdAt" | "type" | "content"
+> & { by: { __typename?: "User" } & Pick<User, "id" | "username" | "picture"> };
+
+export type AddPostMutationVariables = {
+  input: PostInput;
+  filter?: Maybe<PostFilterInput>;
+};
+
+export type AddPostMutation = { __typename?: "Mutation" } & {
+  createPost: Maybe<
+    Array<
+      Maybe<
+        { __typename?: "Post" } & {
+          originalPost: Maybe<
+            { __typename?: "Post" } & ShallowPostFieldsFragment
+          >;
+        } & ShallowPostFieldsFragment
+      >
+    >
+  >;
+};
 
 export type AddCardMutationVariables = {
   card: CardInput;
@@ -423,6 +512,21 @@ export type UpdateDeckMutationVariables = {
 export type UpdateDeckMutation = { __typename?: "Mutation" } & {
   updateDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "name">>;
 };
+
+export type DeletePostMutationVariables = {
+  id: Scalars["ID"];
+};
+
+export type DeletePostMutation = { __typename?: "Mutation" } & {
+  deletePost: Maybe<Array<Maybe<{ __typename?: "Post" } & Pick<Post, "id">>>>;
+};
+
+export type UpdateNowMutationVariables = {};
+
+export type UpdateNowMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "updateNow"
+>;
 
 export type AddLanguageToUserMutationVariables = {
   userId: Scalars["ID"];
@@ -549,6 +653,10 @@ export type CurrentUserIdQuery = { __typename?: "Query" } & Pick<
   "currentUserID"
 >;
 
+export type NowQueryVariables = {};
+
+export type NowQuery = { __typename?: "Query" } & Pick<Query, "now">;
+
 export type ProfileQueryVariables = {
   id?: Maybe<Scalars["ID"]>;
 };
@@ -564,7 +672,31 @@ export type ProfileQuery = { __typename?: "Query" } & {
       | "picture"
       | "introStep"
       | "isSocial"
+      | "badges"
     >
+  >;
+};
+
+export type FeedQueryVariables = {
+  userId: Scalars["ID"];
+  filter?: Maybe<PostFilterInput>;
+};
+
+export type FeedQuery = { __typename?: "Query" } & {
+  user: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        feed: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Post" } & {
+                originalPost: Maybe<
+                  { __typename?: "Post" } & ShallowPostFieldsFragment
+                >;
+              } & ShallowPostFieldsFragment
+            >
+          >
+        >;
+      }
   >;
 };
 
@@ -615,7 +747,15 @@ export type LessonsQuery = { __typename?: "Query" } & {
                   card: { __typename?: "Card" } & Pick<
                     Card,
                     "id" | "meaning" | "pronunciation" | "translation"
-                  >;
+                  > & {
+                      deck: Maybe<
+                        { __typename?: "Deck" } & {
+                          language: {
+                            __typename?: "Language";
+                          } & LanguageFieldsFragment;
+                        }
+                      >;
+                    };
                 }
             >
           >
@@ -656,12 +796,20 @@ export type ReviewsQuery = { __typename?: "Query" } & {
             Maybe<
               { __typename?: "Review" } & Pick<
                 Review,
-                "id" | "box" | "correct" | "reviewedFields"
+                "id" | "box" | "correct" | "reviewedFields" | "nextReviewAt"
               > & {
                   card: { __typename?: "Card" } & Pick<
                     Card,
                     "id" | "meaning" | "pronunciation" | "translation"
-                  >;
+                  > & {
+                      deck: Maybe<
+                        { __typename?: "Deck" } & {
+                          language: {
+                            __typename?: "Language";
+                          } & LanguageFieldsFragment;
+                        }
+                      >;
+                    };
                 }
             >
           >
@@ -697,7 +845,12 @@ export type DeckDetailsQueryVariables = {
 };
 
 export type DeckDetailsQuery = { __typename?: "Query" } & {
-  deck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "name">>;
+  deck: Maybe<
+    { __typename?: "Deck" } & Pick<Deck, "id" | "name"> & {
+        language: { __typename?: "Language" } & LanguageFieldsFragment;
+        nativeLanguage: { __typename?: "Language" } & LanguageFieldsFragment;
+      }
+  >;
 };
 
 export type LessonsCountQueryVariables = {
@@ -783,8 +936,85 @@ export const languageFieldsFragmentDoc = gql`
     languageCode
     name
     nativeName
+    hasConverter
+    requiresIME
+    hasPronunciation
   }
 `;
+export const shallowPostFieldsFragmentDoc = gql`
+  fragment shallowPostFields on Post {
+    id
+    createdAt
+    type
+    by {
+      id
+      username
+      picture
+    }
+    content
+  }
+`;
+export const AddPostDocument = gql`
+  mutation AddPost($input: PostInput!, $filter: PostFilterInput) {
+    createPost(input: $input, filter: $filter) {
+      ...shallowPostFields
+      originalPost {
+        ...shallowPostFields
+      }
+    }
+  }
+  ${shallowPostFieldsFragmentDoc}
+`;
+
+export class AddPostComponent extends React.Component<
+  Partial<ReactApollo.MutationProps<AddPostMutation, AddPostMutationVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<AddPostMutation, AddPostMutationVariables>
+        mutation={AddPostDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type AddPostProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddPostMutation, AddPostMutationVariables>
+> &
+  TChildProps;
+export type AddPostMutationFn = ReactApollo.MutationFn<
+  AddPostMutation,
+  AddPostMutationVariables
+>;
+export function withAddPost<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        AddPostMutation,
+        AddPostMutationVariables,
+        AddPostProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddPostMutation,
+    AddPostMutationVariables,
+    AddPostProps<TChildProps>
+  >(AddPostDocument, operationOptions);
+}
+
+export function useAddPostMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    AddPostMutation,
+    AddPostMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    AddPostMutation,
+    AddPostMutationVariables
+  >(AddPostDocument, baseOptions);
+}
 export const AddCardDocument = gql`
   mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
     createCard(input: $card) {
@@ -1179,6 +1409,122 @@ export function useUpdateDeckMutation(
     UpdateDeckMutation,
     UpdateDeckMutationVariables
   >(UpdateDeckDocument, baseOptions);
+}
+export const DeletePostDocument = gql`
+  mutation DeletePost($id: ID!) {
+    deletePost(id: $id) {
+      id
+    }
+  }
+`;
+
+export class DeletePostComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<DeletePostMutation, DeletePostMutationVariables>
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<DeletePostMutation, DeletePostMutationVariables>
+        mutation={DeletePostDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type DeletePostProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<DeletePostMutation, DeletePostMutationVariables>
+> &
+  TChildProps;
+export type DeletePostMutationFn = ReactApollo.MutationFn<
+  DeletePostMutation,
+  DeletePostMutationVariables
+>;
+export function withDeletePost<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        DeletePostMutation,
+        DeletePostMutationVariables,
+        DeletePostProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeletePostMutation,
+    DeletePostMutationVariables,
+    DeletePostProps<TChildProps>
+  >(DeletePostDocument, operationOptions);
+}
+
+export function useDeletePostMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeletePostMutation,
+    DeletePostMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    DeletePostMutation,
+    DeletePostMutationVariables
+  >(DeletePostDocument, baseOptions);
+}
+export const UpdateNowDocument = gql`
+  mutation UpdateNow {
+    updateNow @client
+  }
+`;
+
+export class UpdateNowComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<UpdateNowMutation, UpdateNowMutationVariables>
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<UpdateNowMutation, UpdateNowMutationVariables>
+        mutation={UpdateNowDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type UpdateNowProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdateNowMutation, UpdateNowMutationVariables>
+> &
+  TChildProps;
+export type UpdateNowMutationFn = ReactApollo.MutationFn<
+  UpdateNowMutation,
+  UpdateNowMutationVariables
+>;
+export function withUpdateNow<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        UpdateNowMutation,
+        UpdateNowMutationVariables,
+        UpdateNowProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdateNowMutation,
+    UpdateNowMutationVariables,
+    UpdateNowProps<TChildProps>
+  >(UpdateNowDocument, operationOptions);
+}
+
+export function useUpdateNowMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateNowMutation,
+    UpdateNowMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateNowMutation,
+    UpdateNowMutationVariables
+  >(UpdateNowDocument, baseOptions);
 }
 export const AddLanguageToUserDocument = gql`
   mutation AddLanguageToUser($userId: ID!, $languageId: ID!) {
@@ -1662,6 +2008,54 @@ export function useCurrentUserIdQuery(
     CurrentUserIdQueryVariables
   >(CurrentUserIdDocument, baseOptions);
 }
+export const NowDocument = gql`
+  query Now {
+    now @client
+  }
+`;
+
+export class NowComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<NowQuery, NowQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<NowQuery, NowQueryVariables>
+        query={NowDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type NowProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<NowQuery, NowQueryVariables>
+> &
+  TChildProps;
+export function withNow<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        NowQuery,
+        NowQueryVariables,
+        NowProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    NowQuery,
+    NowQueryVariables,
+    NowProps<TChildProps>
+  >(NowDocument, operationOptions);
+}
+
+export function useNowQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<NowQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<NowQuery, NowQueryVariables>(
+    NowDocument,
+    baseOptions
+  );
+}
 export const ProfileDocument = gql`
   query Profile($id: ID) {
     user(id: $id) {
@@ -1672,6 +2066,7 @@ export const ProfileDocument = gql`
       picture
       introStep
       isSocial
+      badges
     }
   }
 `;
@@ -1715,6 +2110,63 @@ export function useProfileQuery(
 ) {
   return ReactApolloHooks.useQuery<ProfileQuery, ProfileQueryVariables>(
     ProfileDocument,
+    baseOptions
+  );
+}
+export const FeedDocument = gql`
+  query Feed($userId: ID!, $filter: PostFilterInput) {
+    user(id: $userId) {
+      id
+      feed(filter: $filter) {
+        ...shallowPostFields
+        originalPost {
+          ...shallowPostFields
+        }
+      }
+    }
+  }
+  ${shallowPostFieldsFragmentDoc}
+`;
+
+export class FeedComponent extends React.Component<
+  Partial<ReactApollo.QueryProps<FeedQuery, FeedQueryVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Query<FeedQuery, FeedQueryVariables>
+        query={FeedDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type FeedProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<FeedQuery, FeedQueryVariables>
+> &
+  TChildProps;
+export function withFeed<TProps, TChildProps = {}>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        FeedQuery,
+        FeedQueryVariables,
+        FeedProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    FeedQuery,
+    FeedQueryVariables,
+    FeedProps<TChildProps>
+  >(FeedDocument, operationOptions);
+}
+
+export function useFeedQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<FeedQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<FeedQuery, FeedQueryVariables>(
+    FeedDocument,
     baseOptions
   );
 }
@@ -1842,11 +2294,17 @@ export const LessonsDocument = gql`
           meaning
           pronunciation
           translation
+          deck {
+            language {
+              ...languageFields
+            }
+          }
         }
         reviewedFields
       }
     }
   }
+  ${languageFieldsFragmentDoc}
 `;
 
 export class LessonsComponent extends React.Component<
@@ -1964,11 +2422,18 @@ export const ReviewsDocument = gql`
           meaning
           pronunciation
           translation
+          deck {
+            language {
+              ...languageFields
+            }
+          }
         }
         reviewedFields
+        nextReviewAt
       }
     }
   }
+  ${languageFieldsFragmentDoc}
 `;
 
 export class ReviewsComponent extends React.Component<
@@ -2075,8 +2540,15 @@ export const DeckDetailsDocument = gql`
     deck(id: $deckID) {
       id
       name
+      language {
+        ...languageFields
+      }
+      nativeLanguage {
+        ...languageFields
+      }
     }
   }
+  ${languageFieldsFragmentDoc}
 `;
 
 export class DeckDetailsComponent extends React.Component<

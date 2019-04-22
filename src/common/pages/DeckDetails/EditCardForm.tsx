@@ -13,15 +13,23 @@ import * as React from "react"
 import {FetchResult} from "react-apollo"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {Card, useAddCardMutation, useUpdateCardMutation} from "../../../generated/graphql"
+import {
+    Card,
+    Language,
+    LessonsCountDocument,
+    useAddCardMutation,
+    useUpdateCardMutation
+} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {useFormState, useToast} from "../../hooks"
+import {useFormState, useID, useToast} from "../../hooks"
 import {Column, SortDirection} from "./DeckDetails"
 
 export interface PropTypes {
     closeDialog: () => void
     card?: Card
     deckId: string
+    language: Language
+    nativeLanguage: Language
     rowsPerPage: number
     page: number
     sortDirection: SortDirection
@@ -41,21 +49,37 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         [theme.breakpoints.up("sm")]: {
             width: 550
         }
+    },
+    useIme: {
+        imeMode: "active",
+        "-webkit-ime-mode": "active",
+        "-moz-ime-mode": "active",
+        "-ms-ime-mode": "active"
+    },
+    disableIme: {
+        imeMode: "inactive",
+        "-webkit-ime-mode": "inactive",
+        "-moz-ime-mode": "inactive",
+        "-ms-ime-mode": "inactive"
     }
 }))
 
-export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sortDirection, sortBy}: PropTypes) => {
+export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sortDirection, sortBy, language, nativeLanguage}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {Toast, openToast} = useToast(`Successfully ${card ? "updated" : "created"} card`)
+    //const langConverter = converter(language.languageCode)
     const {meaning, pronunciation, translation} = useFormState<Form>({
         meaning: oc(card).meaning(""),
         pronunciation: oc(card).pronunciation(""),
         translation: oc(card).translation("")
     })
-    const [meaningRef, pronunciationRef, translationRef]: any[] = [React.createRef(), React.createRef(), React.createRef()]
+    const meaningRef: any = React.createRef()
+    const pronunciationRef: any = React.createRef()
+    const translationRef: any = React.createRef()
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<ApolloError | undefined>(undefined)
+    const userId = useID()
 
     const onSaved = ({errors}: FetchResult<any>) => {
         setSaving(false)
@@ -66,12 +90,12 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
         } else {
             meaning.set("")
             pronunciation.set("")
-            translation.set("")
-            meaningRef.current.focus()
+            translation.set("");
+            (document.querySelector("#meaning") as any).focus()
         }
     }
 
-    const mutateAddCard = useAddCardMutation({
+    const addCardMutate = useAddCardMutation({
         variables: {
             card: {
                 meaning: meaning.value,
@@ -85,16 +109,20 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
                 sortBy,
                 sortDirection
             }
-        }
+        },
+        refetchQueries: [
+            {query: LessonsCountDocument, variables: {userId}}
+        ]
     })
+
     const addCard = () => {
         setSaving(true)
-        mutateAddCard().then(onSaved)
+        addCardMutate().then(onSaved)
     }
 
-    const mutateEditCard = useUpdateCardMutation({
+    const editCardMutate = useUpdateCardMutation({
         variables: {
-            id: card!.id,
+            id: oc(card).id()!,
             card: {
                 meaning: meaning.value,
                 pronunciation: pronunciation.value,
@@ -105,16 +133,17 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
             __typename: "Mutation",
             editCard: {
                 __typename: "Card",
-                id: card!.id,
+                id: oc(card).id()!,
                 meaning: meaning.value,
                 pronunciation: pronunciation.value,
                 translation: translation.value
             }
         }
     })
+
     const editCard = () => {
         setSaving(true)
-        mutateEditCard().then(onSaved)
+        editCardMutate().then(onSaved)
     }
 
     const submit = () => {
@@ -122,10 +151,10 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
         else addCard()
     }
 
-    const onKeyPress = (refToFocus: any) => event => {
+    const onKeyPress = (refToFocus?: string) => event => {
         if(event.key === "Enter") {
             event.preventDefault()
-            refToFocus ? refToFocus.current.focus() : submit()
+            refToFocus ? (document.querySelector(refToFocus)! as any).focus() : submit()
         }
     }
 
@@ -142,18 +171,26 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
                 </DialogContentText>
                 <form className={classes.form}>
                     <TextField label={t("Meaning")} value={meaning.value} onChange={meaning.onChange}
-                               inputProps={{"data-lpignore": true, autoComplete: "off"}} autoFocus
-                               onKeyPress={onKeyPress(pronunciationRef)} inputRef={meaningRef}/>
-                    <TextField label={t("Pronunciation")} value={pronunciation.value} onChange={pronunciation.onChange}
-                               inputProps={{"data-lpignore": true, autoComplete: "off"}}
-                               onKeyPress={onKeyPress(translationRef)} inputRef={pronunciationRef}/>
+                               inputProps={{"data-lpignore": true, autoComplete: "off", id: "meaning"}} autoFocus
+                               onKeyPress={onKeyPress(language.hasPronunciation ? "#pronunciation" : "#translation")} inputRef={meaningRef} type={nativeLanguage.requiresIME ? "text" : "tel"}
+                               className={nativeLanguage.requiresIME ? classes.useIme : classes.disableIme}
+                    />
+                    {language.hasPronunciation && (
+                        <TextField label={t("Pronunciation")} value={pronunciation.value} onChange={pronunciation.onChange}
+                               inputProps={{"data-lpignore": true, autoComplete: "off", id: "pronunciation"}}
+                               onKeyPress={onKeyPress("#translation")} inputRef={pronunciationRef}
+                               type={language.requiresIME ? "text" : "tel"}
+                               className={language.requiresIME ? classes.useIme : classes.disableIme}/>
+                    )}
                     <TextField label={t("Translation")} value={translation.value} onChange={translation.onChange}
-                               inputProps={{"data-lpignore": true, autoComplete: "off"}}
-                               onKeyPress={onKeyPress(null)} inputRef={translationRef}/>
+                               inputProps={{"data-lpignore": true, autoComplete: "off", id: "translation"}}
+                               onKeyPress={onKeyPress(undefined)} inputRef={translationRef}
+                               type={language.requiresIME ? "text" : "tel"}
+                               className={language.requiresIME ? classes.useIme : classes.disableIme}/>
                 </form>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog} color="primary" type="cancel">
+                <Button onClick={closeDialog} color="primary" type="reset">
                     {t("Close")}
                 </Button>
                 <Button onClick={submit} color="primary" disabled={saving} type="submit">
