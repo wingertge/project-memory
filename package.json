@@ -2,6 +2,9 @@
   "name": "project-memory",
   "version": "0.0.1",
   "license": "MIT",
+  "engines": {
+    "node": ">=10.15.1"
+  },
   "scripts": {
     "start": "razzle start",
     "build": "razzle build",
