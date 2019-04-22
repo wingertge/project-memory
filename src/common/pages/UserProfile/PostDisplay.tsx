@@ -18,6 +18,7 @@ import breaks from "remark-breaks"
 interface PropTypes {
     post: Post
     isOwn?: boolean
+    onRepostClick: (post: Post) => void
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const PostDisplay = ({post, isOwn}: PropTypes) => {
+export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const isLiked = false
@@ -98,7 +99,7 @@ export const PostDisplay = ({post, isOwn}: PropTypes) => {
                 {!isOwn && (
                     <div className={classes.actions}>
                         {post.type !== "repost" && (
-                            <IconButton title={t("Repost")} className={classes.actionButton}>
+                            <IconButton title={t("Repost")} className={classes.actionButton} onClick={() => onRepostClick(post)}>
                                 <Repeat className={classes.actionIcon} />
                             </IconButton>
                         )}

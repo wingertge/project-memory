@@ -1,7 +1,8 @@
-import {Avatar, Card, CircularProgress, Hidden, IconButton, makeStyles, Theme, Typography} from "@material-ui/core"
+import {Avatar, Card, Hidden, IconButton, makeStyles, Theme, Typography} from "@material-ui/core"
 import {Favorite, PersonAdd, ThumbUp} from "@material-ui/icons"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
 
 interface PropTypes {
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     avatar: {
         width: 160,
         height: 160,
-        marginRight: theme.spacing(4),
+        marginRight: theme.spacing(2),
         [theme.breakpoints.down("xs")]: {
             width: 120,
             height: 120,
@@ -22,7 +23,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     card: {
         display: "flex",
         width: "100%",
-        maxWidth: 600,
         alignItems: "center",
         justifyContent: "flex-start",
         borderRadius: 80,
@@ -70,7 +70,7 @@ export const UserSummary = ({userId}: PropTypes) => {
     const {t} = useTranslation()
     const user = useUser(userId)
 
-    if(!user) return <CircularProgress />
+    if(!user) return <TimedCircularProgress />
 
     return (
         <Card className={classes.card}>

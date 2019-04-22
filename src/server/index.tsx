@@ -41,7 +41,9 @@ initI18n(() => {
             const __auth__ = req.signedCookies.__auth__
             const decoded = __auth__ && jwt.decode(__auth__)
             const id = decoded && decoded[`${process.env.REACT_APP_OAUTH_NAMESPACE}/id`] || "none"
-            let apollo = createApollo({auth: __auth__, id})
+            // tslint:disable-next-line:no-string-literal
+            const expiresAt = decoded && new Date(decoded["exp"] * 1000) || undefined
+            let apollo = createApollo({auth: __auth__, id, loginExpiry: expiresAt})
 
             apollo = await handleCallback(routeParams[0], req, res, apollo)
 

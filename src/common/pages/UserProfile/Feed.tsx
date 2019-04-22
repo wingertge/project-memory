@@ -1,4 +1,4 @@
-import {Button, CircularProgress, Divider, Grow, List, ListItem, TextField, Theme, Typography} from "@material-ui/core"
+import {Button, Divider, Grow, List, ListItem, TextField, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
@@ -6,6 +6,7 @@ import {oc} from "ts-optchain"
 import {FeedDocument, Post, useAddPostMutation, useFeedQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Heading from "../../components/common/Heading"
+import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser, useValidatedFormState} from "../../hooks"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import PostDisplay from "./PostDisplay"
@@ -79,6 +80,19 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
         newPostContent.set("")
     }
 
+    const repostMutate = useAddPostMutation()
+
+    const repost = (post: Post) => {
+        repostMutate({
+            variables: {
+                input: {
+                    type: "repost",
+                    originalPost: post.id
+                }
+            }
+        })
+    }
+
     const keyHandler = event => {
         if(event.key === "Enter" && event.shiftKey) {
             event.preventDefault()
@@ -87,7 +101,7 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
     }
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <CircularProgress />
+    if(loading) return <TimedCircularProgress />
 
     return (
         <div className={classes.feed}>
@@ -108,7 +122,7 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
                 {feed.map((post, i) => (
                     <ListItem key={post.id} disableGutters>
                         <div style={{width: "100%"}}>
-                            <PostDisplay post={post} isOwn={isOwn} />
+                            <PostDisplay post={post} isOwn={isOwn} onRepostClick={repost} />
                             {i < feed.length - 1 && <Divider />}
                         </div>
                     </ListItem>

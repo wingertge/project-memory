@@ -20,7 +20,8 @@ export const handleCallback = async (basePath: string, req, res, apollo: Apollo)
             // tslint:disable-next-line:no-console
             console.log("id: " + id)
             const {cache, errorLink, retryLink} = apollo
-            newApollo = createApollo({auth: token, id, cache, errorLink, retryLink})
+            const loginExpiry = new Date(new Date().getTime() + authResult.data.authenticate.expiresIn * 1000)
+            newApollo = createApollo({auth: token, id, loginExpiry, cache, errorLink, retryLink})
             res.cookie("__auth__", token, {...authCookieOptions, maxAge: authResult.data.authenticate.expiresIn * 1000})
         }
     }

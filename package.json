@@ -7,6 +7,7 @@
     "build": "razzle build",
     "test": "razzle test --env=jsdom",
     "start:prod": "SET \"NODE_ENV=production\" & node build/server.js",
+    "start:heroku": "node build/server.js",
     "schema:generate": "graphql-codegen --config codegen.yml",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"

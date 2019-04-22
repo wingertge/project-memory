@@ -19,11 +19,12 @@ const initHttpLink = auth => createHttpLink({
     }
 })
 
-const initCache = (cache: InMemoryCache, id?: string) => {
+const initCache = (cache: InMemoryCache, id?: string, loginExpiry?: Date) => {
     cache.writeData({
         data: {
             currentUserID: id,
-            now: new Date().toISOString()
+            now: new Date().toISOString(),
+            loginExpiresAt: loginExpiry!.toISOString()
         }
     })
     debug(cache.extract())
@@ -47,9 +48,9 @@ export interface Apollo {
     retryLink: ApolloLink
 }
 
-export const createApollo = (parameters: { auth: string, id?: string, cache?: InMemoryCache, errorLink?: ApolloLink, retryLink?: ApolloLink, stateLink?: ApolloLink, httpLink?: ApolloLink }
+export const createApollo = (parameters: { auth: string, id?: string, loginExpiry?: Date, cache?: InMemoryCache, errorLink?: ApolloLink, retryLink?: ApolloLink, stateLink?: ApolloLink, httpLink?: ApolloLink }
 ) => {
-    const {auth, id, cache = new InMemoryCache(), errorLink = initErrorLink(), retryLink = new RetryLink()} = parameters
+    const {auth, id, cache = new InMemoryCache(), errorLink = initErrorLink(), retryLink = new RetryLink(), loginExpiry = new Date()} = parameters
     const {httpLink = initHttpLink(auth)} = parameters
     const link = ApolloLink.from([errorLink, retryLink, httpLink])
     const client = new ApolloClient({
@@ -58,7 +59,7 @@ export const createApollo = (parameters: { auth: string, id?: string, cache?: In
         resolvers: localResolvers,
         typeDefs: localTypeDefs
     })
-    initCache(cache, id)
+    initCache(cache, id, loginExpiry)
 
     return {
         client,

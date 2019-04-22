@@ -13,7 +13,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         flexWrap: "wrap" as "wrap"
     },
     summaryContainer: {
-        padding: theme.spacing(2)
+        padding: theme.spacing(2),
+        width: "100%",
+        maxWidth: 650
     }
 }))
 

@@ -1,6 +1,11 @@
 import React from "react"
-import UserProfile from "./UserProfile/UserProfile"
+import {useID} from "../hooks"
+import DeckList from "./UserProfile/DeckList"
 
-const TestBed = () => <UserProfile />
+const TestBed = () => {
+    const id = useID()
+
+    return <DeckList userId={id} isOwn={true} />
+}
 
 export default TestBed
