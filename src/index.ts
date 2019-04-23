@@ -21,7 +21,7 @@ if (module.hot) {
     console.info("✅  Server-side HMR Enabled!")
 }
 
-const port = 8081
+const port = process.env.PORT || 8081
 console.log(process.env.PORT)
 
 // noinspection TypeScriptValidateJSTypes
