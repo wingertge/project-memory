@@ -23,6 +23,8 @@ import jwt from "jsonwebtoken"
 import proc from "./env"
 
 const server = express()
+// tslint:disable-next-line:no-console
+console.log(process.env.RAZZLE_PUBLIC_DIR)
 
 initI18n(() => {
     server
