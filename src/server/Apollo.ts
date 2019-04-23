@@ -8,6 +8,8 @@ import fetch from "node-fetch"
 import localResolvers from "../common/localResolvers"
 import localTypeDefs from "../common/localTypeDefs"
 
+import process from "./env"
+
 // tslint:disable-next-line:no-var-requires
 const debug = require("debug")("Apollo")
 

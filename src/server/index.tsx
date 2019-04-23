@@ -20,7 +20,7 @@ import {appSrc, initI18n, preloadI18n} from "./i18n"
 import {Layout} from "./Layout"
 import {getBundleScripts} from "./ReactLoadable"
 import jwt from "jsonwebtoken"
-
+import proc from "./env"
 
 const server = express()
 
@@ -29,7 +29,7 @@ initI18n(() => {
         .disable("x-powered-by")
         .use("/locales", express.static(`${appSrc}/locales`))
         .use(express.static(process.env.RAZZLE_PUBLIC_DIR!))
-        .use(cookieParser(process.env.COOKIE_SECRET))
+        .use(cookieParser(proc.env.COOKIE_SECRET))
         .use(morgan("tiny"))
         .use(I18NextMiddleware.handle(i18n, {removeLngFromUrl: false}))
         .post("/locales/add/:lng/:ns", I18NextMiddleware.missingKeyHandler(i18n))
@@ -40,7 +40,7 @@ initI18n(() => {
 
             const __auth__ = req.signedCookies.__auth__
             const decoded = __auth__ && jwt.decode(__auth__)
-            const id = decoded && decoded[`${process.env.REACT_APP_OAUTH_NAMESPACE}/id`] || "none"
+            const id = decoded && decoded[`${proc.env.REACT_APP_OAUTH_NAMESPACE}/id`] || "none"
             // tslint:disable-next-line:no-string-literal
             const expiresAt = decoded && new Date(decoded["exp"] * 1000) || undefined
             let apollo = createApollo({auth: __auth__, id, loginExpiry: expiresAt})
