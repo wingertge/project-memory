@@ -4,8 +4,8 @@
 import express from "express"
 import Loadable from "react-loadable"
 
-import dotenv from "dotenv"
-dotenv.config()
+/*import dotenv from "dotenv"
+dotenv.config()*/
 
 let app = require("./server").default
 
