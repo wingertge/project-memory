@@ -2,7 +2,7 @@ import {InMemoryCache, NormalizedCacheObject} from "apollo-cache-inmemory"
 import {ApolloClient} from "apollo-client"
 import {ApolloLink} from "apollo-link"
 import {onError} from "apollo-link-error"
-import {createHttpLink} from "apollo-link-http"
+import {BatchHttpLink} from "apollo-link-batch-http"
 import {RetryLink} from "apollo-link-retry"
 import fetch from "node-fetch"
 import localResolvers from "../common/localResolvers"
@@ -11,7 +11,7 @@ import localTypeDefs from "../common/localTypeDefs"
 // tslint:disable-next-line:no-var-requires
 const debug = require("debug")("Apollo")
 
-const initHttpLink = auth => createHttpLink({
+const initHttpLink = auth => new BatchHttpLink({
     uri: process.env.REACT_APP_API_ENDPOINT,
     fetch,
     headers: auth && {

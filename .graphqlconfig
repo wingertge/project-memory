@@ -3,7 +3,7 @@
   "extensions": {
     "endpoints": {
       "Default Introspection Endpoint": {
-        "url": "http://localhost:4000",
+        "url": "https://api.project-memory.org",
         "introspect": true,
         "headers": {
           "user-agent": "JS GraphQL"
