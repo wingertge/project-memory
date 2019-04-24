@@ -29,7 +29,7 @@ export const ConfirmUsernameStep = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
-    const {username} = useFormState<Form>({username: oc(user).username()})
+    const {username} = useFormState<Form>({username: oc(user).username("")})
     const save = useUpdateProfileMutation({
         variables: {
             id: user && user.id,
