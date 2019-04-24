@@ -1,9 +1,10 @@
 import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
-import {Theme, Chip, Avatar} from "@material-ui/core"
+import {Theme, Chip} from "@material-ui/core"
 import * as PropTypes from "prop-types"
 import {useTranslation} from "react-i18next"
 import {Language} from "../../../generated/graphql"
+import LanguageIcon from "../common/LanguageIcon"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     languageName: {
@@ -28,13 +29,14 @@ interface PropTypes {
     onDelete?: () => void
 }
 
-export const LanguageDisplay = ({language: {name, nativeName, languageCode}, onDelete}: PropTypes) => {
+export const LanguageDisplay = ({language, onDelete}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
+    const {name, nativeName} = language
 
     return (
         <Chip
-            avatar={<Avatar src={`/static/media/flags/${languageCode}.png`} alt={languageCode}/>}
+            avatar={<LanguageIcon language={language} />}
             label={`${t(name)} (${nativeName})`}
             onDelete={onDelete}
             className={classes.chip}

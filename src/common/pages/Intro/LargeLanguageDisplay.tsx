@@ -3,6 +3,7 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {Language} from "../../../generated/graphql"
+import LanguageIcon from "../../components/common/LanguageIcon"
 
 interface PropTypes {
     language?: Language
@@ -49,8 +50,7 @@ export const LargeLanguageDisplay = ({language}: PropTypes) => {
             {language && (
                 <Zoom in={true} timeout={300}>
                     <div className={classes.container}>
-                        <Avatar src={`/static/media/flags/${language.languageCode}.png`}
-                                className={classes.languageIcon}/>
+                        <LanguageIcon language={language} className={classes.languageIcon}/>
                         <Typography variant="body1" className={classes.languageName}>
                             {`${t(language.name)} (${language.nativeName})`}
                         </Typography>

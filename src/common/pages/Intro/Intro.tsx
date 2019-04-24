@@ -2,6 +2,7 @@ import {Hidden, MobileStepper, Slide, Step, StepLabel, Stepper, Theme} from "@ma
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {Redirect} from "react-router"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
 import ConfirmUsernameStep from "./ConfirmUsernameStep"
@@ -52,6 +53,7 @@ export const Intro = () => {
                     {introStep === 2 && <FirstDeckStep/>}
                     {introStep === 3 && <ConfirmUsernameStep/>}
                     {introStep === 4 && <FinishedStep/>}
+                    {introStep === -1 && <Redirect to="/" />}
                 </div>
             </Slide>
             <Hidden smUp implementation="css">

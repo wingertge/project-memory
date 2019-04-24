@@ -4,7 +4,8 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
-import {useFormState, useUser} from "../../hooks"
+import {useUser, useValidatedFormState} from "../../hooks"
+import {usernameValidator} from "../../util/validators"
 
 interface Form {
     username: string
@@ -29,7 +30,7 @@ export const ConfirmUsernameStep = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
-    const {username} = useFormState<Form>({username: oc(user).username("")})
+    const {username} = useValidatedFormState<Form>({username: oc(user).username("")}, {username: usernameValidator})
     const save = useUpdateProfileMutation({
         variables: {
             id: user && user.id,

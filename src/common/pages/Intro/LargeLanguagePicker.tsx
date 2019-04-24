@@ -1,5 +1,4 @@
 import {
-    Avatar,
     CircularProgress,
     IconButton,
     Theme,
@@ -11,6 +10,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {Language, useLanguagesQuery, useUserLanguagesQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import LanguageIcon from "../../components/common/LanguageIcon"
 import {useID} from "../../hooks"
 
 interface PropTypes {
@@ -55,8 +55,7 @@ export const LargeLanguagePicker = ({updateLanguage, exclusive}: PropTypes) => {
             {languages && languages.map(language => (
                 <Tooltip title={`${t(language.name)} (${language.nativeName})`} key={language.id}>
                     <IconButton className={classes.languageButton} onClick={() => updateLanguage(language)}>
-                        <Avatar src={`/static/media/flags/${language.languageCode}.png`}
-                                className={classes.languageIcon}/>
+                        <LanguageIcon language={language} className={classes.languageIcon}/>
                     </IconButton>
                 </Tooltip>
             ))}

@@ -7,7 +7,8 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useToast, useUser, useValidatedFormState, ValidatorMap} from "../../hooks"
-import {isEmail, longerThan, noInvalidCharacters, notEmpty, shorterThan} from "../../util/validationUtils"
+import {isEmail, notEmpty} from "../../util/validationUtils"
+import {usernameValidator} from "../../util/validators"
 import ApolloErrorBox from "../common/ApolloErrorBox"
 import Heading from "../common/Heading"
 import PasswordChangeDialog from "./PasswordChangeDialog"
@@ -62,12 +63,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }))
 
 const validators: ValidatorMap<Form> = {
-    username: [
-        {fun: notEmpty, message: "Username can't be empty"},
-        {fun: noInvalidCharacters(), message: "Please don't use unicode characters that break display. Thank you."},
-        {fun: longerThan(2), message: "Must be at least 3 characters long"},
-        {fun: shorterThan(25), message: "Must be 18 characters or less"}
-    ],
+    username: usernameValidator,
     name: [
         {fun: notEmpty, message: "Name can't be empty"}
     ],

@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Grid,
     IconButton,
     Theme,
@@ -19,6 +18,7 @@ import {
 } from "../../../../generated/graphql"
 import DeckImg from "../../../assets/deck.png"
 import {useID} from "../../../hooks"
+import LanguageIcon from "../../common/LanguageIcon"
 
 interface PropTypes {
     owned: boolean
@@ -123,7 +123,7 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
         <Tooltip title={`${name} (${t(language.name)})`}>
             <Grid container direction="column" className={classes.deck}>
                 <Grid item className={classes.deckActions}>
-                    <Avatar src={`/static/media/flags/${language.languageCode}.png`} className={classes.languageIcon}/>
+                    <LanguageIcon language={language} className={classes.languageIcon} />
                     <div className={classes.spacer}/>
                     <IconButton className={classes.deckActionButton}
                                 onClick={owned ? onEditClicked! : onFavoriteClicked}>
