@@ -2,6 +2,7 @@ import {Button, Grid, TextField, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useFormState, useUser} from "../../hooks"
 
@@ -28,10 +29,10 @@ export const ConfirmUsernameStep = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
-    const {username} = useFormState<Form>({username: user.username})
+    const {username} = useFormState<Form>({username: oc(user).username()})
     const save = useUpdateProfileMutation({
         variables: {
-            id: user.id,
+            id: user && user.id,
             profile: {
                 username: username.value,
                 introStep: 4

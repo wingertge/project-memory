@@ -5,6 +5,7 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {Language, useUpdateProfileMutation} from "../../../generated/graphql"
+import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
 import LargeLanguageDisplay from "./LargeLanguageDisplay"
 import LargeLanguagePicker from "./LargeLanguagePicker"
@@ -25,11 +26,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export const NativeLanguageStep = () => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {id, username} = useUser()
+    const user = useUser()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
     const updateProfile = useUpdateProfileMutation({
         variables: {
-            id,
+            id: oc(user).id(""),
             profile: {
                 nativeLanguage: oc(language).id(""),
                 introStep: 1
@@ -41,11 +42,13 @@ export const NativeLanguageStep = () => {
         setTimeout(updateProfile, 800)
     }
 
+    if(!user) return <TimedCircularProgress />
+
     return (
         <>
             <div className={classes.titleContainer}>
                 <Typography variant="h6">
-                    {t("Hello, {{username}}! Welcome to Project Memory (dun dun dun). How about you pick your native language to start with?", {username})}
+                    {t("Hello, {{username}}! Welcome to Project Memory (dun dun dun). How about you pick your native language to start with?", {username: user.username})}
                 </Typography>
                 <div className={classes.spacer}/>
                 <LargeLanguageDisplay language={language}/>

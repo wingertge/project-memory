@@ -2,6 +2,7 @@ import {Button, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useUser} from "../../hooks"
@@ -19,7 +20,7 @@ export const FinishedStep = () => {
     const {history} = useRouter()
     const mutate = useUpdateProfileMutation({
         variables: {
-            id: user.id,
+            id: oc(user).id(""),
             profile: {
                 introStep: -1
             }
