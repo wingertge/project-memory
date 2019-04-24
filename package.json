@@ -12,11 +12,11 @@
     "build": "razzle build",
     "test": "razzle test --env=jsdom",
     "start:prod": "SET \"NODE_ENV=production\" & node build/server.js",
-    "start:heroku": "node build/server.js",
+    "start:heroku": "NODE_ENV=production node build/server.js",
     "schema:generate": "graphql-codegen --config codegen.yml",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "prestart:heroku": "yarn build"
+    "heroku-postbuild": "yarn run build"
   },
   "dependencies": {
     "@material-ui/core": "^4.0.0-alpha.8",
@@ -53,6 +53,7 @@
     "node-fetch": "^2.3.0",
     "password-sheriff": "^1.1.0",
     "qs": "^6.6.0",
+    "razzle-heroku": "^3.0.0",
     "react": "^16.8.3",
     "react-apollo": "^2.5.2",
     "react-apollo-hooks": "^0.4.5",
