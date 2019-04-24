@@ -2,6 +2,7 @@ import {Hidden, MobileStepper, Slide, Step, StepLabel, Stepper, Theme} from "@ma
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
 import ConfirmUsernameStep from "./ConfirmUsernameStep"
 import FinishedStep from "./FinishedStep"
@@ -28,7 +29,10 @@ const stepsLabels = ["Native language", "Learning language", "First Deck", "Chec
 export const Intro = () => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {introStep = 0} = useUser()
+    const user = useUser()
+
+    if(!user) return <TimedCircularProgress />
+    const introStep = user.introStep || 0
 
     return (
         <div className={classes.root}>
