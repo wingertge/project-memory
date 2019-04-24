@@ -55,7 +55,8 @@ export const LanguageSettings = () => {
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
     const languages = oc(data).user.languages([]) as Language[]
 
-    const removeLanguage = (language: Language) => useRemoveLanguageFromUserMutation({
+    const removeLanguageMutate = useRemoveLanguageFromUserMutation()
+    const removeLanguage = (language: Language) => removeLanguageMutate({
         variables: {userId: id, languageId: language.id},
         optimisticResponse: {
             __typename: "Mutation",
