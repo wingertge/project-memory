@@ -52,17 +52,18 @@ export const FirstDeckStep = () => {
     const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
 
     const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
-    const addDeck = () => useAddDeckMutation({
+    const addDeckMutation = useAddDeckMutation({
         variables: {
             input: {
                 name: name.value,
                 language: language.value,
-                nativeLanguage: nativeLanguage.id,
+                nativeLanguage: nativeLanguage && nativeLanguage.id,
                 owner: id,
                 cards: []
             }
         }
-    })().then(updateProfile)
+    })
+    const addDeck = () => addDeckMutation().then(updateProfile)
 
     if(error) return <ApolloErrorBox error={error} />
     if(loading) return null
