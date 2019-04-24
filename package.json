@@ -15,7 +15,8 @@
     "start:heroku": "node build/server.js",
     "schema:generate": "graphql-codegen --config codegen.yml",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "prestart:heroku": "npm run build"
   },
   "dependencies": {
     "@material-ui/core": "^4.0.0-alpha.8",
@@ -109,8 +110,8 @@
     "jest-enzyme": "^7.0.2",
     "jest-haste-map": "^24.5.0",
     "jest-resolve": "^24.5.0",
-    "razzle": "^3.0.0-alpha.2",
-    "razzle-plugin-typescript": "^3.0.0-alpha.2",
+    "razzle": "^3.0.0",
+    "razzle-plugin-typescript": "^3.0.0",
     "react-docgen-typescript-loader": "^3.1.0",
     "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.3",
