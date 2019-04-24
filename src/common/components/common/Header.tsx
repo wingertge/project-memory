@@ -65,7 +65,7 @@ export const Header = () => {
         ssr: false
     })
 
-    const pendingReviews = oc(reviewsData).user.reviewsCount(0)
+    const pendingReviews = oc(reviewsData).user.reviewsCount() || undefined
 
     const openSettings = () => {
         closeMenu()
