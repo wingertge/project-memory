@@ -16,7 +16,7 @@
     "schema:generate": "graphql-codegen --config codegen.yml",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "prestart:heroku": "yarn build"
+    "prestart:heroku": "yarn install & yarn build"
   },
   "dependencies": {
     "@material-ui/core": "^4.0.0-alpha.8",
