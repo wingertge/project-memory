@@ -40,6 +40,7 @@ module.exports = {
     modify: (config, {target, dev}, webpack) => {
         const newConfig = {
             ...config,
+            mode: "development",
             plugins: [
                 new ReactLoadablePlugin({
                     filename: "./build/react-loadable.json"
