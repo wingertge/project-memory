@@ -3,6 +3,7 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import {Language, useAddLanguageToUserMutation, useUpdateProfileMutation} from "../../../generated/graphql"
 import {useID} from "../../hooks"
 import LargeLanguageDisplay from "./LargeLanguageDisplay"
@@ -26,7 +27,7 @@ export const LearningLanguageStep = () => {
     const {t} = useTranslation()
     const id = useID()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
-    const addLanguage = useAddLanguageToUserMutation({variables: {userId: id, languageId: language!.id}})
+    const addLanguage = useAddLanguageToUserMutation({variables: {userId: id, languageId: oc(language).id("")}})
     const updateProfile = useUpdateProfileMutation({
         variables: {
             id,
