@@ -51,22 +51,21 @@ export const FirstDeckStep = () => {
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
     const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
 
+    if(error) return <ApolloErrorBox error={error} />
+    if(loading) return null
+
     const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
-    const addDeckMutate = useAddDeckMutation({
+    const addDeck = () => useAddDeckMutation({
         variables: {
             input: {
                 name: name.value,
                 language: language.value,
-                nativeLanguage: oc(nativeLanguage).id(),
+                nativeLanguage: nativeLanguage.id,
                 owner: id,
                 cards: []
             }
         }
-    })
-    const addDeck = () => addDeckMutate().then(updateProfile)
-
-    if(error) return <ApolloErrorBox error={error} />
-    if(loading) return null
+    })().then(updateProfile)
 
     return (
         <Grid container direction="column">
