@@ -10,10 +10,11 @@
         }
       },
       "Default (http://localhost:8080/graphql)": {
-        "url": "http://localhost:8080/graphql",
+        "url": "http://localhost:4000",
         "headers": {
           "user-agent": "JS GraphQL"
-        }
+        },
+        "introspect": true
       }
     }
   }

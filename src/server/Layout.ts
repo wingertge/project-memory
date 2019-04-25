@@ -1,6 +1,5 @@
 import reactHelmet from "react-helmet"
 import serialize from "serialize-javascript"
-import proc from "./env"
 
 // tslint:disable-next-line:no-var-requires
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST!)
@@ -34,7 +33,7 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
             ${assets.client.css
         ? `<link rel="stylesheet" href="${assets.client.css}">`
         : ""}
-              ${proc.env.NODE_ENV === "production"
+              ${process.env.NODE_ENV === "production"
         ? `<script src="${assets.client.js}" defer></script>`
         : `<script src="${assets.client.js}" defer crossorigin></script>`}
           <style id="jss-server-side">${css}</style>
@@ -46,12 +45,12 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
               window.__AUTH__ = "${authToken}"
               window.__PRELOADED_I18N__ = ${serialize(i18Store)}
               window.__INITIAL_LANG__ = "${lang}"
-              window.__REACT_APP_API_ENDPOINT__ = "${proc.env.REACT_APP_API_ENDPOINT}"
-              window.__REACT_APP_AUTH0_LOGOUT_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_LOGOUT_CALLBACK}"
-              window.__REACT_APP_AUTH0_DOMAIN__ = "${proc.env.REACT_APP_AUTH0_DOMAIN}"
-              window.__REACT_APP_AUTH0_CLIENT_ID__ = "${proc.env.REACT_APP_AUTH0_CLIENT_ID}"
-              window.__REACT_APP_AUTH0_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_CALLBACK}"
-              window.__REACT_APP_AUTH0_AUDIENCE__ = "${proc.env.REACT_APP_AUTH0_AUDIENCE}"
+              window.__REACT_APP_API_ENDPOINT__ = "${process.env.REACT_APP_API_ENDPOINT}"
+              window.__REACT_APP_AUTH0_LOGOUT_CALLBACK__ = "${process.env.REACT_APP_AUTH0_LOGOUT_CALLBACK}"
+              window.__REACT_APP_AUTH0_DOMAIN__ = "${process.env.REACT_APP_AUTH0_DOMAIN}"
+              window.__REACT_APP_AUTH0_CLIENT_ID__ = "${process.env.REACT_APP_AUTH0_CLIENT_ID}"
+              window.__REACT_APP_AUTH0_CALLBACK__ = "${process.env.REACT_APP_AUTH0_CALLBACK}"
+              window.__REACT_APP_AUTH0_AUDIENCE__ = "${process.env.REACT_APP_AUTH0_AUDIENCE}"
             </script>
             ${bundle}
         </body>

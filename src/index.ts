@@ -7,7 +7,6 @@ import express from "express"
 import Loadable from "react-loadable"
 import dotenv from "dotenv"
 dotenv.config()
-import process from "./server/env"
 
 let app = require("./server").default
 

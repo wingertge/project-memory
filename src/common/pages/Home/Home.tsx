@@ -5,13 +5,20 @@ import {Redirect} from "react-router"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {useLessonsCountQuery} from "../../../generated/graphql"
+import Heading from "../../components/common/Heading"
 import {useUser} from "../../hooks"
+import PopularDecks from "../Intro/PopularDecks"
 import StageCounts from "./StageCounts"
 import UpcomingReviews from "./UpcomingReviews"
 
 const useStyles = makeStyles((theme: Theme) => ({
     lessonsBox: {
         margin: theme.spacing(2)
+    },
+    deckDiscoveryBox: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
     }
 }))
 
@@ -45,6 +52,12 @@ const Home = () => {
             )}
             {user && <UpcomingReviews/>}
             {user && <StageCounts/>}
+            {user && (
+                <div className={classes.deckDiscoveryBox}>
+                    <Heading>{t("Discover more decks")}</Heading>
+                    <PopularDecks exclusive />
+                </div>
+            )}
         </div>
     )
 }

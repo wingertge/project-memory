@@ -15,7 +15,8 @@
     "start:heroku": "NODE_ENV=production node build/server.js",
     "schema:generate": "graphql-codegen --config codegen.yml",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "dev:prod": "razzle build & yarn start:prod"
   },
   "dependencies": {
     "@material-ui/core": "^4.0.0-alpha.8",

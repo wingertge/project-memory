@@ -2,7 +2,6 @@ import {LoginDocument, LoginMutation, LoginMutationVariables} from "../generated
 import {Apollo, createApollo} from "./Apollo"
 import {authCookieOptions} from "./Cookies"
 import jwt from "jsonwebtoken"
-import process from "./env"
 
 export const handleCallback = async (basePath: string, req, res, apollo: Apollo) => {
     let newApollo: Apollo | undefined

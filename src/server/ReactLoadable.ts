@@ -1,7 +1,6 @@
 import {getBundles} from "react-loadable/webpack"
 // @ts-ignore
 import stats from "../../build/react-loadable.json"
-import process from "./env"
 
 export const getBundleScripts = (modules: string[]) => {
     const bundles = getBundles(stats as any, modules)

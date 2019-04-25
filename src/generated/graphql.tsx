@@ -111,7 +111,6 @@ export type Language = {
 export type Mutation = {
   authenticate?: Maybe<AuthResult>;
   logout?: Maybe<Scalars["Boolean"]>;
-  initUser?: Maybe<User>;
   editUser?: Maybe<User>;
   deleteUser?: Maybe<User>;
   addLanguageToUser?: Maybe<User>;
@@ -133,10 +132,6 @@ export type Mutation = {
 
 export type MutationAuthenticateArgs = {
   code: Scalars["ID"];
-};
-
-export type MutationInitUserArgs = {
-  id: Scalars["ID"];
 };
 
 export type MutationEditUserArgs = {
@@ -263,7 +258,7 @@ export type QueryUsersArgs = {
 };
 
 export type QueryUserArgs = {
-  id?: Maybe<Scalars["ID"]>;
+  id: Scalars["ID"];
 };
 
 export type QueryLanguageArgs = {
@@ -666,7 +661,7 @@ export type NowQueryVariables = {};
 export type NowQuery = { __typename?: "Query" } & Pick<Query, "now">;
 
 export type ProfileQueryVariables = {
-  id?: Maybe<Scalars["ID"]>;
+  id: Scalars["ID"];
 };
 
 export type ProfileQuery = { __typename?: "Query" } & {
@@ -1370,7 +1365,7 @@ export function useNowQuery(
   );
 }
 export const ProfileDocument = gql`
-  query Profile($id: ID) {
+  query Profile($id: ID!) {
     user(id: $id) {
       id
       username
