@@ -1,5 +1,5 @@
 import {ApolloError} from "apollo-client"
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import * as React from "react"
 import {oc} from "ts-optchain"
 import {
@@ -74,6 +74,8 @@ export const Reviews = () => {
             setMutationError((errors && errors.length > 0 && errors[0] as any) || undefined)
         })
     }
+
+    useEffect(() => setCurrentReview(randomElement(reviews)), [loading])
 
     if(error) return <ApolloErrorBox error={error} />
     if(loading) return null

@@ -68,6 +68,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     languageIcon: {
         width: 24,
         height: 24
+    },
+    cardCountContainer: {
+        height: "100%",
+        cursor: "pointer"
     }
 }))
 
@@ -118,21 +122,36 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
     onEditClicked = onEditClicked || (() => history.push(`/deck/${id}`))
     onFavoriteClicked = onFavoriteClicked || toggleSubscription
     onLikeClicked = onLikeClicked || toggleLike
+    const favoriteClicked = event => {
+        event.cancelEdit = true
+        onFavoriteClicked!()
+    }
+    const likeClicked = event => {
+        event.cancelEdit = true
+        onLikeClicked!()
+    }
+    const clickEdit = event => {
+        if(event.cancelEdit) {
+            event.cancelEdit = false
+            return
+        }
+        onEditClicked!()
+    }
 
     return (
         <Tooltip title={`${name} (${t(language.name)})`}>
-            <Grid container direction="column" className={classes.deck}>
+            <Grid container direction="column" className={classes.deck} onClick={clickEdit}>
                 <Grid item className={classes.deckActions}>
                     <LanguageIcon language={language} className={classes.languageIcon} />
                     <div className={classes.spacer}/>
                     <IconButton className={classes.deckActionButton}
-                                onClick={owned ? onEditClicked! : onFavoriteClicked}>
+                                onClick={owned ? onEditClicked! : favoriteClicked}>
                         {owned && <Edit/>}
                         {!owned && (subscribed ? <Favorite/> : <FavoriteBorder/>)}
                     </IconButton>
                 </Grid>
                 <Grid item xs>
-                    <Grid container direction="column" alignItems="center" justify="center" style={{height: "100%"}}>
+                    <Grid container direction="column" alignItems="center" justify="center" className={classes.cardCountContainer}>
                         <Grid item>
                             <Typography variant="h4">{cardCount + ""}</Typography>
                         </Grid>
@@ -143,7 +162,7 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
                     <div className={classes.ratingNumber}>
                         <Typography variant="body1">{rating}</Typography>
                     </div>
-                    <IconButton className={classes.deckActionButton} onClick={onLikeClicked}>
+                    <IconButton className={classes.deckActionButton} onClick={likeClicked}>
                         {liked ? <ThumbUp/> : <ThumbUpOutlined/>}
                     </IconButton>
                 </Grid>

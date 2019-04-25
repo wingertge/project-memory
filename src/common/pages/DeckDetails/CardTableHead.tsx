@@ -10,23 +10,26 @@ interface PropTypes {
     rowCount: number
     rows: any[]
     onRequestSort: (event, prop) => void
+    own?: boolean
 }
 
-const CardTableHead = ({onSelectAllClick, onRequestSort, order, orderBy, numSelected, rowCount, rows}: PropTypes) => {
+const CardTableHead = ({onSelectAllClick, onRequestSort, order, orderBy, numSelected, rowCount, rows, own}: PropTypes) => {
     const {t} = useTranslation()
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        indeterminate={(numSelected > 0 && numSelected < rowCount) || rowCount === 0}
-                        checked={numSelected === rowCount && numSelected > 0} onChange={onSelectAllClick}
-                        disabled={rowCount === 0}
-                    />
-                </TableCell>
+                {own && (
+                    <TableCell padding="checkbox">
+                        <Checkbox
+                            indeterminate={(numSelected > 0 && numSelected < rowCount) || rowCount === 0}
+                            checked={numSelected === rowCount && numSelected > 0} onChange={onSelectAllClick}
+                            disabled={rowCount === 0}
+                        />
+                    </TableCell>
+                )}
                 {rows.map(row => (
                     <TableCell key={row.id} align={row.numeric ? "right" : "left"}
-                               padding={row.disablePadding ? "none" : "normal"}
+                               padding={row.disablePadding ? "none" : "default" as any}
                                sortDirection={orderBy === row.id ? order : false}>
                         <Tooltip title={t("Sort")} placement={row.numeric ? "bottom-end" : "bottom-start"}
                                  enterDelay={300}>

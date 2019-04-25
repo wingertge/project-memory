@@ -4,7 +4,7 @@ import {
     Paper,
     Table,
     TableBody,
-    TableCell,
+    TableCell, TableFooter,
     TablePagination,
     TableRow,
     Theme
@@ -23,17 +23,11 @@ import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
 import {Column, SortDirection} from "./DeckDetails"
 
-const rows = [
-    {id: "meaning", numeric: false, disablePadding: true, label: "Meaning"},
-    {id: "pronunciation", numeric: false, disablePadding: true, label: "Pronunciation"},
-    {id: "translation", numeric: false, disablePadding: true, label: "Translation"},
-    {id: "actions", numeric: true, disablePadding: true, label: ""}
-]
-
 interface PropTypes {
     rowsPerPage: number
     setRowsPerPage: Dispatch<SetStateAction<number>>
     deck: Deck
+    own?: boolean
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -46,6 +40,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     tableWrapper: {
         overflowX: "auto",
+    },
+    actions: {
+        width: 1,
+        whiteSpace: "nowrap"
     }
 }))
 
@@ -57,7 +55,7 @@ interface RouteTypes {
 }
 
 const CardTable = (
-    {rowsPerPage, setRowsPerPage, deck}: PropTypes
+    {rowsPerPage, setRowsPerPage, deck, own}: PropTypes
 ) => {
     const classes = useStyles()
     const {t} = useTranslation()
@@ -84,6 +82,7 @@ const CardTable = (
     const cards = oc(data).deck.cards([]).filter(a => !!a) as any
     const cardCount = oc(data).deck.cardCount(0)
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, cardCount - page * rowsPerPage)
+    const hasPronunciation = deck.language.hasPronunciation
 
     const deleteCards = useDeleteCardsMutation({
         variables: {
@@ -145,68 +144,83 @@ const CardTable = (
         }
     }
 
+    let columns = [
+        {id: "meaning", numeric: false, disablePadding: false, label: "Meaning"},
+        {id: "pronunciation", numeric: false, disablePadding: false, label: "Pronunciation"},
+        {id: "translation", numeric: false, disablePadding: false, label: "Translation"},
+        {id: "actions", numeric: true, disablePadding: true, label: ""}
+    ]
+    if(!hasPronunciation) columns = columns.filter(col => col.id !== "pronunciation")
+    if(!own) columns = columns.filter(col => col.id !== "actions")
+
     return (
         <>
             <Dialog />
             <Paper className={classes.root}>
                 <CardTableToolbar numSelected={selected.length} onDeleteClicked={deleteCards}/>
                 <div className={classes.tableWrapper}>
-                    <Table className={classes.table} aria-labelledby="tableTitle">
+                    <Table className={classes.table} aria-labelledby="tableTitle" size="small">
                         <CardTableHead numSelected={selected.length} order={sortDirection || "asc"}
                                        orderBy={sortBy || "meaning"} onSelectAllClick={event => event.target.checked ? setSelected(cards.map(card => card.id)) : setSelected([])}
-                                       onRequestSort={requestSort} rowCount={rowsPerPage - emptyRows} rows={rows}/>
+                                       onRequestSort={requestSort} rowCount={rowsPerPage - emptyRows} rows={columns} own={own}/>
                         <TableBody>
                             {cards.map(card => (
                                 <TableRow hover role="checkbox" aria-checked={false} tabIndex={-1} key={card.id}
                                           selected={false}>
-                                    <TableCell padding="checkbox" onClick={event => onRowClicked(event, card.id)}>
-                                        <Checkbox checked={selected.indexOf(card.id) !== -1}/>
-                                    </TableCell>
-                                    <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
+                                    {own && (
+                                        <TableCell padding="checkbox" onClick={event => onRowClicked(event, card.id)}>
+                                            <Checkbox checked={selected.indexOf(card.id) !== -1}/>
+                                        </TableCell>
+                                    )}
+                                    <TableCell padding={"default" as any} onClick={event => onRowClicked(event, card.id)}>
                                         {card.meaning}
                                     </TableCell>
-                                    <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
-                                        {card.pronunciation}
-                                    </TableCell>
-                                    <TableCell padding="none" onClick={event => onRowClicked(event, card.id)}>
+                                    {hasPronunciation && (
+                                        <TableCell padding={"default" as any} onClick={event => onRowClicked(event, card.id)}>
+                                            {card.pronunciation}
+                                        </TableCell>
+                                    )}
+                                    <TableCell padding={"default" as any} onClick={event => onRowClicked(event, card.id)}>
                                         {card.translation}
                                     </TableCell>
-                                    <TableCell padding="none" align="right">
-                                        <IconButton onClick={() => openDialog({
-                                            deckId: id,
-                                            card,
-                                            language: deck.language,
-                                            nativeLanguage: deck.nativeLanguage,
-                                            rowsPerPage,
-                                            page,
-                                            sortBy,
-                                            sortDirection
-                                        })}>
-                                            <Edit/>
-                                        </IconButton>
-                                    </TableCell>
+                                    {own && (
+                                        <TableCell padding="none" align="right" className={classes.actions}>
+                                            <IconButton onClick={() => openDialog({
+                                                deckId: id,
+                                                card,
+                                                language: deck.language,
+                                                nativeLanguage: deck.nativeLanguage,
+                                                rowsPerPage,
+                                                page,
+                                                sortBy,
+                                                sortDirection
+                                            })}>
+                                                <Edit/>
+                                            </IconButton>
+                                        </TableCell>
+                                    )}
                                 </TableRow>
                             ))}
-                            {emptyRows > 0 && (
-                                <TableRow style={{height: 49 * emptyRows}}>
-                                    <TableCell colSpan={6}/>
-                                </TableRow>
-                            )}
                         </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 30, 50, 100]}
+                                    count={cardCount} rowsPerPage={rowsPerPage} page={page as number}
+                                    backIconButtonProps={{
+                                        "aria-label": t("Previous Page")
+                                    }}
+                                    nextIconButtonProps={{
+                                        "aria-label": t("Next Page")
+                                    }}
+                                    onChangePage={changePage}
+                                    onChangeRowsPerPage={changeRowsPerPage}
+                                    align="right"
+                                />
+                            </TableRow>
+                        </TableFooter>
                     </Table>
                 </div>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 30, 50, 100]}
-                    count={cardCount} rowsPerPage={rowsPerPage} page={page as number}
-                    backIconButtonProps={{
-                        "aria-label": t("Previous Page")
-                    }}
-                    nextIconButtonProps={{
-                        "aria-label": t("Next Page")
-                    }}
-                    onChangePage={changePage}
-                    onChangeRowsPerPage={changeRowsPerPage}
-                />
             </Paper>
         </>
     )

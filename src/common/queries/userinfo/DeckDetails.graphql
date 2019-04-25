@@ -4,5 +4,9 @@ query DeckDetails($deckID: ID!) {
         name
         language {...languageFields}
         nativeLanguage {...languageFields}
+        owner {
+            id
+            username
+        }
     }
 }

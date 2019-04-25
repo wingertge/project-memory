@@ -1,4 +1,6 @@
-type Maybe<T> = T | null;
+import ReactApollo from "react-apollo"
+
+export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -852,6 +854,7 @@ export type DeckDetailsQuery = { __typename?: "Query" } & {
     { __typename?: "Deck" } & Pick<Deck, "id" | "name"> & {
         language: { __typename?: "Language" } & LanguageFieldsFragment;
         nativeLanguage: { __typename?: "Language" } & LanguageFieldsFragment;
+        owner: { __typename?: "User" } & Pick<User, "id" | "username">;
       }
   >;
 };
@@ -931,6 +934,7 @@ export type UserLanguagesQuery = { __typename?: "Query" } & {
 
 import gql from "graphql-tag";
 import * as ReactApolloHooks from "react-apollo-hooks";
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export const languageFieldsFragmentDoc = gql`
   fragment languageFields on Language {
     id
@@ -966,6 +970,10 @@ export const AddPostDocument = gql`
   }
   ${shallowPostFieldsFragmentDoc}
 `;
+export type AddPostMutationFn = ReactApollo.MutationFn<
+  AddPostMutation,
+  AddPostMutationVariables
+>;
 
 export function useAddPostMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -991,6 +999,10 @@ export const AddCardDocument = gql`
     }
   }
 `;
+export type AddCardMutationFn = ReactApollo.MutationFn<
+  AddCardMutation,
+  AddCardMutationVariables
+>;
 
 export function useAddCardMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1023,6 +1035,10 @@ export const AddDeckDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type AddDeckMutationFn = ReactApollo.MutationFn<
+  AddDeckMutation,
+  AddDeckMutationVariables
+>;
 
 export function useAddDeckMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1052,6 +1068,10 @@ export const DeleteCardsDocument = gql`
     }
   }
 `;
+export type DeleteCardsMutationFn = ReactApollo.MutationFn<
+  DeleteCardsMutation,
+  DeleteCardsMutationVariables
+>;
 
 export function useDeleteCardsMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1079,6 +1099,10 @@ export const SubmitReviewDocument = gql`
     }
   }
 `;
+export type SubmitReviewMutationFn = ReactApollo.MutationFn<
+  SubmitReviewMutation,
+  SubmitReviewMutationVariables
+>;
 
 export function useSubmitReviewMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1102,6 +1126,10 @@ export const UpdateCardDocument = gql`
     }
   }
 `;
+export type UpdateCardMutationFn = ReactApollo.MutationFn<
+  UpdateCardMutation,
+  UpdateCardMutationVariables
+>;
 
 export function useUpdateCardMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1122,6 +1150,10 @@ export const UpdateDeckDocument = gql`
     }
   }
 `;
+export type UpdateDeckMutationFn = ReactApollo.MutationFn<
+  UpdateDeckMutation,
+  UpdateDeckMutationVariables
+>;
 
 export function useUpdateDeckMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1141,6 +1173,10 @@ export const DeletePostDocument = gql`
     }
   }
 `;
+export type DeletePostMutationFn = ReactApollo.MutationFn<
+  DeletePostMutation,
+  DeletePostMutationVariables
+>;
 
 export function useDeletePostMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1158,6 +1194,10 @@ export const UpdateNowDocument = gql`
     updateNow @client
   }
 `;
+export type UpdateNowMutationFn = ReactApollo.MutationFn<
+  UpdateNowMutation,
+  UpdateNowMutationVariables
+>;
 
 export function useUpdateNowMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1183,6 +1223,10 @@ export const AddLanguageToUserDocument = gql`
     }
   }
 `;
+export type AddLanguageToUserMutationFn = ReactApollo.MutationFn<
+  AddLanguageToUserMutation,
+  AddLanguageToUserMutationVariables
+>;
 
 export function useAddLanguageToUserMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1204,6 +1248,10 @@ export const ChangeLikeStatusDocument = gql`
     }
   }
 `;
+export type ChangeLikeStatusMutationFn = ReactApollo.MutationFn<
+  ChangeLikeStatusMutation,
+  ChangeLikeStatusMutationVariables
+>;
 
 export function useChangeLikeStatusMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1236,6 +1284,10 @@ export const ChangeSubscriptionStatusDocument = gql`
     }
   }
 `;
+export type ChangeSubscriptionStatusMutationFn = ReactApollo.MutationFn<
+  ChangeSubscriptionStatusMutation,
+  ChangeSubscriptionStatusMutationVariables
+>;
 
 export function useChangeSubscriptionStatusMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1256,6 +1308,10 @@ export const LoginDocument = gql`
     }
   }
 `;
+export type LoginMutationFn = ReactApollo.MutationFn<
+  LoginMutation,
+  LoginMutationVariables
+>;
 
 export function useLoginMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1281,6 +1337,10 @@ export const RemoveLanguageFromUserDocument = gql`
     }
   }
 `;
+export type RemoveLanguageFromUserMutationFn = ReactApollo.MutationFn<
+  RemoveLanguageFromUserMutation,
+  RemoveLanguageFromUserMutationVariables
+>;
 
 export function useRemoveLanguageFromUserMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1310,6 +1370,10 @@ export const UpdateProfileDocument = gql`
     }
   }
 `;
+export type UpdateProfileMutationFn = ReactApollo.MutationFn<
+  UpdateProfileMutation,
+  UpdateProfileMutationVariables
+>;
 
 export function useUpdateProfileMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1581,6 +1645,10 @@ export const DeckDetailsDocument = gql`
       }
       nativeLanguage {
         ...languageFields
+      }
+      owner {
+        id
+        username
       }
     }
   }

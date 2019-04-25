@@ -10,7 +10,7 @@ import {Deck, useDeckDetailsQuery, useUpdateDeckMutation} from "../../../generat
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Heading from "../../components/common/Heading"
 import WithErrorBox from "../../components/common/WithErrorBox"
-import {useDialog, useToast, useValidatedFormState, ValidatorMap} from "../../hooks"
+import {useDialog, useID, useToast, useValidatedFormState, ValidatorMap} from "../../hooks"
 import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
 import CardTable from "./CardTable"
 import EditCardForm from "./EditCardForm"
@@ -54,6 +54,7 @@ export const DeckDetails = () => {
     const {match: {params: {id, page: pageString = "0", sortDirection = "asc", sortBy = "meaning"}}} = useRouter<RouteTypes>()
     const page = parseInt(pageString, 10)
     const {Dialog, openDialog} = useDialog(EditCardForm)
+    const userId = useID()
 
     const {data, loading, error} = useDeckDetailsQuery({
         variables: {
@@ -62,6 +63,7 @@ export const DeckDetails = () => {
     })
 
     const deck = data!.deck as Deck
+    const isOwn = oc(deck).owner.id() === userId
 
     const {name} = useValidatedFormState<Form>({name: oc(deck).name("")}, deckPropsValidators)
 
@@ -101,7 +103,7 @@ export const DeckDetails = () => {
                             sortDirection
                         })}>{t("Add Cards")}</Button>
                     </form>
-                    <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} deck={deck} />
+                    <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} deck={deck} own={isOwn} />
                 </div>
             </WithErrorBox>
         </>

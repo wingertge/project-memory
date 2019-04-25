@@ -111,6 +111,9 @@ export const Header = () => {
                     </IconButton>
                     <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{vertical: "top", horizontal: "right"}}
                           open={!!anchorEl} onClose={closeMenu}>
+                        <Hidden smUp>
+                            <MenuItem onClick={() => history.push("/profile")}>{t("Profile")}</MenuItem>
+                        </Hidden>
                         <MenuItem onClick={openSettings}>{t("Settings")}</MenuItem>
                         <MenuItem onClick={logout}>{t("Sign Out")}</MenuItem>
                     </Menu>

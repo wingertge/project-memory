@@ -73,7 +73,7 @@ export const PopularDecks = ({exclusive}: PropTypes) => {
                 subscribedDecks: isSubscribed({decks: subscribedDecks, id: deck.id}) ? subscribedDecks.filter(d => d.id !== deck.id) : [...subscribedDecks, deck]
             }
         }
-    }).then(updateProfile)
+    }).then(() => {if(!exclusive) updateProfile()})
 
     if(userLangs.error || globalDecks.error || userDecks.error) return <ApolloErrorBox error={userLangs.error || globalDecks.error || userDecks.error!} />
     if(userLangs.loading || globalDecks.loading || userDecks.loading) return <CircularProgress />
