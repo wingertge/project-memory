@@ -8,8 +8,6 @@ import Loadable from "react-loadable"
 import dotenv from "dotenv"
 dotenv.config()
 
-import proc from "./server/env"
-
 let app = require("./server").default
 
 if (module.hot) {
@@ -24,8 +22,8 @@ if (module.hot) {
     console.info("✅  Server-side HMR Enabled!")
 }
 
-const port = proc.env.PORT || 3000
-console.log(proc.env.PORT)
+const port = process.env.PORT || 3000
+console.log(process.env.PORT)
 
 // noinspection TypeScriptValidateJSTypes
 const listen = Loadable.preloadAll().then(() => {

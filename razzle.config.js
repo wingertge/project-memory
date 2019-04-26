@@ -38,7 +38,7 @@ module.exports = {
         }
     }],
     modify: (config, {target, dev}, webpack) => {
-        if(target === "web") {
+        if(target === "web" || process.env.NODE_ENV === "production") {
             const newConfig = {
                 ...config,
                 mode: "development",
