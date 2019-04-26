@@ -9,6 +9,7 @@ import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
 import CardTable from "./CardTable"
 import {DeckEditForm} from "./DeckEditForm"
 import {Column, SortDirection} from "./DeckDetails"
+import DeckProperties from "./DeckProperties"
 
 export type SortDirection = "asc" | "desc"
 export type Column = "meaning" | "pronunciation" | "translation"
@@ -52,7 +53,8 @@ export const DeckDetails = () => {
     return (
         <>
             <div>
-                <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} />
+                {!isOwn && <DeckProperties deck={deck} />}
+                {isOwn && <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} />}
                 <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} deck={deck} own={isOwn} />
             </div>
         </>

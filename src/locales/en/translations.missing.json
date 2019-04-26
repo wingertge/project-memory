@@ -67,5 +67,7 @@
   "Vietnamese": "Vietnamese",
   "Discover more decks": "Discover more decks",
   "Response can't be empty": "Response can't be empty",
-  "Exit": "Exit"
+  "Exit": "Exit",
+  "{{name}} by {{username}}": "{{name}} by {{username}}",
+  "by {{username}}": "by {{username}}"
 }

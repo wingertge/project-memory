@@ -7,7 +7,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** Represents a date in time */
-  Date: Date;
+  Date: any;
   JSON: any;
 };
 

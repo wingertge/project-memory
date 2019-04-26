@@ -51,9 +51,14 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
         openToast()
     })
     const tags = deck.tags
+    const [tagError, setTagError] = useState<string | undefined>(undefined)
 
     const addTagMutate = useAddTagMutation()
     const addTag = (chip: string) => {
+        if(tags.length >= 20) {
+            setTagError("Sorry, only 20 tags per deck")
+            return
+        }
         addTagMutate({
             variables: {deckId: id, tag: chip},
             optimisticResponse: {
@@ -68,6 +73,7 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
 
     const removeTagMutate = useRemoveTagMutation()
     const removeTag = (chip: string) => {
+        setTagError(undefined)
         removeTagMutate({
             variables: {deckId: id, tag: chip},
             optimisticResponse: {
@@ -90,7 +96,10 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
                 </Heading>
                 <form className={classes.form}>
                     <TextField label={t("Deck Name")} value={name.value} onChange={name.onChange} className={classes.textField}/>
-                    <ChipInput label={t("Tags")} value={tags} onAdd={chip => addTag(chip)} onDelete={chip => removeTag(chip)} classes={{}} className={classes.textField} />
+                    <ChipInput label={t("Tags")} value={tags}
+                               onAdd={chip => addTag(chip)} onDelete={chip => removeTag(chip)} classes={{}}
+                               className={classes.textField} error={!!tagError} helperText={t(tagError!)}
+                    />
                     <div className={classes.actions}>
                         <Button onClick={save}>{t("Save")}</Button>
                         <Button onClick={() => openDialog({
