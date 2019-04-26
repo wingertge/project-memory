@@ -27,9 +27,9 @@ export const Settings = () => {
                 <div className={classes.toolbar}/>
             </ResponsiveDrawer>*/}
             <div className={classes.settingsBox}>
-                <ProfileSettings/>
+                <ProfileSettings />
                 <Spacer multiplier={2}/>
-                <DecksOverview/>
+                <DecksOverview />
             </div>
         </div>
     )

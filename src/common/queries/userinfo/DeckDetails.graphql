@@ -8,5 +8,6 @@ query DeckDetails($deckID: ID!) {
             id
             username
         }
+        tags
     }
 }

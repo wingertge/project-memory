@@ -1,4 +1,4 @@
-import {Button, CircularProgress, Grid, Hidden, TextField, Theme} from "@material-ui/core"
+import {Button, Grid, Hidden, TextField, Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {ApolloError} from "apollo-client"
 import {useState} from "react"
@@ -11,6 +11,7 @@ import {isEmail, notEmpty} from "../../util/validationUtils"
 import {usernameValidator} from "../../util/validators"
 import ApolloErrorBox from "../common/ApolloErrorBox"
 import Heading from "../common/Heading"
+import {TimedCircularProgress} from "../common/TimedCircularProgress"
 import PasswordChangeDialog from "./PasswordChangeDialog"
 import ProfilePictureSelector from "./ProfilePictureSelector"
 
@@ -110,7 +111,7 @@ export const ProfileSettingsContent = () => {
         })
     }
 
-    if(!user) return <CircularProgress />
+    if(!user) return <TimedCircularProgress />
 
     return (
         <>
@@ -119,7 +120,7 @@ export const ProfileSettingsContent = () => {
             <PasswordChangeDialog id={user.id} passwordExists={!user.isSocial}
                                   open={passwordChangeOpen}
                                   close={() => setPasswordChangeOpen(false)}/>
-            <Hidden xsDown>
+            <Hidden xsDown implementation="css">
                 <div className={classes.container}>
                     <ProfilePictureSelector/>
                     <Grid container direction="column" justify="space-between" alignItems="stretch"
@@ -173,7 +174,7 @@ export const ProfileSettingsContent = () => {
                     </Grid>
                 </div>
             </Hidden>
-            <Hidden smUp>
+            <Hidden smUp implementation="css">
                 <div className={classes.mobileRoot}>
                     <Heading>{t("Profile")}</Heading>
                     <div className={classes.container}>

@@ -1,0 +1,6 @@
+mutation RemoveTag($deckId: ID!, $tag: String!) {
+    removeTagFromDeck(id: $deckId, tag: $tag) {
+        id
+        tags
+    }
+}

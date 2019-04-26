@@ -5,7 +5,9 @@ import {Redirect} from "react-router"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {useLessonsCountQuery} from "../../../generated/graphql"
+import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Heading from "../../components/common/Heading"
+import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
 import PopularDecks from "../Intro/PopularDecks"
 import StageCounts from "./StageCounts"
@@ -27,7 +29,7 @@ const Home = () => {
     const {t} = useTranslation()
     const {history} = useRouter()
     const user = useUser()
-    const {data} = useLessonsCountQuery({
+    const {data, loading, error} = useLessonsCountQuery({
         skip: !user,
         variables: {
             userId: oc(user).id()!
@@ -36,6 +38,9 @@ const Home = () => {
 
     const lessonsCount = oc(data).user.lessonsCount(0)
     const openLessons = () => history.push("/lessons")
+
+    if(error) return <ApolloErrorBox error={error} />
+    if(loading) return <TimedCircularProgress />
 
     return (
         <div>

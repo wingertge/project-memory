@@ -2,6 +2,7 @@ import {LoginDocument, LoginMutation, LoginMutationVariables} from "../generated
 import {Apollo, createApollo} from "./Apollo"
 import {authCookieOptions} from "./Cookies"
 import jwt from "jsonwebtoken"
+import proc from "./env"
 
 export const handleCallback = async (basePath: string, req, res, apollo: Apollo) => {
     let newApollo: Apollo | undefined
@@ -16,7 +17,7 @@ export const handleCallback = async (basePath: string, req, res, apollo: Apollo)
         if(authResult.data && authResult.data.authenticate) {
             const token = authResult.data.authenticate.accessToken
             const decoded = jwt.decode(token)
-            const id = decoded![`${process.env.REACT_APP_OAUTH_NAMESPACE}/id`]
+            const id = decoded![`${proc.env.REACT_APP_OAUTH_NAMESPACE}/id`]
             // tslint:disable-next-line:no-console
             console.log("id: " + id)
             const {cache, errorLink, retryLink} = apollo

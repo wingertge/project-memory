@@ -9,7 +9,7 @@ import {hydrate} from "react-dom"
 import {I18nextProvider, useSSR} from "react-i18next"
 import {CssBaseline} from "@material-ui/core"
 import theme from "../common/theme"
-import {createHttpLink} from "apollo-link-http"
+import {BatchHttpLink} from "apollo-link-batch-http"
 import {ApolloClient} from "apollo-client"
 import {InMemoryCache} from "apollo-cache-inmemory"
 import {ApolloProvider} from "react-apollo-hooks"
@@ -36,7 +36,7 @@ const MainApp = () => {
 
 const cache = new InMemoryCache().restore(window.__PRELOADED_STATE__ as any)
 
-const httpLink = createHttpLink({
+const httpLink = new BatchHttpLink({
     uri: window.__REACT_APP_API_ENDPOINT__,
     headers: window.__AUTH__ && {
         authorization: `Bearer ${window.__AUTH__}`

@@ -11,7 +11,9 @@ generates:
       - "typescript-react-apollo"
     config:
       withHooks: true
-      withHOC: false
+      withHOC: true
       withComponent: false
       enumsAsTypes: true
-watch: false
+      scalars:
+        Date: Date
+watch: true

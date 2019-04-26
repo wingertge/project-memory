@@ -1,0 +1,6 @@
+mutation AddTag($deckId: ID!, $tag: String!) {
+    addTagToDeck(id: $deckId, tag: $tag) {
+        id
+        tags
+    }
+}

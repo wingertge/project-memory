@@ -7,12 +7,13 @@ import {RetryLink} from "apollo-link-retry"
 import fetch from "node-fetch"
 import localResolvers from "../common/localResolvers"
 import localTypeDefs from "../common/localTypeDefs"
+import proc from "./env"
 
 // tslint:disable-next-line:no-var-requires
 const debug = require("debug")("Apollo")
 
 const initHttpLink = auth => new BatchHttpLink({
-    uri: process.env.REACT_APP_API_ENDPOINT,
+    uri: proc.env.REACT_APP_API_ENDPOINT,
     fetch,
     headers: auth && {
         authorization: `Bearer ${auth}`

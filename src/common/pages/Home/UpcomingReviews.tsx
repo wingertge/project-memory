@@ -1,4 +1,4 @@
-import {Card, CardContent, CircularProgress, Grid, Theme, Typography} from "@material-ui/core"
+import {Card, CardContent, Grid, Theme, Typography} from "@material-ui/core"
 import {AccessTime, Alarm, CalendarToday} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
@@ -75,7 +75,7 @@ export const UpcomingReviews = () => {
     const reviewCountNextDay = oc(reviewCountNextDayData).user.reviewsCount(0)
 
     if(nextReviewError || reviewCountNextHourError || reviewCountNextDayError) return <ApolloErrorBox error={(nextReviewError || reviewCountNextHourError || reviewCountNextDayError)!} />
-    if(nextReviewLoading || reviewCountNextHourLoading || reviewCountNextDayLoading) return <CircularProgress />
+    if(nextReviewLoading || reviewCountNextHourLoading || reviewCountNextDayLoading) return null
 
     return (
         <div className={classes.root}>

@@ -1,4 +1,4 @@
-import {CircularProgress, Theme} from "@material-ui/core"
+import {Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {oc} from "ts-optchain"
@@ -12,6 +12,7 @@ import {
     useChangeSubscriptionStatusMutation
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import DeckDisplay from "../../components/profile/DecksOverview/DeckDisplay"
 import {useID} from "../../hooks"
 import {isSubscribed} from "../../selectors"
@@ -76,7 +77,7 @@ export const PopularDecks = ({exclusive}: PropTypes) => {
     }).then(() => {if(!exclusive) updateProfile()})
 
     if(userLangs.error || globalDecks.error || userDecks.error) return <ApolloErrorBox error={userLangs.error || globalDecks.error || userDecks.error!} />
-    if(userLangs.loading || globalDecks.loading || userDecks.loading) return <CircularProgress />
+    if(userLangs.loading || globalDecks.loading || userDecks.loading) return <TimedCircularProgress />
 
     return (
         <div className={classes.deckContainer}>

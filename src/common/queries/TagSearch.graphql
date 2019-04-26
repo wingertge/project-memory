@@ -1,0 +1,3 @@
+query TagSearch($search: String!, $limit: Int, $offset: Int) {
+    tags(search: $search, limit: $limit, offset: $offset)
+}

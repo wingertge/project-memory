@@ -1,5 +1,3 @@
-import ReactApollo from "react-apollo"
-
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -9,7 +7,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** Represents a date in time */
-  Date: any;
+  Date: Date;
   JSON: any;
 };
 
@@ -58,6 +56,7 @@ export type Deck = {
   subscriberCount: Scalars["Int"];
   rating: Scalars["Int"];
   isLikedBy: Scalars["Boolean"];
+  tags: Array<Scalars["String"]>;
 };
 
 export type DeckCardsArgs = {
@@ -115,13 +114,9 @@ export type Mutation = {
   logout?: Maybe<Scalars["Boolean"]>;
   editUser?: Maybe<User>;
   deleteUser?: Maybe<User>;
+  changeFollowingStatus?: Maybe<User>;
   addLanguageToUser?: Maybe<User>;
   removeLanguageFromUser?: Maybe<User>;
-  addDeck?: Maybe<User>;
-  updateDeck?: Maybe<Deck>;
-  deleteDeck?: Maybe<Deck>;
-  changeSubscriptionStatus?: Maybe<User>;
-  changeLikeStatus?: Maybe<Deck>;
   createCard?: Maybe<Deck>;
   editCard?: Maybe<Card>;
   deleteCards?: Maybe<Deck>;
@@ -129,6 +124,13 @@ export type Mutation = {
   createPost?: Maybe<Array<Maybe<Post>>>;
   editPost?: Maybe<Post>;
   deletePost?: Maybe<Array<Maybe<Post>>>;
+  addDeck?: Maybe<User>;
+  updateDeck?: Maybe<Deck>;
+  deleteDeck?: Maybe<Deck>;
+  changeSubscriptionStatus?: Maybe<User>;
+  changeLikeStatus?: Maybe<Deck>;
+  addTagToDeck?: Maybe<Deck>;
+  removeTagFromDeck?: Maybe<Deck>;
   updateNow: Scalars["ID"];
 };
 
@@ -145,6 +147,12 @@ export type MutationDeleteUserArgs = {
   id: Scalars["ID"];
 };
 
+export type MutationChangeFollowingStatusArgs = {
+  id: Scalars["ID"];
+  followID: Scalars["ID"];
+  value: Scalars["Boolean"];
+};
+
 export type MutationAddLanguageToUserArgs = {
   id: Scalars["ID"];
   input: Scalars["ID"];
@@ -153,31 +161,6 @@ export type MutationAddLanguageToUserArgs = {
 export type MutationRemoveLanguageFromUserArgs = {
   id: Scalars["ID"];
   language: Scalars["ID"];
-};
-
-export type MutationAddDeckArgs = {
-  input: DeckInput;
-};
-
-export type MutationUpdateDeckArgs = {
-  id: Scalars["ID"];
-  input: DeckInput;
-};
-
-export type MutationDeleteDeckArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationChangeSubscriptionStatusArgs = {
-  id: Scalars["ID"];
-  deckID: Scalars["ID"];
-  value: Scalars["Boolean"];
-};
-
-export type MutationChangeLikeStatusArgs = {
-  id: Scalars["ID"];
-  userID: Scalars["ID"];
-  value?: Maybe<Scalars["Boolean"]>;
 };
 
 export type MutationCreateCardArgs = {
@@ -215,6 +198,41 @@ export type MutationDeletePostArgs = {
   filter?: Maybe<PostFilterInput>;
 };
 
+export type MutationAddDeckArgs = {
+  input: DeckInput;
+};
+
+export type MutationUpdateDeckArgs = {
+  id: Scalars["ID"];
+  input: DeckInput;
+};
+
+export type MutationDeleteDeckArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationChangeSubscriptionStatusArgs = {
+  id: Scalars["ID"];
+  deckID: Scalars["ID"];
+  value: Scalars["Boolean"];
+};
+
+export type MutationChangeLikeStatusArgs = {
+  id: Scalars["ID"];
+  userID: Scalars["ID"];
+  value?: Maybe<Scalars["Boolean"]>;
+};
+
+export type MutationAddTagToDeckArgs = {
+  id: Scalars["ID"];
+  tag: Scalars["String"];
+};
+
+export type MutationRemoveTagFromDeckArgs = {
+  id: Scalars["ID"];
+  tag: Scalars["String"];
+};
+
 export type Post = {
   id: Scalars["ID"];
   createdAt: Scalars["Date"];
@@ -249,6 +267,7 @@ export type Query = {
   language?: Maybe<Language>;
   decks?: Maybe<Array<Maybe<Deck>>>;
   deck?: Maybe<Deck>;
+  tags: Array<Scalars["String"]>;
   review?: Maybe<Review>;
   currentUserID: Scalars["ID"];
   loginExpiresAt: Scalars["ID"];
@@ -273,6 +292,12 @@ export type QueryDecksArgs = {
 
 export type QueryDeckArgs = {
   id: Scalars["ID"];
+};
+
+export type QueryTagsArgs = {
+  search: Scalars["String"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
 };
 
 export type QueryReviewArgs = {
@@ -400,6 +425,15 @@ export type AddPostMutation = { __typename?: "Mutation" } & {
   >;
 };
 
+export type AddTagMutationVariables = {
+  deckId: Scalars["ID"];
+  tag: Scalars["String"];
+};
+
+export type AddTagMutation = { __typename?: "Mutation" } & {
+  addTagToDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "tags">>;
+};
+
 export type AddCardMutationVariables = {
   card: CardInput;
   cardFilter?: Maybe<CardFilterInput>;
@@ -517,6 +551,15 @@ export type DeletePostMutationVariables = {
 
 export type DeletePostMutation = { __typename?: "Mutation" } & {
   deletePost: Maybe<Array<Maybe<{ __typename?: "Post" } & Pick<Post, "id">>>>;
+};
+
+export type RemoveTagMutationVariables = {
+  deckId: Scalars["ID"];
+  tag: Scalars["String"];
+};
+
+export type RemoveTagMutation = { __typename?: "Mutation" } & {
+  removeTagFromDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "tags">>;
 };
 
 export type UpdateNowMutationVariables = {};
@@ -823,6 +866,14 @@ export type ReviewsQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type TagSearchQueryVariables = {
+  search: Scalars["String"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+};
+
+export type TagSearchQuery = { __typename?: "Query" } & Pick<Query, "tags">;
+
 export type CardsQueryVariables = {
   deckID: Scalars["ID"];
   filter?: Maybe<CardFilterInput>;
@@ -851,7 +902,7 @@ export type DeckDetailsQueryVariables = {
 
 export type DeckDetailsQuery = { __typename?: "Query" } & {
   deck: Maybe<
-    { __typename?: "Deck" } & Pick<Deck, "id" | "name"> & {
+    { __typename?: "Deck" } & Pick<Deck, "id" | "name" | "tags"> & {
         language: { __typename?: "Language" } & LanguageFieldsFragment;
         nativeLanguage: { __typename?: "Language" } & LanguageFieldsFragment;
         owner: { __typename?: "User" } & Pick<User, "id" | "username">;
@@ -933,6 +984,7 @@ export type UserLanguagesQuery = { __typename?: "Query" } & {
 };
 
 import gql from "graphql-tag";
+import * as ReactApollo from "react-apollo";
 import * as ReactApolloHooks from "react-apollo-hooks";
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export const languageFieldsFragmentDoc = gql`
@@ -974,6 +1026,28 @@ export type AddPostMutationFn = ReactApollo.MutationFn<
   AddPostMutation,
   AddPostMutationVariables
 >;
+export type AddPostProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddPostMutation, AddPostMutationVariables>
+> &
+  TChildProps;
+export function withAddPost<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    AddPostMutation,
+    AddPostMutationVariables,
+    AddPostProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddPostMutation,
+    AddPostMutationVariables,
+    AddPostProps<TChildProps>
+  >(AddPostDocument, {
+    alias: "withAddPost",
+    ...operationOptions
+  });
+}
 
 export function useAddPostMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -985,6 +1059,52 @@ export function useAddPostMutation(
     AddPostMutation,
     AddPostMutationVariables
   >(AddPostDocument, baseOptions);
+}
+export const AddTagDocument = gql`
+  mutation AddTag($deckId: ID!, $tag: String!) {
+    addTagToDeck(id: $deckId, tag: $tag) {
+      id
+      tags
+    }
+  }
+`;
+export type AddTagMutationFn = ReactApollo.MutationFn<
+  AddTagMutation,
+  AddTagMutationVariables
+>;
+export type AddTagProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddTagMutation, AddTagMutationVariables>
+> &
+  TChildProps;
+export function withAddTag<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    AddTagMutation,
+    AddTagMutationVariables,
+    AddTagProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddTagMutation,
+    AddTagMutationVariables,
+    AddTagProps<TChildProps>
+  >(AddTagDocument, {
+    alias: "withAddTag",
+    ...operationOptions
+  });
+}
+
+export function useAddTagMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    AddTagMutation,
+    AddTagMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<AddTagMutation, AddTagMutationVariables>(
+    AddTagDocument,
+    baseOptions
+  );
 }
 export const AddCardDocument = gql`
   mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
@@ -1003,6 +1123,28 @@ export type AddCardMutationFn = ReactApollo.MutationFn<
   AddCardMutation,
   AddCardMutationVariables
 >;
+export type AddCardProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddCardMutation, AddCardMutationVariables>
+> &
+  TChildProps;
+export function withAddCard<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    AddCardMutation,
+    AddCardMutationVariables,
+    AddCardProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddCardMutation,
+    AddCardMutationVariables,
+    AddCardProps<TChildProps>
+  >(AddCardDocument, {
+    alias: "withAddCard",
+    ...operationOptions
+  });
+}
 
 export function useAddCardMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1039,6 +1181,28 @@ export type AddDeckMutationFn = ReactApollo.MutationFn<
   AddDeckMutation,
   AddDeckMutationVariables
 >;
+export type AddDeckProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<AddDeckMutation, AddDeckMutationVariables>
+> &
+  TChildProps;
+export function withAddDeck<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    AddDeckMutation,
+    AddDeckMutationVariables,
+    AddDeckProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddDeckMutation,
+    AddDeckMutationVariables,
+    AddDeckProps<TChildProps>
+  >(AddDeckDocument, {
+    alias: "withAddDeck",
+    ...operationOptions
+  });
+}
 
 export function useAddDeckMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1072,6 +1236,28 @@ export type DeleteCardsMutationFn = ReactApollo.MutationFn<
   DeleteCardsMutation,
   DeleteCardsMutationVariables
 >;
+export type DeleteCardsProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<DeleteCardsMutation, DeleteCardsMutationVariables>
+> &
+  TChildProps;
+export function withDeleteCards<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    DeleteCardsMutation,
+    DeleteCardsMutationVariables,
+    DeleteCardsProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeleteCardsMutation,
+    DeleteCardsMutationVariables,
+    DeleteCardsProps<TChildProps>
+  >(DeleteCardsDocument, {
+    alias: "withDeleteCards",
+    ...operationOptions
+  });
+}
 
 export function useDeleteCardsMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1103,6 +1289,28 @@ export type SubmitReviewMutationFn = ReactApollo.MutationFn<
   SubmitReviewMutation,
   SubmitReviewMutationVariables
 >;
+export type SubmitReviewProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<SubmitReviewMutation, SubmitReviewMutationVariables>
+> &
+  TChildProps;
+export function withSubmitReview<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    SubmitReviewMutation,
+    SubmitReviewMutationVariables,
+    SubmitReviewProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    SubmitReviewMutation,
+    SubmitReviewMutationVariables,
+    SubmitReviewProps<TChildProps>
+  >(SubmitReviewDocument, {
+    alias: "withSubmitReview",
+    ...operationOptions
+  });
+}
 
 export function useSubmitReviewMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1130,6 +1338,28 @@ export type UpdateCardMutationFn = ReactApollo.MutationFn<
   UpdateCardMutation,
   UpdateCardMutationVariables
 >;
+export type UpdateCardProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdateCardMutation, UpdateCardMutationVariables>
+> &
+  TChildProps;
+export function withUpdateCard<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UpdateCardMutation,
+    UpdateCardMutationVariables,
+    UpdateCardProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdateCardMutation,
+    UpdateCardMutationVariables,
+    UpdateCardProps<TChildProps>
+  >(UpdateCardDocument, {
+    alias: "withUpdateCard",
+    ...operationOptions
+  });
+}
 
 export function useUpdateCardMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1154,6 +1384,28 @@ export type UpdateDeckMutationFn = ReactApollo.MutationFn<
   UpdateDeckMutation,
   UpdateDeckMutationVariables
 >;
+export type UpdateDeckProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdateDeckMutation, UpdateDeckMutationVariables>
+> &
+  TChildProps;
+export function withUpdateDeck<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UpdateDeckMutation,
+    UpdateDeckMutationVariables,
+    UpdateDeckProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdateDeckMutation,
+    UpdateDeckMutationVariables,
+    UpdateDeckProps<TChildProps>
+  >(UpdateDeckDocument, {
+    alias: "withUpdateDeck",
+    ...operationOptions
+  });
+}
 
 export function useUpdateDeckMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1177,6 +1429,28 @@ export type DeletePostMutationFn = ReactApollo.MutationFn<
   DeletePostMutation,
   DeletePostMutationVariables
 >;
+export type DeletePostProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<DeletePostMutation, DeletePostMutationVariables>
+> &
+  TChildProps;
+export function withDeletePost<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    DeletePostMutation,
+    DeletePostMutationVariables,
+    DeletePostProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeletePostMutation,
+    DeletePostMutationVariables,
+    DeletePostProps<TChildProps>
+  >(DeletePostDocument, {
+    alias: "withDeletePost",
+    ...operationOptions
+  });
+}
 
 export function useDeletePostMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1189,6 +1463,52 @@ export function useDeletePostMutation(
     DeletePostMutationVariables
   >(DeletePostDocument, baseOptions);
 }
+export const RemoveTagDocument = gql`
+  mutation RemoveTag($deckId: ID!, $tag: String!) {
+    removeTagFromDeck(id: $deckId, tag: $tag) {
+      id
+      tags
+    }
+  }
+`;
+export type RemoveTagMutationFn = ReactApollo.MutationFn<
+  RemoveTagMutation,
+  RemoveTagMutationVariables
+>;
+export type RemoveTagProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<RemoveTagMutation, RemoveTagMutationVariables>
+> &
+  TChildProps;
+export function withRemoveTag<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    RemoveTagMutation,
+    RemoveTagMutationVariables,
+    RemoveTagProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    RemoveTagMutation,
+    RemoveTagMutationVariables,
+    RemoveTagProps<TChildProps>
+  >(RemoveTagDocument, {
+    alias: "withRemoveTag",
+    ...operationOptions
+  });
+}
+
+export function useRemoveTagMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    RemoveTagMutation,
+    RemoveTagMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    RemoveTagMutation,
+    RemoveTagMutationVariables
+  >(RemoveTagDocument, baseOptions);
+}
 export const UpdateNowDocument = gql`
   mutation UpdateNow {
     updateNow @client
@@ -1198,6 +1518,28 @@ export type UpdateNowMutationFn = ReactApollo.MutationFn<
   UpdateNowMutation,
   UpdateNowMutationVariables
 >;
+export type UpdateNowProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdateNowMutation, UpdateNowMutationVariables>
+> &
+  TChildProps;
+export function withUpdateNow<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UpdateNowMutation,
+    UpdateNowMutationVariables,
+    UpdateNowProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdateNowMutation,
+    UpdateNowMutationVariables,
+    UpdateNowProps<TChildProps>
+  >(UpdateNowDocument, {
+    alias: "withUpdateNow",
+    ...operationOptions
+  });
+}
 
 export function useUpdateNowMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1227,6 +1569,31 @@ export type AddLanguageToUserMutationFn = ReactApollo.MutationFn<
   AddLanguageToUserMutation,
   AddLanguageToUserMutationVariables
 >;
+export type AddLanguageToUserProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables
+  >
+> &
+  TChildProps;
+export function withAddLanguageToUser<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables,
+    AddLanguageToUserProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    AddLanguageToUserMutation,
+    AddLanguageToUserMutationVariables,
+    AddLanguageToUserProps<TChildProps>
+  >(AddLanguageToUserDocument, {
+    alias: "withAddLanguageToUser",
+    ...operationOptions
+  });
+}
 
 export function useAddLanguageToUserMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1252,6 +1619,31 @@ export type ChangeLikeStatusMutationFn = ReactApollo.MutationFn<
   ChangeLikeStatusMutation,
   ChangeLikeStatusMutationVariables
 >;
+export type ChangeLikeStatusProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables
+  >
+> &
+  TChildProps;
+export function withChangeLikeStatus<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables,
+    ChangeLikeStatusProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ChangeLikeStatusMutation,
+    ChangeLikeStatusMutationVariables,
+    ChangeLikeStatusProps<TChildProps>
+  >(ChangeLikeStatusDocument, {
+    alias: "withChangeLikeStatus",
+    ...operationOptions
+  });
+}
 
 export function useChangeLikeStatusMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1288,6 +1680,31 @@ export type ChangeSubscriptionStatusMutationFn = ReactApollo.MutationFn<
   ChangeSubscriptionStatusMutation,
   ChangeSubscriptionStatusMutationVariables
 >;
+export type ChangeSubscriptionStatusProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables
+  >
+> &
+  TChildProps;
+export function withChangeSubscriptionStatus<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables,
+    ChangeSubscriptionStatusProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ChangeSubscriptionStatusMutation,
+    ChangeSubscriptionStatusMutationVariables,
+    ChangeSubscriptionStatusProps<TChildProps>
+  >(ChangeSubscriptionStatusDocument, {
+    alias: "withChangeSubscriptionStatus",
+    ...operationOptions
+  });
+}
 
 export function useChangeSubscriptionStatusMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1312,6 +1729,28 @@ export type LoginMutationFn = ReactApollo.MutationFn<
   LoginMutation,
   LoginMutationVariables
 >;
+export type LoginProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<LoginMutation, LoginMutationVariables>
+> &
+  TChildProps;
+export function withLogin<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    LoginMutation,
+    LoginMutationVariables,
+    LoginProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    LoginMutation,
+    LoginMutationVariables,
+    LoginProps<TChildProps>
+  >(LoginDocument, {
+    alias: "withLogin",
+    ...operationOptions
+  });
+}
 
 export function useLoginMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1341,6 +1780,31 @@ export type RemoveLanguageFromUserMutationFn = ReactApollo.MutationFn<
   RemoveLanguageFromUserMutation,
   RemoveLanguageFromUserMutationVariables
 >;
+export type RemoveLanguageFromUserProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables
+  >
+> &
+  TChildProps;
+export function withRemoveLanguageFromUser<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables,
+    RemoveLanguageFromUserProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    RemoveLanguageFromUserMutation,
+    RemoveLanguageFromUserMutationVariables,
+    RemoveLanguageFromUserProps<TChildProps>
+  >(RemoveLanguageFromUserDocument, {
+    alias: "withRemoveLanguageFromUser",
+    ...operationOptions
+  });
+}
 
 export function useRemoveLanguageFromUserMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1374,6 +1838,28 @@ export type UpdateProfileMutationFn = ReactApollo.MutationFn<
   UpdateProfileMutation,
   UpdateProfileMutationVariables
 >;
+export type UpdateProfileProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdateProfileMutation, UpdateProfileMutationVariables>
+> &
+  TChildProps;
+export function withUpdateProfile<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables,
+    UpdateProfileProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables,
+    UpdateProfileProps<TChildProps>
+  >(UpdateProfileDocument, {
+    alias: "withUpdateProfile",
+    ...operationOptions
+  });
+}
 
 export function useUpdateProfileMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -1391,6 +1877,28 @@ export const CurrentUserIdDocument = gql`
     currentUserID @client
   }
 `;
+export type CurrentUserIdProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<CurrentUserIdQuery, CurrentUserIdQueryVariables>
+> &
+  TChildProps;
+export function withCurrentUserId<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    CurrentUserIdQuery,
+    CurrentUserIdQueryVariables,
+    CurrentUserIdProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    CurrentUserIdQuery,
+    CurrentUserIdQueryVariables,
+    CurrentUserIdProps<TChildProps>
+  >(CurrentUserIdDocument, {
+    alias: "withCurrentUserId",
+    ...operationOptions
+  });
+}
 
 export function useCurrentUserIdQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<CurrentUserIdQueryVariables>
@@ -1405,6 +1913,28 @@ export const LoginExpiryDocument = gql`
     loginExpiresAt @client
   }
 `;
+export type LoginExpiryProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LoginExpiryQuery, LoginExpiryQueryVariables>
+> &
+  TChildProps;
+export function withLoginExpiry<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    LoginExpiryQuery,
+    LoginExpiryQueryVariables,
+    LoginExpiryProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LoginExpiryQuery,
+    LoginExpiryQueryVariables,
+    LoginExpiryProps<TChildProps>
+  >(LoginExpiryDocument, {
+    alias: "withLoginExpiry",
+    ...operationOptions
+  });
+}
 
 export function useLoginExpiryQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<LoginExpiryQueryVariables>
@@ -1419,6 +1949,28 @@ export const NowDocument = gql`
     now @client
   }
 `;
+export type NowProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<NowQuery, NowQueryVariables>
+> &
+  TChildProps;
+export function withNow<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    NowQuery,
+    NowQueryVariables,
+    NowProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    NowQuery,
+    NowQueryVariables,
+    NowProps<TChildProps>
+  >(NowDocument, {
+    alias: "withNow",
+    ...operationOptions
+  });
+}
 
 export function useNowQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<NowQueryVariables>
@@ -1442,6 +1994,28 @@ export const ProfileDocument = gql`
     }
   }
 `;
+export type ProfileProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ProfileQuery, ProfileQueryVariables>
+> &
+  TChildProps;
+export function withProfile<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ProfileQuery,
+    ProfileQueryVariables,
+    ProfileProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ProfileQuery,
+    ProfileQueryVariables,
+    ProfileProps<TChildProps>
+  >(ProfileDocument, {
+    alias: "withProfile",
+    ...operationOptions
+  });
+}
 
 export function useProfileQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<ProfileQueryVariables>
@@ -1465,6 +2039,28 @@ export const FeedDocument = gql`
   }
   ${shallowPostFieldsFragmentDoc}
 `;
+export type FeedProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<FeedQuery, FeedQueryVariables>
+> &
+  TChildProps;
+export function withFeed<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    FeedQuery,
+    FeedQueryVariables,
+    FeedProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    FeedQuery,
+    FeedQueryVariables,
+    FeedProps<TChildProps>
+  >(FeedDocument, {
+    alias: "withFeed",
+    ...operationOptions
+  });
+}
 
 export function useFeedQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<FeedQueryVariables>
@@ -1493,6 +2089,28 @@ export const GlobalDecksDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type GlobalDecksProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<GlobalDecksQuery, GlobalDecksQueryVariables>
+> &
+  TChildProps;
+export function withGlobalDecks<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    GlobalDecksQuery,
+    GlobalDecksQueryVariables,
+    GlobalDecksProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    GlobalDecksQuery,
+    GlobalDecksQueryVariables,
+    GlobalDecksProps<TChildProps>
+  >(GlobalDecksDocument, {
+    alias: "withGlobalDecks",
+    ...operationOptions
+  });
+}
 
 export function useGlobalDecksQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<GlobalDecksQueryVariables>
@@ -1510,6 +2128,28 @@ export const LanguagesDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type LanguagesProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LanguagesQuery, LanguagesQueryVariables>
+> &
+  TChildProps;
+export function withLanguages<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    LanguagesQuery,
+    LanguagesQueryVariables,
+    LanguagesProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LanguagesQuery,
+    LanguagesQueryVariables,
+    LanguagesProps<TChildProps>
+  >(LanguagesDocument, {
+    alias: "withLanguages",
+    ...operationOptions
+  });
+}
 
 export function useLanguagesQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<LanguagesQueryVariables>
@@ -1542,6 +2182,28 @@ export const LessonsDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type LessonsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LessonsQuery, LessonsQueryVariables>
+> &
+  TChildProps;
+export function withLessons<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    LessonsQuery,
+    LessonsQueryVariables,
+    LessonsProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LessonsQuery,
+    LessonsQueryVariables,
+    LessonsProps<TChildProps>
+  >(LessonsDocument, {
+    alias: "withLessons",
+    ...operationOptions
+  });
+}
 
 export function useLessonsQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<LessonsQueryVariables>
@@ -1568,6 +2230,28 @@ export const NextReviewDocument = gql`
     }
   }
 `;
+export type NextReviewProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<NextReviewQuery, NextReviewQueryVariables>
+> &
+  TChildProps;
+export function withNextReview<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    NextReviewQuery,
+    NextReviewQueryVariables,
+    NextReviewProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    NextReviewQuery,
+    NextReviewQueryVariables,
+    NextReviewProps<TChildProps>
+  >(NextReviewDocument, {
+    alias: "withNextReview",
+    ...operationOptions
+  });
+}
 
 export function useNextReviewQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<NextReviewQueryVariables>
@@ -1603,12 +2287,70 @@ export const ReviewsDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type ReviewsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ReviewsQuery, ReviewsQueryVariables>
+> &
+  TChildProps;
+export function withReviews<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ReviewsQuery,
+    ReviewsQueryVariables,
+    ReviewsProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ReviewsQuery,
+    ReviewsQueryVariables,
+    ReviewsProps<TChildProps>
+  >(ReviewsDocument, {
+    alias: "withReviews",
+    ...operationOptions
+  });
+}
 
 export function useReviewsQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<ReviewsQueryVariables>
 ) {
   return ReactApolloHooks.useQuery<ReviewsQuery, ReviewsQueryVariables>(
     ReviewsDocument,
+    baseOptions
+  );
+}
+export const TagSearchDocument = gql`
+  query TagSearch($search: String!, $limit: Int, $offset: Int) {
+    tags(search: $search, limit: $limit, offset: $offset)
+  }
+`;
+export type TagSearchProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<TagSearchQuery, TagSearchQueryVariables>
+> &
+  TChildProps;
+export function withTagSearch<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    TagSearchQuery,
+    TagSearchQueryVariables,
+    TagSearchProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    TagSearchQuery,
+    TagSearchQueryVariables,
+    TagSearchProps<TChildProps>
+  >(TagSearchDocument, {
+    alias: "withTagSearch",
+    ...operationOptions
+  });
+}
+
+export function useTagSearchQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<TagSearchQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<TagSearchQuery, TagSearchQueryVariables>(
+    TagSearchDocument,
     baseOptions
   );
 }
@@ -1626,6 +2368,28 @@ export const CardsDocument = gql`
     }
   }
 `;
+export type CardsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<CardsQuery, CardsQueryVariables>
+> &
+  TChildProps;
+export function withCards<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    CardsQuery,
+    CardsQueryVariables,
+    CardsProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    CardsQuery,
+    CardsQueryVariables,
+    CardsProps<TChildProps>
+  >(CardsDocument, {
+    alias: "withCards",
+    ...operationOptions
+  });
+}
 
 export function useCardsQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<CardsQueryVariables>
@@ -1650,10 +2414,33 @@ export const DeckDetailsDocument = gql`
         id
         username
       }
+      tags
     }
   }
   ${languageFieldsFragmentDoc}
 `;
+export type DeckDetailsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<DeckDetailsQuery, DeckDetailsQueryVariables>
+> &
+  TChildProps;
+export function withDeckDetails<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    DeckDetailsQuery,
+    DeckDetailsQueryVariables,
+    DeckDetailsProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    DeckDetailsQuery,
+    DeckDetailsQueryVariables,
+    DeckDetailsProps<TChildProps>
+  >(DeckDetailsDocument, {
+    alias: "withDeckDetails",
+    ...operationOptions
+  });
+}
 
 export function useDeckDetailsQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<DeckDetailsQueryVariables>
@@ -1671,6 +2458,28 @@ export const LessonsCountDocument = gql`
     }
   }
 `;
+export type LessonsCountProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LessonsCountQuery, LessonsCountQueryVariables>
+> &
+  TChildProps;
+export function withLessonsCount<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    LessonsCountQuery,
+    LessonsCountQueryVariables,
+    LessonsCountProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LessonsCountQuery,
+    LessonsCountQueryVariables,
+    LessonsCountProps<TChildProps>
+  >(LessonsCountDocument, {
+    alias: "withLessonsCount",
+    ...operationOptions
+  });
+}
 
 export function useLessonsCountQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<LessonsCountQueryVariables>
@@ -1688,6 +2497,28 @@ export const ReviewsCountDocument = gql`
     }
   }
 `;
+export type ReviewsCountProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ReviewsCountQuery, ReviewsCountQueryVariables>
+> &
+  TChildProps;
+export function withReviewsCount<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ReviewsCountQuery,
+    ReviewsCountQueryVariables,
+    ReviewsCountProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ReviewsCountQuery,
+    ReviewsCountQueryVariables,
+    ReviewsCountProps<TChildProps>
+  >(ReviewsCountDocument, {
+    alias: "withReviewsCount",
+    ...operationOptions
+  });
+}
 
 export function useReviewsCountQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<ReviewsCountQueryVariables>
@@ -1725,6 +2556,28 @@ export const ShallowDecksDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type ShallowDecksProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<ShallowDecksQuery, ShallowDecksQueryVariables>
+> &
+  TChildProps;
+export function withShallowDecks<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ShallowDecksQuery,
+    ShallowDecksQueryVariables,
+    ShallowDecksProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    ShallowDecksQuery,
+    ShallowDecksQueryVariables,
+    ShallowDecksProps<TChildProps>
+  >(ShallowDecksDocument, {
+    alias: "withShallowDecks",
+    ...operationOptions
+  });
+}
 
 export function useShallowDecksQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<ShallowDecksQueryVariables>
@@ -1748,6 +2601,28 @@ export const UserLanguagesDocument = gql`
   }
   ${languageFieldsFragmentDoc}
 `;
+export type UserLanguagesProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<UserLanguagesQuery, UserLanguagesQueryVariables>
+> &
+  TChildProps;
+export function withUserLanguages<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UserLanguagesQuery,
+    UserLanguagesQueryVariables,
+    UserLanguagesProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    UserLanguagesQuery,
+    UserLanguagesQueryVariables,
+    UserLanguagesProps<TChildProps>
+  >(UserLanguagesDocument, {
+    alias: "withUserLanguages",
+    ...operationOptions
+  });
+}
 
 export function useUserLanguagesQuery(
   baseOptions?: ReactApolloHooks.QueryHookOptions<UserLanguagesQueryVariables>
