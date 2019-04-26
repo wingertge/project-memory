@@ -38,32 +38,28 @@ module.exports = {
         }
     }],
     modify: (config, {target, dev}, webpack) => {
-        if(target === "web" || process.env.NODE_ENV === "production") {
-            const newConfig = {
-                ...config,
-                mode: "development",
-                plugins: [
-                    new ReactLoadablePlugin({
-                        filename: "./build/react-loadable.json"
-                    }),
-                    ...config.plugins
-                ],
-                module: {
-                    ...config.module,
-                    rules: [
-                        ...config.module.rules.filter(rule => rule.loader !== modifiedFileLoader.loader),
-                        {
-                            test: /\.(graphql|gql)$/,
-                            exclude: /node_modules/,
-                            loader: "graphql-tag/loader"
-                        },
-                        modifiedFileLoader
-                    ]
-                }
+        const newConfig = {
+            ...config,
+            mode: "development",
+            plugins: [
+                new ReactLoadablePlugin({
+                    filename: "./build/react-loadable.json"
+                }),
+                ...config.plugins
+            ],
+            module: {
+                ...config.module,
+                rules: [
+                    ...config.module.rules.filter(rule => rule.loader !== modifiedFileLoader.loader),
+                    {
+                        test: /\.(graphql|gql)$/,
+                        exclude: /node_modules/,
+                        loader: "graphql-tag/loader"
+                    },
+                    modifiedFileLoader
+                ]
             }
-            return razzleHeroku(newConfig, {target, dev}, webpack)
         }
-
-        return config
+        return razzleHeroku(newConfig, {target, dev}, webpack)
     }
 }
