@@ -78,5 +78,9 @@
   "Sort Direction": "Sort Direction",
   "Descending": "Descending",
   "Ascending": "Ascending",
-  "Show More": "Show More"
+  "Show More": "Show More",
+  "Are you sure you want to delete this deck?": "Are you sure you want to delete this deck?",
+  "This action is irreversible and will affect all subscribers. Be sure you know what you're doing here.": "This action is irreversible and will affect all subscribers. Be sure you know what you're doing here.",
+  "Delete": "Delete",
+  "Confirm": "Confirm"
 }

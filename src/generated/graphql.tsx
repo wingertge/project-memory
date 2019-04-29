@@ -32,6 +32,7 @@ export type CardFilterInput = {
   offset?: Maybe<Scalars["Int"]>;
   sortDirection?: Maybe<SortDirection>;
   sortBy?: Maybe<CardSortingOptions>;
+  search?: Maybe<Scalars["String"]>;
 };
 
 export type CardInput = {
@@ -91,7 +92,7 @@ export type DeckInput = {
   cards?: Maybe<Array<Maybe<CardInput>>>;
 };
 
-export type DeckSortBy = "name" | "cardsCount" | "rating" | "subscribersCount";
+export type DeckSortBy = "name" | "cardCount" | "rating" | "subscriberCount";
 
 export type Identity = {
   userId: Scalars["ID"];

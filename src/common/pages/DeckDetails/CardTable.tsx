@@ -17,7 +17,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {Deck, useCardsQuery, useDeleteCardsMutation} from "../../../generated/graphql"
-import {useDialog} from "../../hooks"
+import {useDialog, useFormState} from "../../hooks"
 import EditCardForm from "./EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
@@ -65,6 +65,7 @@ const CardTable = (
     const [page, setPage] = useState<number>(parseInt(initialPage || "0", 10))
     const [sortBy, setSortBy] = useState<Column>(initialSortBy || "meaning")
     const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortDirection || "asc")
+    const {search} = useFormState<{search: string}>({search: ""})
 
     const {Dialog, openDialog} = useDialog(EditCardForm)
     const {data} = useCardsQuery({
@@ -74,7 +75,8 @@ const CardTable = (
                 limit: rowsPerPage,
                 offset: page * rowsPerPage,
                 sortBy,
-                sortDirection
+                sortDirection,
+                search: search.value.trim().length > 0 ? search.value : undefined
             }
         }
     })
@@ -157,7 +159,7 @@ const CardTable = (
         <>
             <Dialog />
             <Paper className={classes.root}>
-                <CardTableToolbar numSelected={selected.length} onDeleteClicked={deleteCards}/>
+                <CardTableToolbar numSelected={selected.length} onDeleteClicked={deleteCards} search={search.value} onSearchChange={search.onChange}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle" size="small">
                         <CardTableHead numSelected={selected.length} order={sortDirection || "asc"}
