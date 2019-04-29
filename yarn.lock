@@ -999,15 +999,15 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/yargs" "^12.0.9"
 
-"@material-ui/core@^4.0.0-alpha.8":
-  version "4.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.0.0-alpha.8.tgz#282176dfeb1be287afb847b25684f98a1b57fe62"
-  integrity sha512-2dXyiXkhqyZJdZtWzVDEpFW10qWWzEDRWK7LxlQSLsoKXnfPeH5UbB2z4Ifz2Th13kqviLCxz0jS+SvDBkI07A==
+"@material-ui/core@^4.0.0-beta.0":
+  version "4.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.0.0-beta.0.tgz#8a10d1e6a4850492fb57c3f028ff1f9b09d93c5c"
+  integrity sha512-yEgo5wsaOzIOWzJBCvEjKudz2Jh5XHPu0g2w+pyZJryOf7RCCfzyBV3fWv7goJyEOhiSAs50JFaKDQi2BLxp2Q==
   dependencies:
     "@babel/runtime" "^7.2.0"
-    "@material-ui/styles" "^4.0.0-alpha.8"
-    "@material-ui/system" "^4.0.0-alpha.8"
-    "@material-ui/utils" "^4.0.0-alpha.8"
+    "@material-ui/styles" "^4.0.0-beta.0"
+    "@material-ui/system" "^4.0.0-beta.0"
+    "@material-ui/utils" "^4.0.0-beta.0"
     "@types/react-transition-group" "^2.0.16"
     clsx "^1.0.2"
     csstype "^2.5.2"
@@ -1022,21 +1022,21 @@
     react-transition-group "^4.0.0"
     warning "^4.0.1"
 
-"@material-ui/icons@^4.0.0-alpha.8":
-  version "4.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.0.0-alpha.8.tgz#8063b983b51cac8f613a4ffba638029a71874dbd"
-  integrity sha512-LR3Ggcc1ZPm4GOG94qhumrXveB+QBGPdYM/oaYTsPuuYyyWtDOzqZ2eMVM/eH1G8JOI7unfqZHUABeAZjTKS5A==
+"@material-ui/icons@^4.0.0-beta.0":
+  version "4.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.0.0-beta.0.tgz#9d117e72d7d690f6e212e02dcf491898145c5660"
+  integrity sha512-xowrittZJR0wrD1uubEnnv/k1gBBodPiPjJoOztWGjbFu9/q5hvZZyFkeiq1VMgyhlkKIvo6BzTKPSMl2+1sow==
   dependencies:
     "@babel/runtime" "^7.2.0"
 
-"@material-ui/styles@^4.0.0-alpha.8":
-  version "4.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.0.0-alpha.8.tgz#3d13234824253aa9a394e251e4ee0e4bf1855a34"
-  integrity sha512-mAFQ0PxJ/lfETFkvildzZqbV8vJpFiScBOwitbBVPpQ4BIPaRgO2x2BC53Ew4Nozk47JQmGUrXQGtBuYC4ASPQ==
+"@material-ui/styles@^4.0.0-beta.0":
+  version "4.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.0.0-beta.0.tgz#81954873523f8a255410fe085fe0e082e6eafed3"
+  integrity sha512-UXexmJk2fNMPkrWbPaWM1yBNrkHxVRqgKBrY3u1t65Smpyk3I5aVqQ1QfTSxoMOfHMUEljKs7zsriHtUovF6qg==
   dependencies:
     "@babel/runtime" "^7.2.0"
     "@emotion/hash" "^0.7.1"
-    "@material-ui/utils" "^4.0.0-alpha.8"
+    "@material-ui/utils" "^4.0.0-beta.0"
     clsx "^1.0.2"
     deepmerge "^3.0.0"
     hoist-non-react-statics "^3.2.1"
@@ -1051,20 +1051,20 @@
     prop-types "^15.7.2"
     warning "^4.0.1"
 
-"@material-ui/system@^4.0.0-alpha.8":
-  version "4.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@material-ui/system/-/system-4.0.0-alpha.8.tgz#fac7e0737a65255de96fb7d436c2c5967f11bf34"
-  integrity sha512-VBIpF6YNbJSXMGqrTV/jb+isPyWRlVGmvrCa74nM2EtYjidtdZn58YRGiD6G62h3Y/KVIEWJihO+74Q98JTEYA==
+"@material-ui/system@^4.0.0-beta.0":
+  version "4.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/system/-/system-4.0.0-beta.0.tgz#288c22294df71e4d8c4d28cf5739e4df4c153d1e"
+  integrity sha512-ky8sIq7YZWMhSy1bHHHuiZsRa5aIncwdioypj/gywXTtWOdwnLylWQJ56VZzbD4uqrsJhbwrCOfhMXbAuN25Tw==
   dependencies:
     "@babel/runtime" "^7.2.0"
     deepmerge "^3.0.0"
     prop-types "^15.7.2"
     warning "^4.0.1"
 
-"@material-ui/utils@^4.0.0-alpha.8":
-  version "4.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@material-ui/utils/-/utils-4.0.0-alpha.8.tgz#b2c976d3f8b24137ef70abaed57729ca5b83df7a"
-  integrity sha512-SyUkUXJI35VrPVlG/Ri8AoJIpe4Kbdfp+jFuIsSLMY8+gr3dUPR3iwxEdI/9lvhQCBWBBl60TQF3WFl2Lvbpkg==
+"@material-ui/utils@^4.0.0-beta.0":
+  version "4.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/utils/-/utils-4.0.0-beta.0.tgz#29f9c29cefbae3b7b7ef5b90a97e22dbe1af88f1"
+  integrity sha512-2rha1tPVIavAm4+eGY6TdgqOIrffgBRIFerSLvMPsAi242U5IgVNWn8oDRxy80DMXYD4Shnm8Idm8WXB7sgCcQ==
   dependencies:
     "@babel/runtime" "^7.2.0"
     prop-types "^15.7.2"

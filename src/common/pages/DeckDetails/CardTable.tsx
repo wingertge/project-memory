@@ -17,7 +17,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {Deck, useCardsQuery, useDeleteCardsMutation} from "../../../generated/graphql"
-import {useDialog, useFormState} from "../../hooks"
+import {useConfirmDialog, useDialog, useFormState} from "../../hooks"
 import EditCardForm from "./EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
@@ -154,12 +154,14 @@ const CardTable = (
     ]
     if(!hasPronunciation) columns = columns.filter(col => col.id !== "pronunciation")
     if(!own) columns = columns.filter(col => col.id !== "actions")
+    const [confirmDelete, ConfirmDeleteDialog] = useConfirmDialog(deleteCards, "Are you sure you want to delete all those cards?", "You can't undo this operation.")
 
     return (
         <>
             <Dialog />
+            <ConfirmDeleteDialog />
             <Paper className={classes.root}>
-                <CardTableToolbar numSelected={selected.length} onDeleteClicked={deleteCards} search={search.value} onSearchChange={search.onChange}/>
+                <CardTableToolbar numSelected={selected.length} onDeleteClicked={selected.length >= 30 ? confirmDelete : deleteCards} search={search.value} onSearchChange={search.onChange}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle" size="small">
                         <CardTableHead numSelected={selected.length} order={sortDirection || "asc"}
