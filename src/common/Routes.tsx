@@ -5,7 +5,6 @@ import Loading from "./components/common/Loading"
 import AuthenticatedRoute from "./components/routing/AuthenticatedRoute"
 import UnauthenticatedRoute from "./components/routing/UnauthenticatedRoute"
 import Loadable from "react-loadable"
-import Intro from "./pages/Intro"
 import TestBed from "./pages/TestBed"
 
 const Home = Loadable({
@@ -54,15 +53,18 @@ const NotFound = Loadable({
     loading: Loading
 })
 
-/*
 const Intro = Loadable({
     loader: () => import("./pages/Intro"),
     loading: Loading
 })
-*/
 
 const Reviews = Loadable({
     loader: () => import("./pages/Reviews"),
+    loading: Loading
+})
+
+const DeckDiscovery = Loadable({
+    loader: () => import("./pages/DeckDiscovery"),
     loading: Loading
 })
 
@@ -74,6 +76,7 @@ const Routes = () => (
         <AuthenticatedRoute path="/settings" component={Settings} />
         <AuthenticatedRoute path="/profile/:id([a-zA-Z0-9]+)?" component={UserProfile} />
         <AuthenticatedRoute exact path="/deck/:id([a-zA-Z0-9\\-]+)/(page)?/:page([0-9]+)?/(sortBy)?/:sortBy(meaning|pronunciation|translation)?/(sortDirection)?/:sortDirection(asc|desc)?" component={DeckDetails}/>
+        <AuthenticatedRoute path="/decks" component={DeckDiscovery} />
         <AuthenticatedRoute path="/logout" render={() => {
             if(typeof window === "undefined") { return <Redirect to="/"/> }
             Auth.logout()

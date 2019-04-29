@@ -21,7 +21,8 @@ import {
     useUpdateCardMutation
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {useFormState, useID, useToast} from "../../hooks"
+import {useID, useToast, useValidatedFormState, ValidatorMap} from "../../hooks"
+import {shorterThan} from "../../util/validationUtils"
 import {Column, SortDirection} from "./DeckDetails"
 
 export interface PropTypes {
@@ -64,16 +65,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
+const validators: ValidatorMap<Form> = {
+    meaning: [{fun: shorterThan(401), message: "Can't enter more than 400 characters"}],
+    pronunciation: [{fun: shorterThan(401), message: "Can't enter more than 400 characters"}],
+    translation: [{fun: shorterThan(401), message: "Can't enter more than 400 characters"}]
+}
+
 export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sortDirection, sortBy, language, nativeLanguage}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {Toast, openToast} = useToast(`Successfully ${card ? "updated" : "created"} card`)
     //const langConverter = converter(language.languageCode)
-    const {meaning, pronunciation, translation} = useFormState<Form>({
+    const {meaning, pronunciation, translation, valid} = useValidatedFormState<Form>({
         meaning: oc(card).meaning(""),
         pronunciation: oc(card).pronunciation(""),
         translation: oc(card).translation("")
-    })
+    }, validators)
     const meaningRef: any = React.createRef()
     const pronunciationRef: any = React.createRef()
     const translationRef: any = React.createRef()
@@ -174,26 +181,31 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
                                inputProps={{"data-lpignore": true, autoComplete: "off", id: "meaning"}} autoFocus
                                onKeyPress={onKeyPress(language.hasPronunciation ? "#pronunciation" : "#translation")} inputRef={meaningRef} type={nativeLanguage.requiresIME ? "text" : "tel"}
                                className={nativeLanguage.requiresIME ? classes.useIme : classes.disableIme}
+                               error={!!meaning.error} helperText={meaning.error}
                     />
                     {language.hasPronunciation && (
                         <TextField label={t("Pronunciation")} value={pronunciation.value} onChange={pronunciation.onChange}
-                               inputProps={{"data-lpignore": true, autoComplete: "off", id: "pronunciation"}}
-                               onKeyPress={onKeyPress("#translation")} inputRef={pronunciationRef}
-                               type={language.requiresIME ? "text" : "tel"}
-                               className={language.requiresIME ? classes.useIme : classes.disableIme}/>
+                                   inputProps={{"data-lpignore": true, autoComplete: "off", id: "pronunciation"}}
+                                   onKeyPress={onKeyPress("#translation")} inputRef={pronunciationRef}
+                                   type={language.requiresIME ? "text" : "tel"}
+                                   className={language.requiresIME ? classes.useIme : classes.disableIme}
+                                   error={!!pronunciation.error} helperText={pronunciation.error}
+                        />
                     )}
                     <TextField label={t("Translation")} value={translation.value} onChange={translation.onChange}
                                inputProps={{"data-lpignore": true, autoComplete: "off", id: "translation"}}
                                onKeyPress={onKeyPress(undefined)} inputRef={translationRef}
                                type={language.requiresIME ? "text" : "tel"}
-                               className={language.requiresIME ? classes.useIme : classes.disableIme}/>
+                               className={language.requiresIME ? classes.useIme : classes.disableIme}
+                               error={!!translation.error} helperText={translation.error}
+                    />
                 </form>
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog} color="primary" type="reset">
                     {t("Close")}
                 </Button>
-                <Button onClick={submit} color="primary" disabled={saving} type="submit">
+                <Button onClick={submit} color="primary" disabled={saving || !valid} type="submit">
                     {card ? t("Save") : t("Add")}
                 </Button>
             </DialogActions>

@@ -8,7 +8,12 @@ interface PropTypes {
 
 export const TimedCircularProgress = ({timeout = 200}: PropTypes) => {
     const [showLoading, setShowLoading] = useState(false)
-    useEffect(() => {setTimeout(() => setShowLoading(true), timeout)}, [])
+    useEffect(() => {
+        const handle = setTimeout(() => setShowLoading(true), timeout)
+        return () => {
+            clearTimeout(handle)
+        }
+    }, [])
 
     return showLoading ? <CircularProgress /> : null
 }

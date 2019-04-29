@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     navbarLink: {
         fontSize: 16,
-        marginRight: theme.spacing(3)
+        marginRight: theme.spacing(2)
     },
     grow: {
         flexGrow: 1
@@ -100,18 +100,16 @@ export const Header = () => {
                 )}
                 <div className={classes.grow}/>
                 <div>
-                    {username && (
-                        <Hidden smDown>
-                            <LinkButton to="/profile" className={classes.navbarLink}>{username}</LinkButton>
-                        </Hidden>
-                    )}
+                    <Hidden xsDown implementation="js">
+                        {username && <LinkButton to="/profile" className={classes.navbarLink}>{username}</LinkButton>}
+                    </Hidden>
                     <IconButton aria-owns={!!anchorEl ? "menu-appbar" : undefined} aria-haspopup="true"
                                 onClick={openMenu} color="inherit">
                         <AccountCircle/>
                     </IconButton>
                     <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{vertical: "top", horizontal: "right"}}
                           open={!!anchorEl} onClose={closeMenu}>
-                        <Hidden smUp>
+                        <Hidden smUp implementation="css">
                             <MenuItem onClick={() => history.push("/profile")}>{t("Profile")}</MenuItem>
                         </Hidden>
                         <MenuItem onClick={openSettings}>{t("Settings")}</MenuItem>

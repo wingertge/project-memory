@@ -10,6 +10,6 @@ export const getBundleScripts = (modules: string[]) => {
     if(proc.env.NODE_ENV === "production") {
         return chunks.map(chunk => `<script src=/${chunk.file}></script>`).join("\n")
     } else {
-        return chunks.map(chunk => `<script src="http://${proc.env.HOST}:${parseInt(proc.env.PORT!, 10) + 1}/${chunk.file}"></script>`).join("\n")
+        return chunks.map(chunk => `<script src="http://${process.env.HOST}:${parseInt(proc.env.PORT!, 10) + 1}/${chunk.file}"></script>`).join("\n")
     }
 }

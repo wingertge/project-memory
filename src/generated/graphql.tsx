@@ -50,9 +50,9 @@ export type Deck = {
   owner: User;
   language: Language;
   nativeLanguage: Language;
-  cards?: Maybe<Array<Maybe<Card>>>;
+  cards: Array<Card>;
   cardCount: Scalars["Int"];
-  subscribers?: Maybe<Array<Maybe<User>>>;
+  subscribers: Array<User>;
   subscriberCount: Scalars["Int"];
   rating: Scalars["Int"];
   isLikedBy: Scalars["Boolean"];
@@ -73,13 +73,14 @@ export type DeckIsLikedByArgs = {
 
 export type DeckFilterInput = {
   limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   sortBy?: Maybe<DeckSortBy>;
   sortDirection?: Maybe<SortDirection>;
   search?: Maybe<Scalars["String"]>;
   owner?: Maybe<Scalars["ID"]>;
-  languages?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  languages?: Maybe<Array<Scalars["ID"]>>;
   nativeLanguage?: Maybe<Scalars["ID"]>;
-  cardContained?: Maybe<Scalars["ID"]>;
+  tags?: Maybe<Array<Scalars["String"]>>;
 };
 
 export type DeckInput = {
@@ -90,7 +91,7 @@ export type DeckInput = {
   cards?: Maybe<Array<Maybe<CardInput>>>;
 };
 
-export type DeckSortBy = "name" | "cardCount" | "rating" | "subscribers";
+export type DeckSortBy = "name" | "cardsCount" | "rating" | "subscribersCount";
 
 export type Identity = {
   userId: Scalars["ID"];
@@ -126,7 +127,7 @@ export type Mutation = {
   deletePost?: Maybe<Array<Maybe<Post>>>;
   addDeck?: Maybe<User>;
   updateDeck?: Maybe<Deck>;
-  deleteDeck?: Maybe<Deck>;
+  deleteDeck: User;
   changeSubscriptionStatus?: Maybe<User>;
   changeLikeStatus?: Maybe<Deck>;
   addTagToDeck?: Maybe<Deck>;
@@ -335,24 +336,23 @@ export type SubscriberFilterInput = {
 };
 
 export type User = {
-  sub?: Maybe<Scalars["ID"]>;
   id: Scalars["ID"];
   email?: Maybe<Scalars["String"]>;
   name?: Maybe<Scalars["String"]>;
   username: Scalars["String"];
   picture: Scalars["String"];
-  gender: Scalars["String"];
+  gender?: Maybe<Scalars["String"]>;
   locale?: Maybe<Scalars["String"]>;
-  identities?: Maybe<Array<Maybe<Identity>>>;
+  identities?: Maybe<Array<Identity>>;
   isSocial: Scalars["Boolean"];
-  nativeLanguage?: Maybe<Language>;
-  languages?: Maybe<Array<Maybe<Language>>>;
-  ownedDecks?: Maybe<Array<Maybe<Deck>>>;
-  subscribedDecks?: Maybe<Array<Maybe<Deck>>>;
-  reviewQueue?: Maybe<Array<Maybe<Review>>>;
-  reviewsCount?: Maybe<Scalars["Int"]>;
+  nativeLanguage: Language;
+  languages: Array<Language>;
+  ownedDecks: Array<Deck>;
+  subscribedDecks: Array<Deck>;
+  reviewQueue: Array<Review>;
+  reviewsCount: Scalars["Int"];
   nextReview?: Maybe<Review>;
-  lessonQueue?: Maybe<Array<Maybe<Review>>>;
+  lessonQueue: Array<Review>;
   lessonsCount: Scalars["Int"];
   totalRating: Scalars["Int"];
   totalSubscribers: Scalars["Int"];
@@ -442,14 +442,10 @@ export type AddCardMutationVariables = {
 export type AddCardMutation = { __typename?: "Mutation" } & {
   createCard: Maybe<
     { __typename?: "Deck" } & Pick<Deck, "id"> & {
-        cards: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Card" } & Pick<
-                Card,
-                "id" | "meaning" | "pronunciation" | "translation"
-              >
-            >
+        cards: Array<
+          { __typename?: "Card" } & Pick<
+            Card,
+            "id" | "meaning" | "pronunciation" | "translation"
           >
         >;
       }
@@ -461,27 +457,7 @@ export type AddDeckMutationVariables = {
 };
 
 export type AddDeckMutation = { __typename?: "Mutation" } & {
-  addDeck: Maybe<
-    { __typename?: "User" } & Pick<User, "id"> & {
-        ownedDecks: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Deck" } & Pick<
-                Deck,
-                "id" | "name" | "cardCount" | "subscriberCount"
-              > & {
-                  language: {
-                    __typename?: "Language";
-                  } & LanguageFieldsFragment;
-                  nativeLanguage: {
-                    __typename?: "Language";
-                  } & LanguageFieldsFragment;
-                }
-            >
-          >
-        >;
-      }
-  >;
+  addDeck: Maybe<{ __typename?: "User" } & Pick<User, "id">>;
 };
 
 export type DeleteCardsMutationVariables = {
@@ -493,18 +469,22 @@ export type DeleteCardsMutationVariables = {
 export type DeleteCardsMutation = { __typename?: "Mutation" } & {
   deleteCards: Maybe<
     { __typename?: "Deck" } & Pick<Deck, "id"> & {
-        cards: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Card" } & Pick<
-                Card,
-                "id" | "meaning" | "pronunciation" | "translation"
-              >
-            >
+        cards: Array<
+          { __typename?: "Card" } & Pick<
+            Card,
+            "id" | "meaning" | "pronunciation" | "translation"
           >
         >;
       }
   >;
+};
+
+export type DeleteDeckMutationVariables = {
+  id: Scalars["ID"];
+};
+
+export type DeleteDeckMutation = { __typename?: "Mutation" } & {
+  deleteDeck: { __typename?: "User" } & Pick<User, "id">;
 };
 
 export type SubmitReviewMutationVariables = {
@@ -577,14 +557,10 @@ export type AddLanguageToUserMutationVariables = {
 export type AddLanguageToUserMutation = { __typename?: "Mutation" } & {
   addLanguageToUser: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        languages: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Language" } & Pick<
-                Language,
-                "id" | "name" | "nativeName" | "languageCode"
-              >
-            >
+        languages: Array<
+          { __typename?: "Language" } & Pick<
+            Language,
+            "id" | "name" | "nativeName" | "languageCode"
           >
         >;
       }
@@ -612,20 +588,10 @@ export type ChangeSubscriptionStatusMutationVariables = {
 export type ChangeSubscriptionStatusMutation = { __typename?: "Mutation" } & {
   changeSubscriptionStatus: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        subscribedDecks: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Deck" } & Pick<
-                Deck,
-                "id" | "name" | "cardCount"
-              > & {
-                  owner: { __typename?: "User" } & Pick<
-                    User,
-                    "id" | "username"
-                  >;
-                }
-            >
-          >
+        subscribedDecks: Array<
+          { __typename?: "Deck" } & Pick<Deck, "id" | "name" | "cardCount"> & {
+              owner: { __typename?: "User" } & Pick<User, "id" | "username">;
+            }
         >;
       }
   >;
@@ -652,14 +618,10 @@ export type RemoveLanguageFromUserMutationVariables = {
 export type RemoveLanguageFromUserMutation = { __typename?: "Mutation" } & {
   removeLanguageFromUser: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        languages: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Language" } & Pick<
-                Language,
-                "id" | "name" | "nativeName" | "languageCode"
-              >
-            >
+        languages: Array<
+          { __typename?: "Language" } & Pick<
+            Language,
+            "id" | "name" | "nativeName" | "languageCode"
           >
         >;
       }
@@ -677,11 +639,9 @@ export type UpdateProfileMutation = { __typename?: "Mutation" } & {
       User,
       "id" | "username" | "email" | "name" | "introStep"
     > & {
-        nativeLanguage: Maybe<
-          { __typename?: "Language" } & Pick<
-            Language,
-            "id" | "name" | "nativeName" | "languageCode"
-          >
+        nativeLanguage: { __typename?: "Language" } & Pick<
+          Language,
+          "id" | "name" | "nativeName" | "languageCode"
         >;
       }
   >;
@@ -769,6 +729,14 @@ export type GlobalDecksQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type GlobalTagsQueryVariables = {
+  search: Scalars["String"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+};
+
+export type GlobalTagsQuery = { __typename?: "Query" } & Pick<Query, "tags">;
+
 export type LanguagesQueryVariables = {};
 
 export type LanguagesQuery = { __typename?: "Query" } & {
@@ -785,28 +753,21 @@ export type LessonsQueryVariables = {
 export type LessonsQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        lessonQueue: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Review" } & Pick<
-                Review,
-                "id" | "reviewedFields"
+        lessonQueue: Array<
+          { __typename?: "Review" } & Pick<Review, "id" | "reviewedFields"> & {
+              card: { __typename?: "Card" } & Pick<
+                Card,
+                "id" | "meaning" | "pronunciation" | "translation"
               > & {
-                  card: { __typename?: "Card" } & Pick<
-                    Card,
-                    "id" | "meaning" | "pronunciation" | "translation"
-                  > & {
-                      deck: Maybe<
-                        { __typename?: "Deck" } & {
-                          language: {
-                            __typename?: "Language";
-                          } & LanguageFieldsFragment;
-                        }
-                      >;
-                    };
-                }
-            >
-          >
+                  deck: Maybe<
+                    { __typename?: "Deck" } & {
+                      language: {
+                        __typename?: "Language";
+                      } & LanguageFieldsFragment;
+                    }
+                  >;
+                };
+            }
         >;
       }
   >;
@@ -839,28 +800,24 @@ export type ReviewsQueryVariables = {
 export type ReviewsQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        reviewQueue: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Review" } & Pick<
-                Review,
-                "id" | "box" | "correct" | "reviewedFields" | "nextReviewAt"
+        reviewQueue: Array<
+          { __typename?: "Review" } & Pick<
+            Review,
+            "id" | "box" | "correct" | "reviewedFields" | "nextReviewAt"
+          > & {
+              card: { __typename?: "Card" } & Pick<
+                Card,
+                "id" | "meaning" | "pronunciation" | "translation"
               > & {
-                  card: { __typename?: "Card" } & Pick<
-                    Card,
-                    "id" | "meaning" | "pronunciation" | "translation"
-                  > & {
-                      deck: Maybe<
-                        { __typename?: "Deck" } & {
-                          language: {
-                            __typename?: "Language";
-                          } & LanguageFieldsFragment;
-                        }
-                      >;
-                    };
-                }
-            >
-          >
+                  deck: Maybe<
+                    { __typename?: "Deck" } & {
+                      language: {
+                        __typename?: "Language";
+                      } & LanguageFieldsFragment;
+                    }
+                  >;
+                };
+            }
         >;
       }
   >;
@@ -882,14 +839,10 @@ export type CardsQueryVariables = {
 export type CardsQuery = { __typename?: "Query" } & {
   deck: Maybe<
     { __typename?: "Deck" } & Pick<Deck, "id" | "cardCount"> & {
-        cards: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Card" } & Pick<
-                Card,
-                "id" | "meaning" | "pronunciation" | "translation"
-              >
-            >
+        cards: Array<
+          { __typename?: "Card" } & Pick<
+            Card,
+            "id" | "meaning" | "pronunciation" | "translation"
           >
         >;
       }
@@ -934,33 +887,17 @@ export type ShallowDecksQueryVariables = {
 export type ShallowDecksQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        ownedDecks: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Deck" } & Pick<
-                Deck,
-                "id" | "name" | "cardCount" | "rating" | "isLikedBy"
-              > & {
-                  language: {
-                    __typename?: "Language";
-                  } & LanguageFieldsFragment;
-                }
-            >
-          >
+        ownedDecks: Array<
+          { __typename?: "Deck" } & Pick<
+            Deck,
+            "id" | "name" | "cardCount" | "rating" | "isLikedBy"
+          > & { language: { __typename?: "Language" } & LanguageFieldsFragment }
         >;
-        subscribedDecks: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Deck" } & Pick<
-                Deck,
-                "id" | "name" | "cardCount" | "rating" | "isLikedBy"
-              > & {
-                  language: {
-                    __typename?: "Language";
-                  } & LanguageFieldsFragment;
-                }
-            >
-          >
+        subscribedDecks: Array<
+          { __typename?: "Deck" } & Pick<
+            Deck,
+            "id" | "name" | "cardCount" | "rating" | "isLikedBy"
+          > & { language: { __typename?: "Language" } & LanguageFieldsFragment }
         >;
       }
   >;
@@ -973,12 +910,8 @@ export type UserLanguagesQueryVariables = {
 export type UserLanguagesQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        languages: Maybe<
-          Array<Maybe<{ __typename?: "Language" } & LanguageFieldsFragment>>
-        >;
-        nativeLanguage: Maybe<
-          { __typename?: "Language" } & LanguageFieldsFragment
-        >;
+        languages: Array<{ __typename?: "Language" } & LanguageFieldsFragment>;
+        nativeLanguage: { __typename?: "Language" } & LanguageFieldsFragment;
       }
   >;
 };
@@ -1161,21 +1094,8 @@ export const AddDeckDocument = gql`
   mutation AddDeck($input: DeckInput!) {
     addDeck(input: $input) {
       id
-      ownedDecks {
-        id
-        name
-        language {
-          ...languageFields
-        }
-        nativeLanguage {
-          ...languageFields
-        }
-        cardCount
-        subscriberCount
-      }
     }
   }
-  ${languageFieldsFragmentDoc}
 `;
 export type AddDeckMutationFn = ReactApollo.MutationFn<
   AddDeckMutation,
@@ -1269,6 +1189,51 @@ export function useDeleteCardsMutation(
     DeleteCardsMutation,
     DeleteCardsMutationVariables
   >(DeleteCardsDocument, baseOptions);
+}
+export const DeleteDeckDocument = gql`
+  mutation DeleteDeck($id: ID!) {
+    deleteDeck(id: $id) {
+      id
+    }
+  }
+`;
+export type DeleteDeckMutationFn = ReactApollo.MutationFn<
+  DeleteDeckMutation,
+  DeleteDeckMutationVariables
+>;
+export type DeleteDeckProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<DeleteDeckMutation, DeleteDeckMutationVariables>
+> &
+  TChildProps;
+export function withDeleteDeck<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    DeleteDeckMutation,
+    DeleteDeckMutationVariables,
+    DeleteDeckProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeleteDeckMutation,
+    DeleteDeckMutationVariables,
+    DeleteDeckProps<TChildProps>
+  >(DeleteDeckDocument, {
+    alias: "withDeleteDeck",
+    ...operationOptions
+  });
+}
+
+export function useDeleteDeckMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeleteDeckMutation,
+    DeleteDeckMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    DeleteDeckMutation,
+    DeleteDeckMutationVariables
+  >(DeleteDeckDocument, baseOptions);
 }
 export const SubmitReviewDocument = gql`
   mutation SubmitReview(
@@ -2117,6 +2082,42 @@ export function useGlobalDecksQuery(
 ) {
   return ReactApolloHooks.useQuery<GlobalDecksQuery, GlobalDecksQueryVariables>(
     GlobalDecksDocument,
+    baseOptions
+  );
+}
+export const GlobalTagsDocument = gql`
+  query GlobalTags($search: String!, $limit: Int, $offset: Int) {
+    tags(search: $search, limit: $limit, offset: $offset)
+  }
+`;
+export type GlobalTagsProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<GlobalTagsQuery, GlobalTagsQueryVariables>
+> &
+  TChildProps;
+export function withGlobalTags<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    GlobalTagsQuery,
+    GlobalTagsQueryVariables,
+    GlobalTagsProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    GlobalTagsQuery,
+    GlobalTagsQueryVariables,
+    GlobalTagsProps<TChildProps>
+  >(GlobalTagsDocument, {
+    alias: "withGlobalTags",
+    ...operationOptions
+  });
+}
+
+export function useGlobalTagsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<GlobalTagsQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<GlobalTagsQuery, GlobalTagsQueryVariables>(
+    GlobalTagsDocument,
     baseOptions
   );
 }

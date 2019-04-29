@@ -21,12 +21,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     tags: {
         width: `calc(100% - ${theme.spacing(4)}px)`,
-        maxWidth: 500,
+        maxWidth: 800,
         display: "flex",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        overflow: "hidden"
     },
     tagsContainer: {
-        display: "flex"
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        flexDirection: "column"
     }
 }))
 
@@ -45,7 +49,7 @@ export const DeckProperties = ({deck}: PropTypes) => {
                 </Typography>
             </div>
             {tags.length > 0 && (
-                <div>
+                <div className={classes.tagsContainer}>
                     <Typography variant="h6">{t("Tags")}</Typography>
                     <div className={classes.tags}>
                         {tags.map(tag => (

@@ -29,7 +29,7 @@ export const deckPropsValidators: ValidatorMap<Form> = {
     name: [
         {fun: notEmpty, message: "Name can't be empty"},
         {fun: longerThan(2), message: "Name needs to be at least 3 characters long"},
-        {fun: shorterThan(25), message: "Name needs to be 24 characters or less"}
+        {fun: shorterThan(41), message: "Name needs to be 40 characters or less"}
     ]
 }
 

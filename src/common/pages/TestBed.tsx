@@ -1,11 +1,16 @@
+import {Typography} from "@material-ui/core"
 import React from "react"
-import {useID} from "../hooks"
-import DeckList from "./UserProfile/DeckList"
+import {MyCard, MyCardContent, MyCardHeader} from "../components/common/MyCard"
 
-const TestBed = () => {
-    const id = useID()
-
-    return <DeckList userId={id} isOwn={true} />
-}
+const TestBed = () => (
+    <MyCard>
+        <MyCardHeader>
+            <Typography variant="h5">Card Heading</Typography>
+        </MyCardHeader>
+        <MyCardContent>
+            Card Content
+        </MyCardContent>
+    </MyCard>
+)
 
 export default TestBed

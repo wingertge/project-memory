@@ -1,17 +1,5 @@
 mutation AddDeck($input: DeckInput!) {
     addDeck(input: $input) {
         id
-        ownedDecks {
-            id
-            name
-            language {
-                ...languageFields
-            }
-            nativeLanguage {
-                ...languageFields
-            }
-            cardCount
-            subscriberCount
-        }
     }
 }

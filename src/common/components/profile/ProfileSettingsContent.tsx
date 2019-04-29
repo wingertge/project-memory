@@ -7,7 +7,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useToast, useUser, useValidatedFormState, ValidatorMap} from "../../hooks"
-import {isEmail, notEmpty} from "../../util/validationUtils"
+import {isEmail, notEmpty, shorterThan} from "../../util/validationUtils"
 import {usernameValidator} from "../../util/validators"
 import ApolloErrorBox from "../common/ApolloErrorBox"
 import Heading from "../common/Heading"
@@ -66,7 +66,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const validators: ValidatorMap<Form> = {
     username: usernameValidator,
     name: [
-        {fun: notEmpty, message: "Name can't be empty"}
+        {fun: notEmpty, message: "Name can't be empty"},
+        {fun: shorterThan(101), message: "Name can't be longer than 100 characters"}
     ],
     email: [
         {fun: notEmpty, message: "Email is required"},

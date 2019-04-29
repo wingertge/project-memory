@@ -74,7 +74,7 @@ export const DecksOverview = () => {
                         {subscribedDecks.map(deck => (
                             <DeckDisplay deck={deck} owned={false} subscribed={true} />
                         ))}
-                        <Button onClick={() => openDialog()} className={classes.newDeck}>{""}</Button>
+                        {ownedDecks.length <= 50 && <Button onClick={() => openDialog()} className={classes.newDeck}>{""}</Button>}
                     </div>
                 </CardContent>
             </Card>

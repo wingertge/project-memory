@@ -69,5 +69,14 @@
   "Response can't be empty": "Response can't be empty",
   "Exit": "Exit",
   "{{name}} by {{username}}": "{{name}} by {{username}}",
-  "by {{username}}": "by {{username}}"
+  "by {{username}}": "by {{username}}",
+  "Tags": "Tags",
+  "Search": "Search",
+  "Sort By": "Sort By",
+  "Rating": "Rating",
+  "Subscribers": "Subscribers",
+  "Sort Direction": "Sort Direction",
+  "Descending": "Descending",
+  "Ascending": "Ascending",
+  "Show More": "Show More"
 }
