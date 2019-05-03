@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         marginTop: theme.spacing(-2)
     },
     mainImage: {
-        width: "100vw",
+        width: "100%",
         margin: "0 auto",
         backgroundRepeat: "no-repeat",
         backgroundSize: "1600px 100%",
