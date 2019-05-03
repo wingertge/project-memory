@@ -1,8 +1,10 @@
 import React from "react"
 import {Route, Switch, Redirect} from "react-router"
 import Auth from "../client/Auth"
+import CMSPage from "./components/common/CMSPage"
 import Loading from "./components/common/Loading"
 import AuthenticatedRoute from "./components/routing/AuthenticatedRoute"
+import {SwitchedRoute} from "./components/routing/SwitchedRoute"
 import UnauthenticatedRoute from "./components/routing/UnauthenticatedRoute"
 import Loadable from "react-loadable"
 import TestBed from "./pages/TestBed"
@@ -70,9 +72,11 @@ const DeckDiscovery = Loadable({
 
 const Routes = () => (
     <Switch>
-        <Route exact path="/" component={Home} />
+        <SwitchedRoute exact path="/" authenticatedComponent={Home} unauthenticatedComponent={() => null} />
+        <Route path="/landing" render={() => null} />
         <AuthenticatedRoute path="/intro" component={Intro} />
         <Route path="/callback" component={Callback} />
+        <Route path="/page/:slug*" component={CMSPage} />
         <AuthenticatedRoute path="/settings" component={Settings} />
         <AuthenticatedRoute path="/profile/:id([a-zA-Z0-9]+)?" component={UserProfile} />
         <AuthenticatedRoute exact path="/deck/:id([a-zA-Z0-9\\-]+)/(page)?/:page([0-9]+)?/(sortBy)?/:sortBy(meaning|pronunciation|translation)?/(sortDirection)?/:sortDirection(asc|desc)?" component={DeckDetails}/>

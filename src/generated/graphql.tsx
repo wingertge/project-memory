@@ -6,9 +6,429 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
+  /** Custom scalar representing a Slate rich text AST */
+  RichTextAST: any;
   /** Represents a date in time */
   Date: any;
+  /** Raw JSON value */
+  Json: any;
+  /** The `Long` scalar type represents non-fractional signed whole numeric values.
+   * Long can represent values between -(2^63) and 2^63 - 1.
+   */
+  Long: any;
+  /** Custom scalar representing the hex color code value */
+  HEX: any;
+  /** Custom scalar representing the hue part of a rgba value. Value ranges from 0 - 255 */
+  RGBAHue: any;
+  /** Custom scalar representing the transparency part of a rgba value. Value ranges from 0 - 1 */
+  RGBATransparency: any;
   JSON: any;
+};
+
+export type AggregateAsset = {
+  count: Scalars["Int"];
+};
+
+export type AggregateLocation = {
+  count: Scalars["Int"];
+};
+
+export type AggregatePage = {
+  count: Scalars["Int"];
+};
+
+export type Asset = Node & {
+  status: Status;
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+  handle: Scalars["String"];
+  fileName: Scalars["String"];
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+  mainImagePage?: Maybe<Array<Page>>;
+  /** Get the url for the asset with provided transformations applied. */
+  url: Scalars["String"];
+};
+
+export type AssetMainImagePageArgs = {
+  where?: Maybe<PageWhereInput>;
+  orderBy?: Maybe<PageOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type AssetUrlArgs = {
+  transformation?: Maybe<AssetTransformationInput>;
+};
+
+/** A connection to a list of items. */
+export type AssetConnection = {
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A list of edges. */
+  edges: Array<Maybe<AssetEdge>>;
+  aggregate: AggregateAsset;
+};
+
+export type AssetCreateInput = {
+  status?: Maybe<Status>;
+  handle: Scalars["String"];
+  fileName: Scalars["String"];
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+  mainImagePage?: Maybe<PageCreateManyWithoutMainImageInput>;
+};
+
+export type AssetCreateOneWithoutMainImagePageInput = {
+  create?: Maybe<AssetCreateWithoutMainImagePageInput>;
+  connect?: Maybe<AssetWhereUniqueInput>;
+};
+
+export type AssetCreateWithoutMainImagePageInput = {
+  status?: Maybe<Status>;
+  handle: Scalars["String"];
+  fileName: Scalars["String"];
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+};
+
+/** An edge in a connection. */
+export type AssetEdge = {
+  /** The item at the end of the edge. */
+  node: Asset;
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"];
+};
+
+export type AssetOrderByInput =
+  | "status_ASC"
+  | "status_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "id_ASC"
+  | "id_DESC"
+  | "handle_ASC"
+  | "handle_DESC"
+  | "fileName_ASC"
+  | "fileName_DESC"
+  | "height_ASC"
+  | "height_DESC"
+  | "width_ASC"
+  | "width_DESC"
+  | "size_ASC"
+  | "size_DESC"
+  | "mimeType_ASC"
+  | "mimeType_DESC";
+
+export type AssetPreviousValues = {
+  status: Status;
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+  handle: Scalars["String"];
+  fileName: Scalars["String"];
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+};
+
+export type AssetSubscriptionPayload = {
+  mutation: MutationType;
+  node?: Maybe<Asset>;
+  updatedFields?: Maybe<Array<Scalars["String"]>>;
+  previousValues?: Maybe<AssetPreviousValues>;
+};
+
+export type AssetSubscriptionWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<AssetSubscriptionWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<AssetSubscriptionWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<AssetSubscriptionWhereInput>>;
+  /** The subscription event gets dispatched when it's listed in mutation_in */
+  mutation_in?: Maybe<Array<MutationType>>;
+  /** The subscription event gets only dispatched when one of the updated fields names is included in this list */
+  updatedFields_contains?: Maybe<Scalars["String"]>;
+  /** The subscription event gets only dispatched when all of the field names included in this list have been updated */
+  updatedFields_contains_every?: Maybe<Array<Scalars["String"]>>;
+  /** The subscription event gets only dispatched when some of the field names included in this list have been updated */
+  updatedFields_contains_some?: Maybe<Array<Scalars["String"]>>;
+  node?: Maybe<AssetWhereInput>;
+};
+
+/** Transformations for Assets */
+export type AssetTransformationInput = {
+  image?: Maybe<ImageTransformationInput>;
+  document?: Maybe<DocumentTransformationInput>;
+  /** Pass `true` if you want to validate the passed transformation parameters */
+  validateOptions?: Maybe<Scalars["Boolean"]>;
+};
+
+export type AssetUpdateInput = {
+  status?: Maybe<Status>;
+  handle?: Maybe<Scalars["String"]>;
+  fileName?: Maybe<Scalars["String"]>;
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+  mainImagePage?: Maybe<PageUpdateManyWithoutMainImageInput>;
+};
+
+export type AssetUpdateManyMutationInput = {
+  status?: Maybe<Status>;
+  handle?: Maybe<Scalars["String"]>;
+  fileName?: Maybe<Scalars["String"]>;
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+};
+
+export type AssetUpdateOneWithoutMainImagePageInput = {
+  create?: Maybe<AssetCreateWithoutMainImagePageInput>;
+  connect?: Maybe<AssetWhereUniqueInput>;
+  disconnect?: Maybe<Scalars["Boolean"]>;
+  delete?: Maybe<Scalars["Boolean"]>;
+  update?: Maybe<AssetUpdateWithoutMainImagePageDataInput>;
+  upsert?: Maybe<AssetUpsertWithoutMainImagePageInput>;
+};
+
+export type AssetUpdateWithoutMainImagePageDataInput = {
+  status?: Maybe<Status>;
+  handle?: Maybe<Scalars["String"]>;
+  fileName?: Maybe<Scalars["String"]>;
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+};
+
+export type AssetUpsertWithoutMainImagePageInput = {
+  update: AssetUpdateWithoutMainImagePageDataInput;
+  create: AssetCreateWithoutMainImagePageInput;
+};
+
+export type AssetWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<AssetWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<AssetWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<AssetWhereInput>>;
+  status?: Maybe<Status>;
+  /** All values that are not equal to given value. */
+  status_not?: Maybe<Status>;
+  /** All values that are contained in given list. */
+  status_in?: Maybe<Array<Status>>;
+  /** All values that are not contained in given list. */
+  status_not_in?: Maybe<Array<Status>>;
+  updatedAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: Maybe<Scalars["DateTime"]>;
+  createdAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  createdAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  createdAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  createdAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: Maybe<Scalars["DateTime"]>;
+  id?: Maybe<Scalars["ID"]>;
+  /** All values that are not equal to given value. */
+  id_not?: Maybe<Scalars["ID"]>;
+  /** All values that are contained in given list. */
+  id_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values less than the given value. */
+  id_lt?: Maybe<Scalars["ID"]>;
+  /** All values less than or equal the given value. */
+  id_lte?: Maybe<Scalars["ID"]>;
+  /** All values greater than the given value. */
+  id_gt?: Maybe<Scalars["ID"]>;
+  /** All values greater than or equal the given value. */
+  id_gte?: Maybe<Scalars["ID"]>;
+  /** All values containing the given string. */
+  id_contains?: Maybe<Scalars["ID"]>;
+  /** All values not containing the given string. */
+  id_not_contains?: Maybe<Scalars["ID"]>;
+  /** All values starting with the given string. */
+  id_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values ending with the given string. */
+  id_ends_with?: Maybe<Scalars["ID"]>;
+  /** All values not ending with the given string. */
+  id_not_ends_with?: Maybe<Scalars["ID"]>;
+  handle?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  handle_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  handle_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  handle_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  handle_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  handle_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  handle_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  handle_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  handle_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  handle_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  handle_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  handle_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  handle_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  handle_not_ends_with?: Maybe<Scalars["String"]>;
+  fileName?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  fileName_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  fileName_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  fileName_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  fileName_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  fileName_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  fileName_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  fileName_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  fileName_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  fileName_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  fileName_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  fileName_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  fileName_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  fileName_not_ends_with?: Maybe<Scalars["String"]>;
+  height?: Maybe<Scalars["Float"]>;
+  /** All values that are not equal to given value. */
+  height_not?: Maybe<Scalars["Float"]>;
+  /** All values that are contained in given list. */
+  height_in?: Maybe<Array<Scalars["Float"]>>;
+  /** All values that are not contained in given list. */
+  height_not_in?: Maybe<Array<Scalars["Float"]>>;
+  /** All values less than the given value. */
+  height_lt?: Maybe<Scalars["Float"]>;
+  /** All values less than or equal the given value. */
+  height_lte?: Maybe<Scalars["Float"]>;
+  /** All values greater than the given value. */
+  height_gt?: Maybe<Scalars["Float"]>;
+  /** All values greater than or equal the given value. */
+  height_gte?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  /** All values that are not equal to given value. */
+  width_not?: Maybe<Scalars["Float"]>;
+  /** All values that are contained in given list. */
+  width_in?: Maybe<Array<Scalars["Float"]>>;
+  /** All values that are not contained in given list. */
+  width_not_in?: Maybe<Array<Scalars["Float"]>>;
+  /** All values less than the given value. */
+  width_lt?: Maybe<Scalars["Float"]>;
+  /** All values less than or equal the given value. */
+  width_lte?: Maybe<Scalars["Float"]>;
+  /** All values greater than the given value. */
+  width_gt?: Maybe<Scalars["Float"]>;
+  /** All values greater than or equal the given value. */
+  width_gte?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  /** All values that are not equal to given value. */
+  size_not?: Maybe<Scalars["Float"]>;
+  /** All values that are contained in given list. */
+  size_in?: Maybe<Array<Scalars["Float"]>>;
+  /** All values that are not contained in given list. */
+  size_not_in?: Maybe<Array<Scalars["Float"]>>;
+  /** All values less than the given value. */
+  size_lt?: Maybe<Scalars["Float"]>;
+  /** All values less than or equal the given value. */
+  size_lte?: Maybe<Scalars["Float"]>;
+  /** All values greater than the given value. */
+  size_gt?: Maybe<Scalars["Float"]>;
+  /** All values greater than or equal the given value. */
+  size_gte?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  mimeType_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  mimeType_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  mimeType_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  mimeType_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  mimeType_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  mimeType_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  mimeType_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  mimeType_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  mimeType_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  mimeType_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  mimeType_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  mimeType_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  mimeType_not_ends_with?: Maybe<Scalars["String"]>;
+  mainImagePage_every?: Maybe<PageWhereInput>;
+  mainImagePage_some?: Maybe<PageWhereInput>;
+  mainImagePage_none?: Maybe<PageWhereInput>;
+};
+
+export type AssetWhereUniqueInput = {
+  id?: Maybe<Scalars["ID"]>;
+  handle?: Maybe<Scalars["String"]>;
 };
 
 export type AuthResult = {
@@ -16,6 +436,11 @@ export type AuthResult = {
   idToken: Scalars["String"];
   tokenType: Scalars["String"];
   expiresIn: Scalars["Int"];
+};
+
+export type BatchPayload = {
+  /** The number of nodes that have been affected by the Batch operation. */
+  count: Scalars["Long"];
 };
 
 export type Card = {
@@ -44,6 +469,19 @@ export type CardInput = {
 };
 
 export type CardSortingOptions = "meaning" | "pronunciation" | "translation";
+
+/** Representing a color value comprising of HEX, RGBA and css color values */
+export type Color = {
+  hex: Scalars["HEX"];
+  rgba: Rgba;
+  css: Scalars["String"];
+};
+
+/** Accepts either HEX or RGBA color value. At least one of hex or rgba value should be passed. If both are passed RGBA is used. */
+export type ColorInput = {
+  hex?: Maybe<Scalars["HEX"]>;
+  rgba?: Maybe<RgbaInput>;
+};
 
 export type Deck = {
   id: Scalars["ID"];
@@ -94,11 +532,96 @@ export type DeckInput = {
 
 export type DeckSortBy = "name" | "cardCount" | "rating" | "subscriberCount";
 
+export type DocumentFileTypes =
+  | "jpg"
+  | "odp"
+  | "ods"
+  | "odt"
+  | "png"
+  | "svg"
+  | "txt"
+  | "webp"
+  | "docx"
+  | "html"
+  | "pdf"
+  | "doc"
+  | "xlsx"
+  | "xls"
+  | "pptx"
+  | "ppt";
+
+export type DocumentOutputInput = {
+  /** Transforms a document into a desired file type.
+   * See this matrix for format support:
+   *
+   * PDF:	jpg, odp, ods, odt, png, svg, txt, and webp
+   * DOC:	docx, html, jpg, odt, pdf, png, svg, txt, and webp
+   * DOCX:	doc, html, jpg, odt, pdf, png, svg, txt, and webp
+   * ODT:	doc, docx, html, jpg, pdf, png, svg, txt, and webp
+   * XLS:	jpg, pdf, ods, png, svg, xlsx, and webp
+   * XLSX:	jpg, pdf, ods, png, svg, xls, and webp
+   * ODS:	jpg, pdf, png, xls, svg, xlsx, and webp
+   * PPT:	jpg, odp, pdf, png, svg, pptx, and webp
+   * PPTX:	jpg, odp, pdf, png, svg, ppt, and webp
+   * ODP:	jpg, pdf, png, ppt, svg, pptx, and webp
+   * BMP:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * GIF:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * JPG:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * PNG:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * WEBP:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * TIFF:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * AI:	    jpg, odp, ods, odt, pdf, png, svg, and webp
+   * PSD:	jpg, odp, ods, odt, pdf, png, svg, and webp
+   * SVG:	jpg, odp, ods, odt, pdf, png, and webp
+   * HTML:	jpg, odt, pdf, svg, txt, and webp
+   * TXT:	jpg, html, odt, pdf, svg, and webp
+   */
+  format?: Maybe<DocumentFileTypes>;
+};
+
+/** Transformations for Documents */
+export type DocumentTransformationInput = {
+  /** Changes the output for the file. */
+  output?: Maybe<DocumentOutputInput>;
+};
+
 export type Identity = {
   userId: Scalars["ID"];
   provider: Scalars["String"];
   connection: Scalars["String"];
   isSocial: Scalars["Boolean"];
+};
+
+export type ImageFit =
+  /** Resizes the image to fit within the specified parameters without distorting, cropping, or changing the aspect ratio. */
+  | "clip"
+  /** Resizes the image to fit the specified parameters exactly by removing any
+   * parts of the image that don't fit within the boundaries.
+   */
+  | "crop"
+  /** Resizes the image to fit the specified parameters exactly by scaling the image
+   * to the desired size. The aspect ratio of the image is not respected and the
+   * image can be distorted using this method.
+   */
+  | "scale"
+  /** Resizes the image to fit within the parameters, but as opposed to 'fit:clip'
+   * will not scale the image if the image is smaller than the output size.
+   */
+  | "max";
+
+export type ImageResizeInput = {
+  /** The width in pixels to resize the image to. The value must be an integer from 1 to 10000. */
+  width?: Maybe<Scalars["Int"]>;
+  /** The height in pixels to resize the image to. The value must be an integer from 1 to 10000. */
+  height?: Maybe<Scalars["Int"]>;
+  /** The default value for the fit parameter is fit:clip. */
+  fit?: Maybe<ImageFit>;
+};
+
+/** Transformations for Images */
+export type ImageTransformationInput = {
+  /** Resizes the image */
+  resize?: Maybe<ImageResizeInput>;
 };
 
 export type Language = {
@@ -111,7 +634,156 @@ export type Language = {
   hasPronunciation: Scalars["Boolean"];
 };
 
+export type Locale = "EN";
+
+export type Location = Node & {
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+};
+
+/** A connection to a list of items. */
+export type LocationConnection = {
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A list of edges. */
+  edges: Array<Maybe<LocationEdge>>;
+  aggregate: AggregateLocation;
+};
+
+/** An edge in a connection. */
+export type LocationEdge = {
+  /** The item at the end of the edge. */
+  node: Location;
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"];
+};
+
+export type LocationOrderByInput =
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "id_ASC"
+  | "id_DESC";
+
+export type LocationPreviousValues = {
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+};
+
+export type LocationSubscriptionPayload = {
+  mutation: MutationType;
+  node?: Maybe<Location>;
+  updatedFields?: Maybe<Array<Scalars["String"]>>;
+  previousValues?: Maybe<LocationPreviousValues>;
+};
+
+export type LocationSubscriptionWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<LocationSubscriptionWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<LocationSubscriptionWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<LocationSubscriptionWhereInput>>;
+  /** The subscription event gets dispatched when it's listed in mutation_in */
+  mutation_in?: Maybe<Array<MutationType>>;
+  /** The subscription event gets only dispatched when one of the updated fields names is included in this list */
+  updatedFields_contains?: Maybe<Scalars["String"]>;
+  /** The subscription event gets only dispatched when all of the field names included in this list have been updated */
+  updatedFields_contains_every?: Maybe<Array<Scalars["String"]>>;
+  /** The subscription event gets only dispatched when some of the field names included in this list have been updated */
+  updatedFields_contains_some?: Maybe<Array<Scalars["String"]>>;
+  node?: Maybe<LocationWhereInput>;
+};
+
+export type LocationWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<LocationWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<LocationWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<LocationWhereInput>>;
+  updatedAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: Maybe<Scalars["DateTime"]>;
+  createdAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  createdAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  createdAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  createdAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: Maybe<Scalars["DateTime"]>;
+  id?: Maybe<Scalars["ID"]>;
+  /** All values that are not equal to given value. */
+  id_not?: Maybe<Scalars["ID"]>;
+  /** All values that are contained in given list. */
+  id_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values less than the given value. */
+  id_lt?: Maybe<Scalars["ID"]>;
+  /** All values less than or equal the given value. */
+  id_lte?: Maybe<Scalars["ID"]>;
+  /** All values greater than the given value. */
+  id_gt?: Maybe<Scalars["ID"]>;
+  /** All values greater than or equal the given value. */
+  id_gte?: Maybe<Scalars["ID"]>;
+  /** All values containing the given string. */
+  id_contains?: Maybe<Scalars["ID"]>;
+  /** All values not containing the given string. */
+  id_not_contains?: Maybe<Scalars["ID"]>;
+  /** All values starting with the given string. */
+  id_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values ending with the given string. */
+  id_ends_with?: Maybe<Scalars["ID"]>;
+  /** All values not ending with the given string. */
+  id_not_ends_with?: Maybe<Scalars["ID"]>;
+};
+
+export type LocationWhereUniqueInput = {
+  id?: Maybe<Scalars["ID"]>;
+};
+
 export type Mutation = {
+  createAsset: Asset;
+  createLocation: Location;
+  createPage: Page;
+  updateAsset?: Maybe<Asset>;
+  updatePage?: Maybe<Page>;
+  deleteAsset?: Maybe<Asset>;
+  deleteLocation?: Maybe<Location>;
+  deletePage?: Maybe<Page>;
+  upsertAsset: Asset;
+  upsertPage: Page;
+  updateManyAssets: BatchPayload;
+  updateManyPages: BatchPayload;
+  deleteManyAssets: BatchPayload;
+  deleteManyLocations: BatchPayload;
+  deleteManyPages: BatchPayload;
   authenticate?: Maybe<AuthResult>;
   logout?: Maybe<Scalars["Boolean"]>;
   editUser?: Maybe<User>;
@@ -134,6 +806,70 @@ export type Mutation = {
   addTagToDeck?: Maybe<Deck>;
   removeTagFromDeck?: Maybe<Deck>;
   updateNow: Scalars["ID"];
+};
+
+export type MutationCreateAssetArgs = {
+  data: AssetCreateInput;
+};
+
+export type MutationCreatePageArgs = {
+  data: PageCreateInput;
+};
+
+export type MutationUpdateAssetArgs = {
+  data: AssetUpdateInput;
+  where: AssetWhereUniqueInput;
+};
+
+export type MutationUpdatePageArgs = {
+  data: PageUpdateInput;
+  where: PageWhereUniqueInput;
+};
+
+export type MutationDeleteAssetArgs = {
+  where: AssetWhereUniqueInput;
+};
+
+export type MutationDeleteLocationArgs = {
+  where: LocationWhereUniqueInput;
+};
+
+export type MutationDeletePageArgs = {
+  where: PageWhereUniqueInput;
+};
+
+export type MutationUpsertAssetArgs = {
+  where: AssetWhereUniqueInput;
+  create: AssetCreateInput;
+  update: AssetUpdateInput;
+};
+
+export type MutationUpsertPageArgs = {
+  where: PageWhereUniqueInput;
+  create: PageCreateInput;
+  update: PageUpdateInput;
+};
+
+export type MutationUpdateManyAssetsArgs = {
+  data: AssetUpdateManyMutationInput;
+  where?: Maybe<AssetWhereInput>;
+};
+
+export type MutationUpdateManyPagesArgs = {
+  data: PageUpdateManyMutationInput;
+  where?: Maybe<PageWhereInput>;
+};
+
+export type MutationDeleteManyAssetsArgs = {
+  where?: Maybe<AssetWhereInput>;
+};
+
+export type MutationDeleteManyLocationsArgs = {
+  where?: Maybe<LocationWhereInput>;
+};
+
+export type MutationDeleteManyPagesArgs = {
+  where?: Maybe<PageWhereInput>;
 };
 
 export type MutationAuthenticateArgs = {
@@ -235,6 +971,600 @@ export type MutationRemoveTagFromDeckArgs = {
   tag: Scalars["String"];
 };
 
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+
+/** An object with an ID */
+export type Node = {
+  /** The id of the object. */
+  id: Scalars["ID"];
+};
+
+export type Page = Node & {
+  status: Status;
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+  header?: Maybe<Scalars["String"]>;
+  mainImage?: Maybe<Asset>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug: Scalars["String"];
+  intro?: Maybe<RichText>;
+  main?: Maybe<RichText>;
+  blurbs?: Maybe<RichText>;
+  outro?: Maybe<RichText>;
+};
+
+/** A connection to a list of items. */
+export type PageConnection = {
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A list of edges. */
+  edges: Array<Maybe<PageEdge>>;
+  aggregate: AggregatePage;
+};
+
+export type PageCreateInput = {
+  status?: Maybe<Status>;
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug: Scalars["String"];
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+  mainImage?: Maybe<AssetCreateOneWithoutMainImagePageInput>;
+};
+
+export type PageCreateManyWithoutMainImageInput = {
+  create?: Maybe<Array<PageCreateWithoutMainImageInput>>;
+  connect?: Maybe<Array<PageWhereUniqueInput>>;
+};
+
+export type PageCreateWithoutMainImageInput = {
+  status?: Maybe<Status>;
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug: Scalars["String"];
+  intro?: Maybe<Scalars["Json"]>;
+  main?: Maybe<Scalars["Json"]>;
+  blurbs?: Maybe<Scalars["Json"]>;
+  outro?: Maybe<Scalars["Json"]>;
+};
+
+/** An edge in a connection. */
+export type PageEdge = {
+  /** The item at the end of the edge. */
+  node: Page;
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"];
+};
+
+/** Information about pagination in a connection. */
+export type PageInfo = {
+  /** When paginating forwards, are there more items? */
+  hasNextPage: Scalars["Boolean"];
+  /** When paginating backwards, are there more items? */
+  hasPreviousPage: Scalars["Boolean"];
+  /** When paginating backwards, the cursor to continue. */
+  startCursor?: Maybe<Scalars["String"]>;
+  /** When paginating forwards, the cursor to continue. */
+  endCursor?: Maybe<Scalars["String"]>;
+};
+
+export type PageOrderByInput =
+  | "status_ASC"
+  | "status_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "id_ASC"
+  | "id_DESC"
+  | "header_ASC"
+  | "header_DESC"
+  | "imageHeader_ASC"
+  | "imageHeader_DESC"
+  | "imageSubheader_ASC"
+  | "imageSubheader_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "intro_ASC"
+  | "intro_DESC"
+  | "main_ASC"
+  | "main_DESC"
+  | "blurbs_ASC"
+  | "blurbs_DESC"
+  | "outro_ASC"
+  | "outro_DESC";
+
+export type PagePreviousValues = {
+  status: Status;
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug: Scalars["String"];
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+};
+
+export type PageScalarWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<PageScalarWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<PageScalarWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<PageScalarWhereInput>>;
+  status?: Maybe<Status>;
+  /** All values that are not equal to given value. */
+  status_not?: Maybe<Status>;
+  /** All values that are contained in given list. */
+  status_in?: Maybe<Array<Status>>;
+  /** All values that are not contained in given list. */
+  status_not_in?: Maybe<Array<Status>>;
+  updatedAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: Maybe<Scalars["DateTime"]>;
+  createdAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  createdAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  createdAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  createdAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: Maybe<Scalars["DateTime"]>;
+  id?: Maybe<Scalars["ID"]>;
+  /** All values that are not equal to given value. */
+  id_not?: Maybe<Scalars["ID"]>;
+  /** All values that are contained in given list. */
+  id_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values less than the given value. */
+  id_lt?: Maybe<Scalars["ID"]>;
+  /** All values less than or equal the given value. */
+  id_lte?: Maybe<Scalars["ID"]>;
+  /** All values greater than the given value. */
+  id_gt?: Maybe<Scalars["ID"]>;
+  /** All values greater than or equal the given value. */
+  id_gte?: Maybe<Scalars["ID"]>;
+  /** All values containing the given string. */
+  id_contains?: Maybe<Scalars["ID"]>;
+  /** All values not containing the given string. */
+  id_not_contains?: Maybe<Scalars["ID"]>;
+  /** All values starting with the given string. */
+  id_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values ending with the given string. */
+  id_ends_with?: Maybe<Scalars["ID"]>;
+  /** All values not ending with the given string. */
+  id_not_ends_with?: Maybe<Scalars["ID"]>;
+  header?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  header_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  header_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  header_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  header_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  header_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  header_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  header_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  header_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  header_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  header_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  header_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  header_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  header_not_ends_with?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  imageHeader_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  imageHeader_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  imageHeader_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  imageHeader_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  imageHeader_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  imageHeader_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  imageHeader_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  imageHeader_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  imageHeader_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  imageHeader_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  imageHeader_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  imageHeader_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  imageHeader_not_ends_with?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  imageSubheader_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  imageSubheader_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  imageSubheader_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  imageSubheader_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  imageSubheader_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  imageSubheader_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  imageSubheader_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  imageSubheader_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  imageSubheader_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  imageSubheader_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  imageSubheader_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  imageSubheader_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  imageSubheader_not_ends_with?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  slug_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  slug_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  slug_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  slug_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  slug_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  slug_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  slug_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  slug_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  slug_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  slug_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  slug_not_ends_with?: Maybe<Scalars["String"]>;
+};
+
+export type PageSubscriptionPayload = {
+  mutation: MutationType;
+  node?: Maybe<Page>;
+  updatedFields?: Maybe<Array<Scalars["String"]>>;
+  previousValues?: Maybe<PagePreviousValues>;
+};
+
+export type PageSubscriptionWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<PageSubscriptionWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<PageSubscriptionWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<PageSubscriptionWhereInput>>;
+  /** The subscription event gets dispatched when it's listed in mutation_in */
+  mutation_in?: Maybe<Array<MutationType>>;
+  /** The subscription event gets only dispatched when one of the updated fields names is included in this list */
+  updatedFields_contains?: Maybe<Scalars["String"]>;
+  /** The subscription event gets only dispatched when all of the field names included in this list have been updated */
+  updatedFields_contains_every?: Maybe<Array<Scalars["String"]>>;
+  /** The subscription event gets only dispatched when some of the field names included in this list have been updated */
+  updatedFields_contains_some?: Maybe<Array<Scalars["String"]>>;
+  node?: Maybe<PageWhereInput>;
+};
+
+export type PageUpdateInput = {
+  status?: Maybe<Status>;
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+  mainImage?: Maybe<AssetUpdateOneWithoutMainImagePageInput>;
+};
+
+export type PageUpdateManyDataInput = {
+  status?: Maybe<Status>;
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["Json"]>;
+  main?: Maybe<Scalars["Json"]>;
+  blurbs?: Maybe<Scalars["Json"]>;
+  outro?: Maybe<Scalars["Json"]>;
+};
+
+export type PageUpdateManyMutationInput = {
+  status?: Maybe<Status>;
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+};
+
+export type PageUpdateManyWithoutMainImageInput = {
+  create?: Maybe<Array<PageCreateWithoutMainImageInput>>;
+  connect?: Maybe<Array<PageWhereUniqueInput>>;
+  set?: Maybe<Array<PageWhereUniqueInput>>;
+  disconnect?: Maybe<Array<PageWhereUniqueInput>>;
+  delete?: Maybe<Array<PageWhereUniqueInput>>;
+  update?: Maybe<Array<PageUpdateWithWhereUniqueWithoutMainImageInput>>;
+  updateMany?: Maybe<Array<PageUpdateManyWithWhereNestedInput>>;
+  deleteMany?: Maybe<Array<PageScalarWhereInput>>;
+  upsert?: Maybe<Array<PageUpsertWithWhereUniqueWithoutMainImageInput>>;
+};
+
+export type PageUpdateManyWithWhereNestedInput = {
+  where: PageScalarWhereInput;
+  data: PageUpdateManyDataInput;
+};
+
+export type PageUpdateWithoutMainImageDataInput = {
+  status?: Maybe<Status>;
+  header?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["Json"]>;
+  main?: Maybe<Scalars["Json"]>;
+  blurbs?: Maybe<Scalars["Json"]>;
+  outro?: Maybe<Scalars["Json"]>;
+};
+
+export type PageUpdateWithWhereUniqueWithoutMainImageInput = {
+  where: PageWhereUniqueInput;
+  data: PageUpdateWithoutMainImageDataInput;
+};
+
+export type PageUpsertWithWhereUniqueWithoutMainImageInput = {
+  where: PageWhereUniqueInput;
+  update: PageUpdateWithoutMainImageDataInput;
+  create: PageCreateWithoutMainImageInput;
+};
+
+export type PageWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<PageWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<PageWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<PageWhereInput>>;
+  status?: Maybe<Status>;
+  /** All values that are not equal to given value. */
+  status_not?: Maybe<Status>;
+  /** All values that are contained in given list. */
+  status_in?: Maybe<Array<Status>>;
+  /** All values that are not contained in given list. */
+  status_not_in?: Maybe<Array<Status>>;
+  updatedAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: Maybe<Scalars["DateTime"]>;
+  createdAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  createdAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  createdAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  createdAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: Maybe<Scalars["DateTime"]>;
+  id?: Maybe<Scalars["ID"]>;
+  /** All values that are not equal to given value. */
+  id_not?: Maybe<Scalars["ID"]>;
+  /** All values that are contained in given list. */
+  id_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values less than the given value. */
+  id_lt?: Maybe<Scalars["ID"]>;
+  /** All values less than or equal the given value. */
+  id_lte?: Maybe<Scalars["ID"]>;
+  /** All values greater than the given value. */
+  id_gt?: Maybe<Scalars["ID"]>;
+  /** All values greater than or equal the given value. */
+  id_gte?: Maybe<Scalars["ID"]>;
+  /** All values containing the given string. */
+  id_contains?: Maybe<Scalars["ID"]>;
+  /** All values not containing the given string. */
+  id_not_contains?: Maybe<Scalars["ID"]>;
+  /** All values starting with the given string. */
+  id_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values ending with the given string. */
+  id_ends_with?: Maybe<Scalars["ID"]>;
+  /** All values not ending with the given string. */
+  id_not_ends_with?: Maybe<Scalars["ID"]>;
+  header?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  header_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  header_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  header_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  header_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  header_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  header_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  header_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  header_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  header_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  header_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  header_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  header_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  header_not_ends_with?: Maybe<Scalars["String"]>;
+  imageHeader?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  imageHeader_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  imageHeader_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  imageHeader_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  imageHeader_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  imageHeader_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  imageHeader_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  imageHeader_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  imageHeader_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  imageHeader_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  imageHeader_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  imageHeader_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  imageHeader_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  imageHeader_not_ends_with?: Maybe<Scalars["String"]>;
+  imageSubheader?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  imageSubheader_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  imageSubheader_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  imageSubheader_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  imageSubheader_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  imageSubheader_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  imageSubheader_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  imageSubheader_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  imageSubheader_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  imageSubheader_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  imageSubheader_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  imageSubheader_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  imageSubheader_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  imageSubheader_not_ends_with?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  slug_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  slug_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  slug_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  slug_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  slug_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  slug_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  slug_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  slug_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  slug_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  slug_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  slug_not_ends_with?: Maybe<Scalars["String"]>;
+  mainImage?: Maybe<AssetWhereInput>;
+};
+
+export type PageWhereUniqueInput = {
+  id?: Maybe<Scalars["ID"]>;
+  slug?: Maybe<Scalars["String"]>;
+};
+
 export type Post = {
   id: Scalars["ID"];
   createdAt: Scalars["Date"];
@@ -263,6 +1593,17 @@ export type PostSortOption = "likes" | "reposts" | "createdAt";
 export type PostType = "post" | "repost";
 
 export type Query = {
+  assets: Array<Maybe<Asset>>;
+  locations: Array<Maybe<Location>>;
+  pages: Array<Maybe<Page>>;
+  asset?: Maybe<Asset>;
+  location?: Maybe<Location>;
+  page?: Maybe<Page>;
+  assetsConnection: AssetConnection;
+  locationsConnection: LocationConnection;
+  pagesConnection: PageConnection;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
   users?: Maybe<Array<Maybe<User>>>;
   user?: Maybe<User>;
   languages?: Maybe<Array<Maybe<Language>>>;
@@ -274,6 +1615,82 @@ export type Query = {
   currentUserID: Scalars["ID"];
   loginExpiresAt: Scalars["ID"];
   now: Scalars["ID"];
+};
+
+export type QueryAssetsArgs = {
+  where?: Maybe<AssetWhereInput>;
+  orderBy?: Maybe<AssetOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryLocationsArgs = {
+  where?: Maybe<LocationWhereInput>;
+  orderBy?: Maybe<LocationOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryPagesArgs = {
+  where?: Maybe<PageWhereInput>;
+  orderBy?: Maybe<PageOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryAssetArgs = {
+  where: AssetWhereUniqueInput;
+};
+
+export type QueryLocationArgs = {
+  where: LocationWhereUniqueInput;
+};
+
+export type QueryPageArgs = {
+  where: PageWhereUniqueInput;
+};
+
+export type QueryAssetsConnectionArgs = {
+  where?: Maybe<AssetWhereInput>;
+  orderBy?: Maybe<AssetOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryLocationsConnectionArgs = {
+  where?: Maybe<LocationWhereInput>;
+  orderBy?: Maybe<LocationOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryPagesConnectionArgs = {
+  where?: Maybe<PageWhereInput>;
+  orderBy?: Maybe<PageOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QueryUsersArgs = {
@@ -330,7 +1747,33 @@ export type ReviewFilterInput = {
 
 export type ReviewSortOptions = "reviewDate" | "box";
 
+/** Representing a RGBA color value: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#rgb()_and_rgba() */
+export type Rgba = {
+  r: Scalars["RGBAHue"];
+  g: Scalars["RGBAHue"];
+  b: Scalars["RGBAHue"];
+  a: Scalars["RGBATransparency"];
+};
+
+/** Input type representing a RGBA color value: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#rgb()_and_rgba() */
+export type RgbaInput = {
+  r: Scalars["RGBAHue"];
+  g: Scalars["RGBAHue"];
+  b: Scalars["RGBAHue"];
+  a: Scalars["RGBATransparency"];
+};
+
+/** Custom type representing a rich text value comprising of raw rich text ast, html, markdown and text values */
+export type RichText = {
+  raw?: Maybe<Scalars["RichTextAST"]>;
+  html?: Maybe<Scalars["String"]>;
+  markdown?: Maybe<Scalars["String"]>;
+  text?: Maybe<Scalars["String"]>;
+};
+
 export type SortDirection = "asc" | "desc";
+
+export type Status = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type SubscriberFilterInput = {
   limit?: Maybe<Scalars["Int"]>;
@@ -391,6 +1834,11 @@ export type UserInput = {
   introStep?: Maybe<Scalars["Int"]>;
   nativeLanguage?: Maybe<Scalars["ID"]>;
 };
+export type ImageFragment = { __typename?: "Asset" } & Pick<
+  Asset,
+  "id" | "url" | "width" | "height"
+>;
+
 export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
   Language,
   | "id"
@@ -686,6 +2134,25 @@ export type ProfileQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type PageQueryVariables = {
+  slug: Scalars["String"];
+};
+
+export type PageQuery = { __typename?: "Query" } & {
+  page: Maybe<
+    { __typename?: "Page" } & Pick<
+      Page,
+      "id" | "header" | "imageHeader" | "imageSubheader"
+    > & {
+        mainImage: Maybe<{ __typename?: "Asset" } & ImageFragment>;
+        intro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        main: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        blurbs: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        outro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+      }
+  >;
+};
+
 export type FeedQueryVariables = {
   userId: Scalars["ID"];
   filter?: Maybe<PostFilterInput>;
@@ -921,6 +2388,14 @@ import gql from "graphql-tag";
 import * as ReactApollo from "react-apollo";
 import * as ReactApolloHooks from "react-apollo-hooks";
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export const imageFragmentDoc = gql`
+  fragment image on Asset {
+    id
+    url
+    width
+    height
+  }
+`;
 export const languageFieldsFragmentDoc = gql`
   fragment languageFields on Language {
     id
@@ -1988,6 +3463,63 @@ export function useProfileQuery(
 ) {
   return ReactApolloHooks.useQuery<ProfileQuery, ProfileQueryVariables>(
     ProfileDocument,
+    baseOptions
+  );
+}
+export const PageDocument = gql`
+  query Page($slug: String!) {
+    page(where: { slug: $slug }) {
+      id
+      header
+      mainImage {
+        ...image
+      }
+      imageHeader
+      imageSubheader
+      intro {
+        raw
+      }
+      main {
+        raw
+      }
+      blurbs {
+        raw
+      }
+      outro {
+        raw
+      }
+    }
+  }
+  ${imageFragmentDoc}
+`;
+export type PageProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<PageQuery, PageQueryVariables>
+> &
+  TChildProps;
+export function withPage<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    PageQuery,
+    PageQueryVariables,
+    PageProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    PageQuery,
+    PageQueryVariables,
+    PageProps<TChildProps>
+  >(PageDocument, {
+    alias: "withPage",
+    ...operationOptions
+  });
+}
+
+export function usePageQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<PageQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<PageQuery, PageQueryVariables>(
+    PageDocument,
     baseOptions
   );
 }

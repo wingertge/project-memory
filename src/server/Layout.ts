@@ -52,6 +52,8 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
               window.__REACT_APP_AUTH0_CLIENT_ID__ = "${proc.env.REACT_APP_AUTH0_CLIENT_ID}"
               window.__REACT_APP_AUTH0_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_CALLBACK}"
               window.__REACT_APP_AUTH0_AUDIENCE__ = "${proc.env.REACT_APP_AUTH0_AUDIENCE}"
+              window.__REACT_APP_CMS_SPACE__ = "${proc.env.REACT_APP_CMS_SPACE}"
+              window.__REACT_APP_CMS_TOKEN__ = "${proc.env.REACT_APP_CMS_TOKEN}"
             </script>
             ${bundle}
         </body>

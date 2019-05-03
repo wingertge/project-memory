@@ -9,4 +9,6 @@ interface Window {
     __REACT_APP_AUTH0_CLIENT_ID__: string
     __REACT_APP_AUTH0_CALLBACK__: string
     __REACT_APP_AUTH0_AUDIENCE__: string
+    __REACT_APP_CMS_SPACE__: string
+    __REACT_APP_CMS_TOKEN__: string
 }

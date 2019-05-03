@@ -1,0 +1,13 @@
+query Page($slug: String!) {
+    page(where: {slug: $slug}) {
+        id
+        header
+        mainImage {...image}
+        imageHeader
+        imageSubheader
+        intro {raw}
+        main {raw}
+        blurbs {raw}
+        outro {raw}
+    }
+}

@@ -54,13 +54,11 @@ const Home = () => {
     const openLessons = () => history.push("/lessons")
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <TimedCircularProgress />
+    if(loading || !user) return <TimedCircularProgress />
 
     return (
         <div>
-            {(user && (!user.introStep || user.introStep !== -1)) && (
-                <Redirect to="/intro"/>
-            )}
+            {!user.introStep || user.introStep !== -1 && <Redirect to="/intro"/>}
             {lessonsCount > 0 && (
                 <div className={classes.lessonsBox}>
                     <Typography variant="h6" gutterBottom>
@@ -69,26 +67,24 @@ const Home = () => {
                     <Button onClick={openLessons}>{t("Review now")}</Button>
                 </div>
             )}
-            {user && <UpcomingReviews/>}
-            {user && <StageCounts/>}
-            {user && (
-                <div className={classes.deckDiscoveryBox}>
-                    <Card>
-                        <div className={classes.deckDiscoveryHeader}>
-                            <Typography variant="h5" className={classes.deckDiscoveryHeaderText}>{t("Discover more decks")}</Typography>
-                            <div style={{flex: "1 1 100%"}} />
-                            <Tooltip title={t("Show More")}>
-                                <IconButton onClick={() => history.push("/decks")} className={classes.iconButton}>
-                                    <MoreHoriz />
-                                </IconButton>
-                            </Tooltip>
-                        </div>
-                        <div className={classes.deckDiscoveryBox}>
-                            <PopularDecks exclusive />
-                        </div>
-                    </Card>
-                </div>
-            )}
+            <UpcomingReviews/>
+            <StageCounts/>
+            <div className={classes.deckDiscoveryBox}>
+                <Card>
+                    <div className={classes.deckDiscoveryHeader}>
+                        <Typography variant="h5" className={classes.deckDiscoveryHeaderText}>{t("Discover more decks")}</Typography>
+                        <div style={{flex: "1 1 100%"}} />
+                        <Tooltip title={t("Show More")}>
+                            <IconButton onClick={() => history.push("/decks")} className={classes.iconButton}>
+                                <MoreHoriz />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
+                    <div className={classes.deckDiscoveryBox}>
+                        <PopularDecks exclusive />
+                    </div>
+                </Card>
+            </div>
         </div>
     )
 }
