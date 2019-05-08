@@ -1,16 +1,6 @@
-import {Typography} from "@material-ui/core"
 import React from "react"
-import {MyCard, MyCardContent, MyCardHeader} from "../components/common/MyCard"
+import UserProfile from "./UserProfile/UserProfile"
 
-const TestBed = () => (
-    <MyCard>
-        <MyCardHeader>
-            <Typography variant="h5">Card Heading</Typography>
-        </MyCardHeader>
-        <MyCardContent>
-            Card Content
-        </MyCardContent>
-    </MyCard>
-)
+const TestBed = () => <UserProfile />
 
 export default TestBed

@@ -5,7 +5,13 @@ import {useTranslation} from "react-i18next"
 import {Redirect} from "react-router"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
-import {useLessonsCountQuery} from "../../../generated/graphql"
+import {
+    Deck,
+    Language,
+    useGlobalDecksQuery,
+    useLessonsCountQuery,
+    useUserLanguagesQuery
+} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
@@ -53,8 +59,34 @@ const Home = () => {
     const lessonsCount = oc(data).user.lessonsCount(0)
     const openLessons = () => history.push("/lessons")
 
-    if(error) return <ApolloErrorBox error={error} />
-    if(loading || !user) return <TimedCircularProgress />
+    const userLangs = useUserLanguagesQuery({
+        skip: !user,
+        variables: {
+            userId: oc(user).id("")
+        }
+    })
+    const languages = oc(userLangs.data).user.languages([]) as Language[]
+    const nativeLanguage = oc(userLangs.data).user.nativeLanguage() as Language
+
+    const globalDecks = useGlobalDecksQuery({
+        skip: !user,
+        variables: {
+            filter: {
+                sortBy: "rating",
+                sortDirection: "desc",
+                limit: 20,
+                languages: languages.map(lang => lang.id),
+                nativeLanguage: oc(nativeLanguage).id(),
+                excludeOwnedBy: [oc(user).id("")],
+                excludeSubscribedBy: [oc(user).id("")]
+            },
+            userId: oc(user).id("")
+        }
+    })
+    const decks = oc(globalDecks.data).decks([]) as Deck[]
+
+    if(error || globalDecks.error || userLangs.error) return <ApolloErrorBox error={error || globalDecks.error || userLangs.error} />
+    if(loading || globalDecks.loading || userLangs.loading || !user) return <TimedCircularProgress />
 
     return (
         <div>
@@ -81,7 +113,7 @@ const Home = () => {
                         </Tooltip>
                     </div>
                     <div className={classes.deckDiscoveryBox}>
-                        <PopularDecks exclusive />
+                        <PopularDecks decks={decks} />
                     </div>
                 </Card>
             </div>

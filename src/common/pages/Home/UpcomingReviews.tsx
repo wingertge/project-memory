@@ -1,4 +1,4 @@
-import {Card, CardContent, Grid, Theme, Typography} from "@material-ui/core"
+import {Card, CardContent, Grid, Hidden, Theme, Typography} from "@material-ui/core"
 import {AccessTime, Alarm, CalendarToday} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
@@ -84,19 +84,43 @@ export const UpcomingReviews = () => {
                     <Grid container justify="space-between">
                         <Grid item xs={4} className={classes.container}>
                             <Alarm className={classes.icon}/>
-                            <Typography variant="h6" display="inline">
-                                {t("Next review {{time}}", {time: nextReview ? new Date(nextReview.nextReviewAt).getTime() < now.getTime() ? t("available now") : moment(nextReview.nextReviewAt).fromNow() : t("n/a")})}
-                            </Typography>
+                            <Hidden smDown implementation="css">
+                                <Typography variant="h6" display="inline">
+                                    {t("Next review {{time}}", {time: nextReview ? new Date(nextReview.nextReviewAt).getTime() < now.getTime() ? t("available now") : moment(nextReview.nextReviewAt).fromNow() : t("n/a")})}
+                                </Typography>
+                            </Hidden>
+                            <Hidden mdUp implementation="css">
+                                <Typography variant="h6" display="inline">
+                                    {nextReview ? new Date(nextReview.nextReviewAt).getTime() < now.getTime() ? t("now") : moment(nextReview.nextReviewAt).fromNow() : t("n/a")}
+                                </Typography>
+
+                            </Hidden>
                         </Grid>
                         <Grid item xs={4} className={clsx(classes.container, classes.middle)}>
                             <AccessTime className={classes.icon}/>
-                            <Typography variant="h6"
-                                        display="inline">{t("{{num}} reviews in the next hour", {num: reviewCountNextHour})}</Typography>
+                            <Hidden smDown implementation="css">
+                                <Typography variant="h6" display="inline">
+                                    {t("{{num}} reviews in the next hour", {num: reviewCountNextHour})}
+                                </Typography>
+                            </Hidden>
+                            <Hidden mdUp implementation="css">
+                                <Typography variant="h6" display="inline">
+                                    {reviewCountNextHour}
+                                </Typography>
+                            </Hidden>
                         </Grid>
                         <Grid item xs={4} className={clsx(classes.container, classes.right)}>
                             <CalendarToday className={classes.icon}/>
-                            <Typography variant="h6"
-                                        display="inline">{t("{{num}} reviews in the next day", {num: reviewCountNextDay})}</Typography>
+                            <Hidden smDown implementation="css">
+                                <Typography variant="h6" display="inline">
+                                    {t("{{num}} reviews in the next day", {num: reviewCountNextDay})}
+                                </Typography>
+                            </Hidden>
+                            <Hidden mdUp implementation="css">
+                                <Typography variant="h6" display="inline">
+                                    {reviewCountNextDay}
+                                </Typography>
+                            </Hidden>
                         </Grid>
                     </Grid>
                 </CardContent>

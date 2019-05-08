@@ -43,9 +43,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         justifyContent: "center",
         textAlign: "center",
         padding: theme.spacing(3, 3, 2, 1.5),
-        margin: theme.spacing(0.5),
+        margin: theme.spacing(0.5, 0, 0, 0),
         [theme.breakpoints.up("sm")]: {
-            margin: theme.spacing(1)
+            marginLeft: theme.spacing(1)
         }
     },
     deckActions: {

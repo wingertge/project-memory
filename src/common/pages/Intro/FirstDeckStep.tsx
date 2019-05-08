@@ -9,7 +9,14 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {Language, useAddDeckMutation, useUpdateProfileMutation, useUserLanguagesQuery} from "../../../generated/graphql"
+import {
+    Deck,
+    Language,
+    useAddDeckMutation,
+    useGlobalDecksQuery,
+    useUpdateProfileMutation,
+    useUserLanguagesQuery
+} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import {useFormState, useID} from "../../hooks"
 import PopularDecks from "./PopularDecks"
@@ -65,8 +72,22 @@ export const FirstDeckStep = () => {
     })
     const addDeck = () => addDeckMutation().then(updateProfile)
 
-    if(error) return <ApolloErrorBox error={error} />
-    if(loading) return null
+    const globalDecks = useGlobalDecksQuery({
+        variables: {
+            filter: {
+                sortBy: "rating",
+                sortDirection: "desc",
+                limit: 20,
+                languages: languages.map(lang => lang.id),
+                nativeLanguage: oc(nativeLanguage).id()
+            },
+            userId: id
+        }
+    })
+    const decks = oc(globalDecks.data).decks([]) as Deck[]
+
+    if(error || globalDecks.error) return <ApolloErrorBox error={error || globalDecks.error} />
+    if(loading || globalDecks.loading) return null
 
     return (
         <Grid container direction="column">
@@ -93,7 +114,7 @@ export const FirstDeckStep = () => {
                     {t("Or you can pick from one of these highly rated community ones.")}
                 </Typography>
             </Grid>
-            <PopularDecks/>
+            <PopularDecks decks={decks} />
         </Grid>
     )
 }

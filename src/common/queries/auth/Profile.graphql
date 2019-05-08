@@ -8,5 +8,7 @@ query Profile($id: ID!) {
         introStep
         isSocial
         badges
+        totalRating
+        totalSubscribers
     }
 }

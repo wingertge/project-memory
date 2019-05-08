@@ -22,9 +22,7 @@ interface Form {
 
 const useStyles = makeStyles((theme: Theme) => ({
     feed: {
-        width: "100%",
-        maxWidth: 800,
-        padding: theme.spacing(2)
+        width: "100%"
     },
     newPostInput: {
         width: "100%"

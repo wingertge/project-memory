@@ -12,5 +12,8 @@ export const baseOptions = {
 
     react: {
         wait: true
-    }
+    },
+
+    keySeparator: ">",
+    nsSeparator: "|"
 }

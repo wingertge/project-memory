@@ -520,6 +520,8 @@ export type DeckFilterInput = {
   languages?: Maybe<Array<Scalars["ID"]>>;
   nativeLanguage?: Maybe<Scalars["ID"]>;
   tags?: Maybe<Array<Scalars["String"]>>;
+  excludeOwnedBy?: Maybe<Array<Scalars["ID"]>>;
+  excludeSubscribedBy?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type DeckInput = {
@@ -1089,10 +1091,10 @@ export type PagePreviousValues = {
   imageHeader?: Maybe<Scalars["String"]>;
   imageSubheader?: Maybe<Scalars["String"]>;
   slug: Scalars["String"];
-  intro?: Maybe<Scalars["RichTextAST"]>;
-  main?: Maybe<Scalars["RichTextAST"]>;
-  blurbs?: Maybe<Scalars["RichTextAST"]>;
-  outro?: Maybe<Scalars["RichTextAST"]>;
+  intro?: Maybe<RichText>;
+  main?: Maybe<RichText>;
+  blurbs?: Maybe<RichText>;
+  outro?: Maybe<RichText>;
 };
 
 export type PageScalarWhereInput = {
@@ -1823,6 +1825,7 @@ export type UserFeedArgs = {
 
 export type UserFilterInput = {
   limit?: Maybe<Scalars["Int"]>;
+  search?: Maybe<Scalars["String"]>;
 };
 
 export type UserInput = {
@@ -2130,6 +2133,8 @@ export type ProfileQuery = { __typename?: "Query" } & {
       | "introStep"
       | "isSocial"
       | "badges"
+      | "totalRating"
+      | "totalSubscribers"
     >
   >;
 };
@@ -2381,6 +2386,23 @@ export type UserLanguagesQuery = { __typename?: "Query" } & {
         languages: Array<{ __typename?: "Language" } & LanguageFieldsFragment>;
         nativeLanguage: { __typename?: "Language" } & LanguageFieldsFragment;
       }
+  >;
+};
+
+export type UsersQueryVariables = {
+  filter: UserFilterInput;
+};
+
+export type UsersQuery = { __typename?: "Query" } & {
+  users: Maybe<
+    Array<
+      Maybe<
+        { __typename?: "User" } & Pick<
+          User,
+          "id" | "picture" | "username" | "totalRating" | "totalSubscribers"
+        >
+      >
+    >
   >;
 };
 
@@ -3432,6 +3454,8 @@ export const ProfileDocument = gql`
       introStep
       isSocial
       badges
+      totalRating
+      totalSubscribers
     }
   }
 `;
@@ -4165,4 +4189,46 @@ export function useUserLanguagesQuery(
     UserLanguagesQuery,
     UserLanguagesQueryVariables
   >(UserLanguagesDocument, baseOptions);
+}
+export const UsersDocument = gql`
+  query Users($filter: UserFilterInput!) {
+    users(filter: $filter) {
+      id
+      picture
+      username
+      totalRating
+      totalSubscribers
+    }
+  }
+`;
+export type UsersProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<UsersQuery, UsersQueryVariables>
+> &
+  TChildProps;
+export function withUsers<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UsersQuery,
+    UsersQueryVariables,
+    UsersProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    UsersQuery,
+    UsersQueryVariables,
+    UsersProps<TChildProps>
+  >(UsersDocument, {
+    alias: "withUsers",
+    ...operationOptions
+  });
+}
+
+export function useUsersQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<UsersQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<UsersQuery, UsersQueryVariables>(
+    UsersDocument,
+    baseOptions
+  );
 }

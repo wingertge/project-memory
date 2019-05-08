@@ -2,11 +2,11 @@ import {Avatar, Card, Hidden, IconButton, makeStyles, Theme, Typography} from "@
 import {Favorite, PersonAdd, ThumbUp} from "@material-ui/icons"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {User} from "../../../generated/graphql"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import {useUser} from "../../hooks"
 
 interface PropTypes {
-    userId: string
+    user: User
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,10 +65,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const UserSummary = ({userId}: PropTypes) => {
+export const UserSummary = ({user}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const user = useUser(userId)
 
     if(!user) return <TimedCircularProgress />
 
@@ -87,9 +86,9 @@ export const UserSummary = ({userId}: PropTypes) => {
                                 className={classes.iconButton}><PersonAdd/></IconButton>
                 </div>
                 <div className={classes.stats}>
-                    <div className={classes.statCount}><Favorite className={classes.icon}/>{2000}</div>
+                    <div className={classes.statCount}><Favorite className={classes.icon}/>{user.totalSubscribers}</div>
                     <div className={classes.statSpacer}/>
-                    <div className={classes.statCount}><ThumbUp className={classes.icon}/>{4000}</div>
+                    <div className={classes.statCount}><ThumbUp className={classes.icon}/>{user.totalRating}</div>
                 </div>
             </div>
         </Card>

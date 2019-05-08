@@ -1,4 +1,4 @@
-import {Theme, Tooltip, Typography} from "@material-ui/core"
+import {Hidden, Theme, Tooltip, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
@@ -121,8 +121,13 @@ const StageCountDisplay = ({stage}: PropTypes) => {
                     </div>
                 )}>
                     <div>
-                        <Typography variant="h2">{reviewsCount}</Typography>
-                        <img src={icons[stage]} alt={t(stage)} className={classes.icon}/>
+                        <Hidden smDown implementation="css">
+                            <Typography variant="h2">{reviewsCount}</Typography>
+                            <img src={icons[stage]} alt={t(stage)} className={classes.icon}/>
+                        </Hidden>
+                        <Hidden mdUp implementation="css">
+                            <Typography variant="h4">{reviewsCount}</Typography>
+                        </Hidden>
                     </div>
                 </Tooltip>
             </div>

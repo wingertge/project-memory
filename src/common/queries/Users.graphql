@@ -1,0 +1,9 @@
+query Users($filter: UserFilterInput!) {
+    users(filter: $filter) {
+        id
+        picture
+        username
+        totalRating
+        totalSubscribers
+    }
+}

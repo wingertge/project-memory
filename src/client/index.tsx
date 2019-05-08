@@ -1,5 +1,6 @@
 // tslint:disable-next-line:no-reference
 ///<reference path="../typings/index.d.ts"/>
+import ReactGA from "react-ga"
 import {ThemeProvider} from "@material-ui/styles"
 import localResolvers from "../common/localResolvers"
 import localTypeDefs from "../common/localTypeDefs"
@@ -33,6 +34,9 @@ const MainApp = () => {
         </Suspense>
     )
 }
+
+ReactGA.initialize("UA-139865103-1")
+ReactGA.pageview(window.location.pathname + window.location.search)
 
 const cache = new InMemoryCache().restore(window.__PRELOADED_STATE__ as any)
 

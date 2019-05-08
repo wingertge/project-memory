@@ -3,11 +3,15 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
 import useRouter from "use-react-router/use-react-router"
-import {usePageQuery} from "../../../generated/graphql"
-import NotFound from "../../pages/NotFound"
-import ErrorBox from "./ErrorBox"
-import RichText from "./RichText"
-import {TimedCircularProgress} from "./TimedCircularProgress"
+import {usePageQuery} from "../../generated/graphql"
+import ErrorBox from "../components/common/ErrorBox"
+import RichText from "../components/common/RichText"
+import {TimedCircularProgress} from "../components/common/TimedCircularProgress"
+import NotFound from "./NotFound"
+
+interface PropTypes {
+    slug?: string
+}
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -63,9 +67,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const CMSPage = () => {
+export const CMSPage = ({slug}: PropTypes) => {
     const classes = useStyles()
-    const {match: {params: {slug}}} = useRouter<{slug: string}>()
+    const {match: {params: {slug: routeSlug}}} = useRouter<{slug: string}>()
+    slug = slug || routeSlug
     const {data, error, loading} = usePageQuery({variables: {slug}})
 
     if(error) return <ErrorBox text={JSON.stringify(error)} title="" />
