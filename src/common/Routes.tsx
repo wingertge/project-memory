@@ -84,6 +84,11 @@ const Index = Loadable({
     loading: Loading
 })
 
+const Helpdesk = Loadable({
+    loader: () => import("./pages/Helpdesk"),
+    loading: Loading
+})
+
 const Routes = () => (
     <Switch>
         <SwitchedRoute exact path="/" authenticatedComponent={Home} unauthenticatedComponent={Index} />
@@ -100,6 +105,7 @@ const Routes = () => (
             if(typeof window === "undefined") { return <Redirect to="/"/> }
             Auth.logout()
         }} />
+        <Route path="/help/:slug*" component={Helpdesk} />
         <AuthenticatedRoute path="/test" component={TestBed} />
         <AuthenticatedRoute path="/lessons" component={Lessons} />
         <AuthenticatedRoute path="/reviews" component={Reviews} />

@@ -4,10 +4,10 @@ import clsx from "clsx"
 import * as React from "react"
 import useRouter from "use-react-router/use-react-router"
 import {usePageQuery} from "../../generated/graphql"
-import ErrorBox from "../components/common/ErrorBox"
+import Loading from "../components/common/Loading"
 import RichText from "../components/common/RichText"
 import {TimedCircularProgress} from "../components/common/TimedCircularProgress"
-import NotFound from "./NotFound"
+import Loadable from "react-loadable"
 
 interface PropTypes {
     slug?: string
@@ -67,15 +67,19 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
+const NotFound = Loadable({
+    loader: () => import("./NotFound"),
+    loading: Loading
+})
+
 export const CMSPage = ({slug}: PropTypes) => {
     const classes = useStyles()
     const {match: {params: {slug: routeSlug}}} = useRouter<{slug: string}>()
     slug = slug || routeSlug
     const {data, error, loading} = usePageQuery({variables: {slug}})
 
-    if(error) return <ErrorBox text={JSON.stringify(error)} title="" />
+    if(!data || !data.page || error) return <NotFound />
     if(loading) return <TimedCircularProgress />
-    if(!data || !data.page) return <NotFound />
 
     const page = data.page!
 

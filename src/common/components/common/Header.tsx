@@ -104,7 +104,7 @@ export const Header = () => {
                         {username && <LinkButton to="/profile" className={classes.navbarLink}>{username}</LinkButton>}
                     </Hidden>
                     <IconButton aria-owns={!!anchorEl ? "menu-appbar" : undefined} aria-haspopup="true"
-                                onClick={openMenu} color="inherit">
+                                onClick={openMenu} color="inherit" title={authenticated ? undefined : t("Log in")}>
                         <AccountCircle/>
                     </IconButton>
                     <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{vertical: "top", horizontal: "right"}}
