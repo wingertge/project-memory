@@ -49,10 +49,12 @@ const DeckDetails = Loadable({
     loading: Loading
 })
 
+/*
 const NotFound = Loadable({
     loader: () => import("./pages/NotFound"),
     loading: Loading
 })
+*/
 
 const Intro = Loadable({
     loader: () => import("./pages/Intro"),
@@ -111,7 +113,6 @@ const Routes = () => (
         <AuthenticatedRoute path="/reviews" component={Reviews} />
         <UnauthenticatedRoute path="/login" component={Login} />
         <Route path="/:slug" component={CMSPage} />
-        <Route component={NotFound}/>
     </Switch>
 )
 
