@@ -6,6 +6,7 @@ import {
     Typography
 } from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
@@ -57,6 +58,7 @@ export const FirstDeckStep = () => {
     const languages = oc(data).user.languages([]) as Language[]
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
     const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
+    const [saving, setSaving] = useState(false)
 
     const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
     const addDeckMutation = useAddDeckMutation({
@@ -70,7 +72,10 @@ export const FirstDeckStep = () => {
             }
         }
     })
-    const addDeck = () => addDeckMutation().then(updateProfile)
+    const addDeck = () => {
+        setSaving(true)
+        addDeckMutation().then(() => updateProfile().then(() => setSaving(false)))
+    }
 
     const globalDecks = useGlobalDecksQuery({
         variables: {
@@ -107,7 +112,7 @@ export const FirstDeckStep = () => {
                 </TextField>
             </Grid>
             <Grid item xs>
-                <Button className={classes.button} onClick={addDeck}>{t("Create")}</Button>
+                <Button className={classes.button} onClick={addDeck} disabled={saving}>{t("Create")}</Button>
             </Grid>
             <Grid item xs>
                 <Typography variant="h6">
