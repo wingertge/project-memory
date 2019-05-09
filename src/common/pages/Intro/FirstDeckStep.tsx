@@ -69,7 +69,8 @@ export const FirstDeckStep = () => {
                 nativeLanguage: nativeLanguage && nativeLanguage.id,
                 owner: id,
                 cards: []
-            }
+            },
+            userId: id
         }
     })
     const addDeck = () => {

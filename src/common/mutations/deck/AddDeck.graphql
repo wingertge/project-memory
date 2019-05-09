@@ -1,5 +1,15 @@
-mutation AddDeck($input: DeckInput!) {
+mutation AddDeck($input: DeckInput!, $userId: ID!) {
     addDeck(input: $input) {
         id
+        ownedDecks {
+            id
+            name
+            cardCount
+            rating
+            isLikedBy(userID: $userId)
+            language {
+                ...languageFields
+            }
+        }
     }
 }

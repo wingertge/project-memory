@@ -13,7 +13,7 @@ import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {Language, ShallowDecksDocument, useAddDeckMutation, useUserLanguagesQuery} from "../../../../generated/graphql"
+import {Language, useAddDeckMutation, useUserLanguagesQuery} from "../../../../generated/graphql"
 import {useID, ValidatorMap} from "../../../hooks"
 import {useToast} from "../../../hooks"
 import {useValidatedFormState} from "../../../hooks"
@@ -75,9 +75,9 @@ export const CreateDeckForm = ({closeDialog}: PropTypes) => {
                 language: language.value,
                 nativeLanguage: nativeLanguage.id,
                 cards: []
-            }
-        },
-        refetchQueries: [{query: ShallowDecksDocument, variables: {id}}]
+            },
+            userId: id
+        }
     })
     const save = () => {
         setSaving(true)

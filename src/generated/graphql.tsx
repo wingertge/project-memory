@@ -1911,10 +1911,20 @@ export type AddCardMutation = { __typename?: "Mutation" } & {
 
 export type AddDeckMutationVariables = {
   input: DeckInput;
+  userId: Scalars["ID"];
 };
 
 export type AddDeckMutation = { __typename?: "Mutation" } & {
-  addDeck: Maybe<{ __typename?: "User" } & Pick<User, "id">>;
+  addDeck: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        ownedDecks: Array<
+          { __typename?: "Deck" } & Pick<
+            Deck,
+            "id" | "name" | "cardCount" | "rating" | "isLikedBy"
+          > & { language: { __typename?: "Language" } & LanguageFieldsFragment }
+        >;
+      }
+  >;
 };
 
 export type DeleteCardsMutationVariables = {
@@ -2598,11 +2608,22 @@ export function useAddCardMutation(
   >(AddCardDocument, baseOptions);
 }
 export const AddDeckDocument = gql`
-  mutation AddDeck($input: DeckInput!) {
+  mutation AddDeck($input: DeckInput!, $userId: ID!) {
     addDeck(input: $input) {
       id
+      ownedDecks {
+        id
+        name
+        cardCount
+        rating
+        isLikedBy(userID: $userId)
+        language {
+          ...languageFields
+        }
+      }
     }
   }
+  ${languageFieldsFragmentDoc}
 `;
 export type AddDeckMutationFn = ReactApollo.MutationFn<
   AddDeckMutation,
