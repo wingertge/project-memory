@@ -3,7 +3,6 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {oc} from "ts-optchain"
 import {Language, useUpdateProfileMutation} from "../../../generated/graphql"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useUser} from "../../hooks"
@@ -28,18 +27,20 @@ export const NativeLanguageStep = () => {
     const {t} = useTranslation()
     const user = useUser()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
-    const updateProfile = useUpdateProfileMutation({
-        variables: {
-            id: oc(user).id(""),
-            profile: {
-                nativeLanguage: oc(language).id(""),
-                introStep: 1
-            }
-        }
-    })
+    const updateProfile = useUpdateProfileMutation()
     const pickLanguage = (lang: Language) => {
         setLanguage(lang)
-        setTimeout(updateProfile, 800)
+        setTimeout(() => {
+            updateProfile({
+                variables: {
+                    id: user.id,
+                    profile: {
+                        nativeLanguage: lang.id,
+                        introStep: 1
+                    }
+                }
+            })
+        }, 800)
     }
 
     if(!user) return <TimedCircularProgress />
