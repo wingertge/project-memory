@@ -1,4 +1,4 @@
-import {Grid, Theme, Typography} from "@material-ui/core"
+import {Button, Grid, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
 import {useTranslation} from "react-i18next"
@@ -6,6 +6,7 @@ import AppHeader from "./components/common/Header"
 import LinkButton from "./components/common/LinkButton"
 import {useNow} from "./hooks"
 import Routes from "./Routes"
+import PatreonButton from "./assets/become_a_patron_button@2x.png"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
         root: {
@@ -23,6 +24,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             backgroundColor: theme.palette.background.paper,
             marginTop: theme.spacing(4),
             padding: theme.spacing(2)
+        },
+        patreonButton: {
+            width: 170,
+            height: 40,
+            borderRadius: 4
+        },
+        footerButton: {
+            height: 40
         },
         "@global": {
             "*::-webkit-scrollbar-thumb": {
@@ -66,14 +75,20 @@ export const App = () => {
             </div>
             <footer className={classes.footer}>
                 <Grid container>
-                    <Grid item container direction="column" justify="center" xs={4}>
+                    <Grid item container direction="column" justify="center" xs={3}>
                         <Typography>{t("© {{year}} Genna Wingert", {year: now.getFullYear()})}</Typography>
                     </Grid>
-                    <Grid item xs={4} style={{textAlign: "center"}}>
-                        <LinkButton to="/help">{t("Help")}</LinkButton>
+                    <Grid item xs={3} style={{textAlign: "center"}}>
+                        <LinkButton to="/help" className={classes.footerButton}>{t("Help")}</LinkButton>
                     </Grid>
-                    <Grid item xs={4} style={{textAlign: "right"}}>
-                        <LinkButton to="/contact" variant="text">{t("Contact")}</LinkButton>
+                    <Grid item xs={3} style={{textAlign: "center"}}>
+                        <LinkButton to="/contact" className={classes.footerButton}>{t("Contact")}</LinkButton>
+                    </Grid>
+                    <Grid item xs={3} style={{textAlign: "right"}}>
+                        <Button href="https://www.patreon.com/bePatron?u=17099413" style={{padding: 0}}>
+                            <img alt={t("Become a Patron!")} src={PatreonButton} className={classes.patreonButton} />
+                        </Button>
+                        {/*<a href="https://www.patreon.com/bePatron?u=17099413" data-patreon-widget-type="become-patron-button">Become a Patron!</a>*/}
                     </Grid>
                 </Grid>
             </footer>
