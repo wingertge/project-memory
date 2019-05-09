@@ -1,9 +1,14 @@
 /* tslint:disable:object-literal-key-quotes */
-import {Typography} from "@material-ui/core"
+import {Button, Typography} from "@material-ui/core"
+import {createStyles, makeStyles} from "@material-ui/styles"
+import clsx from "clsx"
+import debug from "debug"
+import GraphImg from "graphcms-image"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import v4 from "uuid/v4"
-import GraphImg from "graphcms-image"
+import {Theme} from "../../theme"
+import LinkButton from "./LinkButton"
 
 interface DocumentTree {
     nodes: Node[]
@@ -12,7 +17,7 @@ interface DocumentTree {
 interface Node {
     object: string,
     type: string,
-    data: {} | ImageData,
+    data: {} | ImageData | LinkData,
     nodes?: Node[]
     leaves?: Leaf[]
 }
@@ -20,7 +25,7 @@ interface Node {
 interface Leaf {
     object: string,
     text: string,
-    marks: any[]
+    marks?: Mark[]
 }
 
 interface ImageData {
@@ -32,9 +37,21 @@ interface ImageData {
     handle: string
 }
 
+interface Mark {
+    object: string,
+    type: string,
+    data: {}
+}
+
+interface LinkData {
+    href: string
+}
+
 interface PropTypes {
     raw: {document: DocumentTree}
 }
+
+const log = debug("app:RichText")
 
 const HeadingOne = ({nodes}: Node) => {
     const {t} = useTranslation()
@@ -60,46 +77,141 @@ const HeadingTwo = ({nodes}: Node) => {
     ))
 }
 
-const Paragraph = ({nodes}: Node) => {
-    const {t} = useTranslation()
-
-    return nodes!.some(({leaves}) => leaves!.some(({text}) => text !== "")) && nodes!.map(({leaves}) => (
-        <div key={v4()}>
-            {leaves!.map(({text}) => text !== "" && (
-                <Typography key={v4()}>{t(text)}</Typography>
-            ))}
-        </div>
-    ))
-}
+const Paragraph = ({nodes}: Node) => (
+    <div>
+        {nodes!.map(renderNode)}
+    </div>
+)
 
 const Image = ({data, nodes}: Node) => {
-    const {t} = useTranslation()
     const {width, height} = data as ImageData
 
     return (
         <div>
             <GraphImg image={data} alt="Image" style={{maxWidth: width, maxHeight: height, margin: "32px auto"}} />
-            {nodes!.some(({leaves}) => leaves!.some(({text}) => text !== "")) && nodes!.map(({leaves}) => (
-                <div key={v4()}>
-                    {leaves!.map(({text}) => text !== "" && <Typography key={v4()}>{t(text)}</Typography>)}
-                </div>
-            ))}
+            {nodes!.map(renderNode)}
         </div>
     )
+}
+
+const Link = ({data, nodes}: Node) => {
+    const {href} = data as LinkData
+    const isLocal = href.startsWith("https://www.project-memory.org")
+    const link = isLocal ? href.split("www.project-memory.org")[1] : href
+    const content = nodes!.map(renderNode)
+
+    return content.length !== 0 && isLocal ? (
+        <LinkButton to={link}>{content}</LinkButton>
+    ) : <Button href={link}>{content}</Button>
+}
+
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    all: {
+        display: "inline"
+    },
+    underlined: {
+        textDecoration: "underline"
+    },
+    bold: {
+        fontWeight: "bold"
+    },
+    italic: {
+        fontStyle: "italic"
+    },
+    code: {
+        fontFamily: theme.typography.fontFamilyCode
+    }
+}))
+
+const Text = ({leaves}: Node) => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+
+    return (
+        <>
+            {leaves!.map(({text, marks}) => {
+                marks = marks || []
+                const decoratorClasses = {
+                    [classes.underlined]: marks.some(({type}) => type === "underlined"),
+                    [classes.bold]: marks.some(({type}) => type === "bold"),
+                    [classes.italic]: marks.some(({type}) => type === "italic"),
+                    [classes.code]: marks.some(({type}) => type === "code")
+                }
+
+                return (
+                    <Typography key={v4()} className={clsx(classes.all, decoratorClasses)}>
+                        {t(text)}
+                    </Typography>
+                )
+            })}
+        </>
+    )
+}
+
+const BulletedList = ({nodes}: Node) => (
+    <ul>
+        {nodes!.map(renderNode)}
+    </ul>
+)
+
+const NumberedList = ({nodes}: Node) => (
+    <ol>
+        {nodes!.map(renderNode)}
+    </ol>
+)
+
+const ListItem = ({nodes}: Node) => {
+    return (
+        <li>
+            {nodes!.map(renderNode)}
+        </li>
+    )
+}
+
+const ListItemChild = ({nodes}: Node) => {
+    return (
+        <>
+            {nodes!.map(renderNode)}
+        </>
+    )
+}
+
+const renderNode = (node: Node) => {
+    const Renderer = objectRenderers[node.object](node.type)
+    if(!Renderer) log(`Couldn't find renderer for object ${node.object} and type ${node.type}`)
+    return <Renderer key={v4()} {...node} />
+}
+
+const objectRenderers = {
+    "text": () => Text,
+    "inline": (type: string) => inlineRenderers[type],
+    "block": (type: string) => renderers[type]
+}
+
+const inlineRenderers = {
+    "link": Link
 }
 
 const renderers = {
     "heading-one": HeadingOne,
     "heading-two": HeadingTwo,
     "paragraph": Paragraph,
-    "image": Image
+    "image": Image,
+    "link": Link,
+    "text": Text,
+    "block-quote": Paragraph,
+    "bulleted-list": BulletedList,
+    "list-item": ListItem,
+    "list-item-child": ListItemChild,
+    "numbered-list": NumberedList
 }
 
 export const RichText = ({raw: {document: {nodes}}}: PropTypes) => {
     return (
         <div>
             {nodes.map(node => {
-                const Renderer = renderers[node.type]
+                const Renderer = objectRenderers[node.object](node.type)
+                if(!Renderer) log(`Couldn't find renderer for object ${node.object} and type ${node.type}`)
                 return <Renderer key={v4()} {...node} />
             })}
         </div>

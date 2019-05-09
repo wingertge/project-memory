@@ -1,4 +1,6 @@
 import {createMuiTheme} from "@material-ui/core/styles"
+import {Theme as BaseTheme} from "@material-ui/core"
+import {Typography} from "@material-ui/core/styles/createTypography"
 
 /*const rawTheme = createMuiTheme({
     palette: {
@@ -117,9 +119,15 @@ const theme = {
     },
 }*/
 
+export interface Theme extends BaseTheme {
+    typography: Typography & {fontFamilyCode: string}
+}
+
 const theme = createMuiTheme({
     typography: {
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif",
+        // @ts-ignore
+        fontFamilyCode: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace"
     },
     palette: {
         type: "dark",
@@ -134,8 +142,7 @@ const theme = createMuiTheme({
             dark: "#882d9e"
         }
     },
-    direction: "ltr",
-
+    direction: "ltr"
 })
 
 theme.overrides = {
