@@ -85,7 +85,7 @@ export const LanguageSettings = () => {
             <div className={classes.card}>
                 <div className={classes.content}>
                     <Typography variant="subtitle1" className={classes.label}>{t("Native Language")}</Typography>
-                    <LanguageDisplay language={nativeLanguage}/>
+                    {nativeLanguage && <LanguageDisplay language={nativeLanguage}/>}
                     <Typography variant="subtitle1" className={classes.label}>{t("Learning Languages")}</Typography>
                     <List className={classes.languageList}>
                         {languages.map(lang => (

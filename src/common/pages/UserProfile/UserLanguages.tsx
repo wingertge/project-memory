@@ -42,9 +42,11 @@ export const UserLanguages = ({userId}: PropTypes) => {
 
     return (
         <div className={classes.root}>
-            <div className={classes.nativeLanguage}>
-                <LanguageDisplay language={nativeLanguage} />
-            </div>
+            {nativeLanguage && (
+                <div className={classes.nativeLanguage}>
+                    <LanguageDisplay language={nativeLanguage} />
+                </div>
+            )}
             {languages.map(lang => <LanguageDisplay key={lang.id} language={lang} />)}
         </div>
     )
