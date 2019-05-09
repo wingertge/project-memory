@@ -23,7 +23,6 @@ export type Scalars = {
   RGBAHue: any;
   /** Custom scalar representing the transparency part of a rgba value. Value ranges from 0 - 1 */
   RGBATransparency: any;
-  JSON: any;
 };
 
 export type AggregateAsset = {
@@ -993,7 +992,7 @@ export type Page = Node & {
   slug: Scalars["String"];
   intro?: Maybe<RichText>;
   main?: Maybe<RichText>;
-  blurbs?: Maybe<RichText>;
+  blurbs: Array<RichText>;
   outro?: Maybe<RichText>;
 };
 
@@ -1006,6 +1005,10 @@ export type PageConnection = {
   aggregate: AggregatePage;
 };
 
+export type PageCreateblurbsInput = {
+  set?: Maybe<Array<Scalars["RichTextAST"]>>;
+};
+
 export type PageCreateInput = {
   status?: Maybe<Status>;
   header?: Maybe<Scalars["String"]>;
@@ -1014,8 +1017,8 @@ export type PageCreateInput = {
   slug: Scalars["String"];
   intro?: Maybe<Scalars["RichTextAST"]>;
   main?: Maybe<Scalars["RichTextAST"]>;
-  blurbs?: Maybe<Scalars["RichTextAST"]>;
   outro?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<PageCreateblurbsInput>;
   mainImage?: Maybe<AssetCreateOneWithoutMainImagePageInput>;
 };
 
@@ -1032,8 +1035,8 @@ export type PageCreateWithoutMainImageInput = {
   slug: Scalars["String"];
   intro?: Maybe<Scalars["Json"]>;
   main?: Maybe<Scalars["Json"]>;
-  blurbs?: Maybe<Scalars["Json"]>;
   outro?: Maybe<Scalars["Json"]>;
+  blurbs?: Maybe<PageCreateblurbsInput>;
 };
 
 /** An edge in a connection. */
@@ -1077,8 +1080,6 @@ export type PageOrderByInput =
   | "intro_DESC"
   | "main_ASC"
   | "main_DESC"
-  | "blurbs_ASC"
-  | "blurbs_DESC"
   | "outro_ASC"
   | "outro_DESC";
 
@@ -1093,7 +1094,7 @@ export type PagePreviousValues = {
   slug: Scalars["String"];
   intro?: Maybe<RichText>;
   main?: Maybe<RichText>;
-  blurbs?: Maybe<RichText>;
+  blurbs: Array<RichText>;
   outro?: Maybe<RichText>;
 };
 
@@ -1303,6 +1304,10 @@ export type PageSubscriptionWhereInput = {
   node?: Maybe<PageWhereInput>;
 };
 
+export type PageUpdateblurbsInput = {
+  set?: Maybe<Array<Scalars["RichTextAST"]>>;
+};
+
 export type PageUpdateInput = {
   status?: Maybe<Status>;
   header?: Maybe<Scalars["String"]>;
@@ -1311,8 +1316,8 @@ export type PageUpdateInput = {
   slug?: Maybe<Scalars["String"]>;
   intro?: Maybe<Scalars["RichTextAST"]>;
   main?: Maybe<Scalars["RichTextAST"]>;
-  blurbs?: Maybe<Scalars["RichTextAST"]>;
   outro?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<PageUpdateblurbsInput>;
   mainImage?: Maybe<AssetUpdateOneWithoutMainImagePageInput>;
 };
 
@@ -1324,8 +1329,8 @@ export type PageUpdateManyDataInput = {
   slug?: Maybe<Scalars["String"]>;
   intro?: Maybe<Scalars["Json"]>;
   main?: Maybe<Scalars["Json"]>;
-  blurbs?: Maybe<Scalars["Json"]>;
   outro?: Maybe<Scalars["Json"]>;
+  blurbs?: Maybe<PageUpdateblurbsInput>;
 };
 
 export type PageUpdateManyMutationInput = {
@@ -1336,8 +1341,8 @@ export type PageUpdateManyMutationInput = {
   slug?: Maybe<Scalars["String"]>;
   intro?: Maybe<Scalars["RichTextAST"]>;
   main?: Maybe<Scalars["RichTextAST"]>;
-  blurbs?: Maybe<Scalars["RichTextAST"]>;
   outro?: Maybe<Scalars["RichTextAST"]>;
+  blurbs?: Maybe<PageUpdateblurbsInput>;
 };
 
 export type PageUpdateManyWithoutMainImageInput = {
@@ -1365,8 +1370,8 @@ export type PageUpdateWithoutMainImageDataInput = {
   slug?: Maybe<Scalars["String"]>;
   intro?: Maybe<Scalars["Json"]>;
   main?: Maybe<Scalars["Json"]>;
-  blurbs?: Maybe<Scalars["Json"]>;
   outro?: Maybe<Scalars["Json"]>;
+  blurbs?: Maybe<PageUpdateblurbsInput>;
 };
 
 export type PageUpdateWithWhereUniqueWithoutMainImageInput = {
@@ -1791,7 +1796,7 @@ export type User = {
   locale?: Maybe<Scalars["String"]>;
   identities?: Maybe<Array<Identity>>;
   isSocial: Scalars["Boolean"];
-  nativeLanguage: Language;
+  nativeLanguage?: Maybe<Language>;
   languages: Array<Language>;
   ownedDecks: Array<Deck>;
   subscribedDecks: Array<Deck>;
@@ -2091,9 +2096,11 @@ export type UpdateProfileMutation = { __typename?: "Mutation" } & {
       User,
       "id" | "username" | "email" | "name" | "introStep"
     > & {
-        nativeLanguage: { __typename?: "Language" } & Pick<
-          Language,
-          "id" | "name" | "nativeName" | "languageCode"
+        nativeLanguage: Maybe<
+          { __typename?: "Language" } & Pick<
+            Language,
+            "id" | "name" | "nativeName" | "languageCode"
+          >
         >;
       }
   >;
@@ -2152,7 +2159,7 @@ export type PageQuery = { __typename?: "Query" } & {
         mainImage: Maybe<{ __typename?: "Asset" } & ImageFragment>;
         intro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
         main: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
-        blurbs: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        blurbs: Array<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
         outro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
       }
   >;
@@ -2384,7 +2391,9 @@ export type UserLanguagesQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
         languages: Array<{ __typename?: "Language" } & LanguageFieldsFragment>;
-        nativeLanguage: { __typename?: "Language" } & LanguageFieldsFragment;
+        nativeLanguage: Maybe<
+          { __typename?: "Language" } & LanguageFieldsFragment
+        >;
       }
   >;
 };

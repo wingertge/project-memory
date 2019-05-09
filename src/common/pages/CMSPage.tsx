@@ -8,6 +8,7 @@ import Loading from "../components/common/Loading"
 import RichText from "../components/common/RichText"
 import {TimedCircularProgress} from "../components/common/TimedCircularProgress"
 import Loadable from "react-loadable"
+import v4 from "uuid/v4"
 
 interface PropTypes {
     slug?: string
@@ -64,6 +65,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     section: {
         padding: theme.spacing(2, 0)
+    },
+    blurbs: {
+        textAlign: "left"
     }
 }))
 
@@ -104,17 +108,17 @@ export const CMSPage = ({slug}: PropTypes) => {
                         </Grid>
                     )}
                     {page.main!.raw && (
-                        <Grid item xs={12} lg={6} component="section">
+                        <Grid item xs={12} component="section">
                             <RichText raw={page.main!.raw} />
                         </Grid>
                     )}
-                    {page.blurbs!.raw && (
-                        <Grid item xs={12} lg={6} component="section">
-                            <RichText raw={page.blurbs!.raw} />
+                    {page.blurbs && page.blurbs.map(({raw}) => (
+                        <Grid item xs={12} lg={6} component="section" key={v4()} className={classes.blurbs}>
+                            <RichText raw={raw} />
                         </Grid>
-                    )}
+                    ))}
                     {page.outro!.raw && (
-                        <Grid item xs={12} lg={6} component="section">
+                        <Grid item xs={12} component="section">
                             <RichText raw={page.outro!.raw} />
                         </Grid>
                     )}
