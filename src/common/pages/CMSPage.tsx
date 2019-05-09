@@ -99,7 +99,7 @@ export const CMSPage = ({slug}: PropTypes) => {
             <main className={classes.content}>
                 <Grid container spacing={8}>
                     {page.intro!.raw && (
-                        <Grid item xs={12} lg={6} component="section">
+                        <Grid item xs={12} component="section">
                             <RichText raw={page.intro!.raw} />
                         </Grid>
                     )}

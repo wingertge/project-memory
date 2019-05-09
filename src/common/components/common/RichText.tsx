@@ -78,7 +78,7 @@ const HeadingTwo = ({nodes}: Node) => {
 }
 
 const Paragraph = ({nodes}: Node) => (
-    <div>
+    <div style={{minHeight: "1rem"}}>
         {nodes!.map(renderNode)}
     </div>
 )
@@ -101,8 +101,8 @@ const Link = ({data, nodes}: Node) => {
     const content = nodes!.map(renderNode)
 
     return content.length !== 0 && isLocal ? (
-        <LinkButton to={link}>{content}</LinkButton>
-    ) : <Button href={link}>{content}</Button>
+        <LinkButton to={link} variant="contained" color="primary">{content}</LinkButton>
+    ) : <Button href={link} variant="contained" color="primary">{content}</Button>
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

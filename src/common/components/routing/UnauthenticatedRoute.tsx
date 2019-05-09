@@ -1,23 +1,17 @@
 import React from "react"
 import {Route, Redirect, RouteProps} from "react-router"
+import useRouter from "use-react-router/use-react-router"
+import {useLoginExpiryQuery} from "../../../generated/graphql"
 import {useID} from "../../hooks"
 
-interface PropTypes {
-    props?: object
-}
-
-type Props = PropTypes & RouteProps
-
-export const UnauthenticatedRoute = ({component, props: cProps, ...rest}: Props) => {
-    const C = component as any
+export const UnauthenticatedRoute = (props: RouteProps) => {
+    const {location} = useRouter()
     const id = useID()
-    return (
-        <Route {...rest} render={props =>
-            id === ""
-                ? <C {...props} {...cProps} />
-                : <Redirect to="/" />
-        } />
-    )
+    const {data} = useLoginExpiryQuery()
+    const authenticated = id !== "" && new Date(data!.loginExpiresAt) >= new Date()
+
+    if(authenticated) return <Redirect to={`/login?redirect=${location.pathname}${location.search}`} />
+    else return <Route {...props} />
 }
 
 export default UnauthenticatedRoute

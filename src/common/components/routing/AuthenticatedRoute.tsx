@@ -4,13 +4,13 @@ import useRouter from "use-react-router/use-react-router"
 import {useLoginExpiryQuery} from "../../../generated/graphql"
 import {useID} from "../../hooks"
 
-
 export const AuthenticatedRoute = (props: RouteProps) => {
     const {location} = useRouter()
     const id = useID()
     const {data} = useLoginExpiryQuery()
+    const authenticated = id !== "" && new Date(data!.loginExpiresAt) >= new Date()
 
-    if(id === "" || new Date(data!.loginExpiresAt) < new Date()) return <Redirect to={`/login?redirect=${location.pathname}${location.search}`} />
+    if(!authenticated) return <Redirect to={`/login?redirect=${location.pathname}${location.search}`} />
     else return <Route {...props} />
 }
 
