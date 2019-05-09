@@ -112,7 +112,7 @@ export const FirstDeckStep = () => {
                 </TextField>
             </Grid>
             <Grid item xs>
-                <Button className={classes.button} onClick={addDeck} disabled={saving}>{t("Create")}</Button>
+                <Button className={classes.button} onClick={addDeck} disabled={saving} color="primary">{t("Create")}</Button>
             </Grid>
             <Grid item xs>
                 <Typography variant="h6">
