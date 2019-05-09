@@ -15,5 +15,6 @@ export const baseOptions = {
     },
 
     keySeparator: ">",
-    nsSeparator: "|"
+    nsSeparator: "|",
+    whitelist: ["en"]
 }
