@@ -17,6 +17,7 @@ export type Scalars = {
    * Long can represent values between -(2^63) and 2^63 - 1.
    */
   Long: any;
+  Upload: any;
   /** Custom scalar representing the hex color code value */
   HEX: any;
   /** Custom scalar representing the hue part of a rgba value. Value ranges from 0 - 255 */
@@ -790,6 +791,7 @@ export type Mutation = {
   editUser?: Maybe<User>;
   deleteUser?: Maybe<User>;
   changeFollowingStatus?: Maybe<User>;
+  uploadProfilePicture?: Maybe<User>;
   addLanguageToUser?: Maybe<User>;
   removeLanguageFromUser?: Maybe<User>;
   createCard?: Maybe<Deck>;
@@ -890,6 +892,11 @@ export type MutationChangeFollowingStatusArgs = {
   id: Scalars["ID"];
   followID: Scalars["ID"];
   value: Scalars["Boolean"];
+};
+
+export type MutationUploadProfilePictureArgs = {
+  userId: Scalars["ID"];
+  file: Scalars["Upload"];
 };
 
 export type MutationAddLanguageToUserArgs = {
@@ -2016,6 +2023,17 @@ export type UpdateNowMutation = { __typename?: "Mutation" } & Pick<
   "updateNow"
 >;
 
+export type UploadProfilePictureMutationVariables = {
+  userId: Scalars["ID"];
+  file: Scalars["Upload"];
+};
+
+export type UploadProfilePictureMutation = { __typename?: "Mutation" } & {
+  uploadProfilePicture: Maybe<
+    { __typename?: "User" } & Pick<User, "id" | "picture">
+  >;
+};
+
 export type AddLanguageToUserMutationVariables = {
   userId: Scalars["ID"];
   languageId: Scalars["ID"];
@@ -3044,6 +3062,55 @@ export function useUpdateNowMutation(
     UpdateNowMutation,
     UpdateNowMutationVariables
   >(UpdateNowDocument, baseOptions);
+}
+export const UploadProfilePictureDocument = gql`
+  mutation UploadProfilePicture($userId: ID!, $file: Upload!) {
+    uploadProfilePicture(userId: $userId, file: $file) {
+      id
+      picture
+    }
+  }
+`;
+export type UploadProfilePictureMutationFn = ReactApollo.MutationFn<
+  UploadProfilePictureMutation,
+  UploadProfilePictureMutationVariables
+>;
+export type UploadProfilePictureProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables
+  >
+> &
+  TChildProps;
+export function withUploadProfilePicture<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables,
+    UploadProfilePictureProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables,
+    UploadProfilePictureProps<TChildProps>
+  >(UploadProfilePictureDocument, {
+    alias: "withUploadProfilePicture",
+    ...operationOptions
+  });
+}
+
+export function useUploadProfilePictureMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    UploadProfilePictureMutation,
+    UploadProfilePictureMutationVariables
+  >(UploadProfilePictureDocument, baseOptions);
 }
 export const AddLanguageToUserDocument = gql`
   mutation AddLanguageToUser($userId: ID!, $languageId: ID!) {

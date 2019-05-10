@@ -9,7 +9,8 @@ import {Close} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {useUser} from "../../hooks"
+import {useDialog, useUser} from "../../hooks"
+import ProfilePictureUploadDialog from "./ProfilePictureUploadDialog"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     avatar: {
@@ -40,28 +41,32 @@ export const ProfilePictureSelector = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
+    const {Dialog, openDialog} = useDialog(ProfilePictureUploadDialog)
 
     return (
-        <Grid container direction="column" justify="center" alignItems="center" className={classes.root}>
-            <Grid item>
-                <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.root}>
-                    <Grid item>
-                        <Tooltip title={t("Change Profile Picture")} placement="right-end">
-                            <IconButton className={classes.iconButton}>
-                                <Avatar src={user.picture} className={classes.avatar}/>
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                    <Grid item xs className={classes.removeButton}>
-                        <Tooltip title={t("Remove Profile Picture")} placement="right-end">
-                            <IconButton className={classes.iconButton}>
-                                <Close/>
-                            </IconButton>
-                        </Tooltip>
+        <>
+            <Dialog />
+            <Grid container direction="column" justify="center" alignItems="center" className={classes.root}>
+                <Grid item>
+                    <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.root}>
+                        <Grid item>
+                            <Tooltip title={t("Change Profile Picture")} placement="right-end">
+                                <IconButton className={classes.iconButton} onClick={() => openDialog()}>
+                                    <Avatar src={user.picture} className={classes.avatar}/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item xs className={classes.removeButton}>
+                            <Tooltip title={t("Remove Profile Picture")} placement="right-end">
+                                <IconButton className={classes.iconButton}>
+                                    <Close/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+        </>
     )
 }
 

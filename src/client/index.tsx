@@ -1,4 +1,6 @@
 // tslint:disable-next-line:no-reference
+import {ApolloLink} from "apollo-link"
+import {BatchHttpLink} from "apollo-link-batch-http"
 ///<reference path="../typings/index.d.ts"/>
 import ReactGA from "react-ga"
 import {ThemeProvider} from "@material-ui/styles"
@@ -10,7 +12,7 @@ import {hydrate} from "react-dom"
 import {I18nextProvider, useSSR} from "react-i18next"
 import {CssBaseline} from "@material-ui/core"
 import theme from "../common/theme"
-import {BatchHttpLink} from "apollo-link-batch-http"
+import {createUploadLink} from "apollo-upload-client"
 import {ApolloClient} from "apollo-client"
 import {InMemoryCache} from "apollo-cache-inmemory"
 import {ApolloProvider} from "react-apollo-hooks"
@@ -40,12 +42,24 @@ ReactGA.pageview(window.location.pathname + window.location.search)
 
 const cache = new InMemoryCache().restore(window.__PRELOADED_STATE__ as any)
 
-const httpLink = new BatchHttpLink({
+/*const httpLink = createUploadLink({
     uri: window.__REACT_APP_API_ENDPOINT__,
     headers: window.__AUTH__ && {
         authorization: `Bearer ${window.__AUTH__}`
     }
-})
+})*/
+
+const httpOptions = {
+    uri: window.__REACT_APP_API_ENDPOINT__,
+    headers: window.__AUTH__ && {
+        authorization: `Bearer ${window.__AUTH__}`
+    }
+}
+const httpLink = ApolloLink.split(
+    operation => operation.getContext().hasUpload,
+    createUploadLink(httpOptions),
+    new BatchHttpLink(httpOptions)
+)
 
 const client = new ApolloClient({
     link: httpLink,
