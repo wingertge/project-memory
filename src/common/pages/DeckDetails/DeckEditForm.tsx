@@ -110,7 +110,7 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
     }
 
     const [deleting, setDeleting] = useState(false)
-    const deleteDeckMutate = useDeleteDeckMutation({variables: {id}, refetchQueries: [{query: ShallowDecksDocument, variables: {id: userId}}, "GlobalDecks"]})
+    const deleteDeckMutate = useDeleteDeckMutation({variables: {id}, refetchQueries: [{query: ShallowDecksDocument, variables: {id: userId}}, "GlobalDecks", "LessonsCount", "ReviewsCount"]})
     const deleteDeck = () => {
         setDeleting(true)
         deleteDeckMutate().then(() => {

@@ -2,10 +2,12 @@
 import {useState} from "react"
 import * as React from "react"
 import {
+    LessonsCountDocument,
     Review,
     ReviewFields,
     useSubmitReviewMutation
 } from "../../../generated/graphql"
+import {useID} from "../../hooks"
 import ReviewDisplay from "../Reviews/ReviewDisplay"
 
 interface PropTypes {
@@ -18,6 +20,7 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
     let [remainingReviews, setRemainingReviews] = useState(reviews)
     let [currentReview, setCurrentReview] = useState(randomElement(remainingReviews))
     const submitReviewMutate = useSubmitReviewMutation()
+    const userId = useID()
 
     const submitReview = (testedField: ReviewFields, correct: boolean) => {
         if(correct) {
@@ -40,7 +43,7 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
                     const id = review.id
                     submitReviewMutate({
                         variables: {reviewId: id, field: field!, correct: true},
-                        refetchQueries: ["LessonsCount", "ReviewsCount"]
+                        refetchQueries: [{query: LessonsCountDocument, variables: {userId}}]
                     }).then(onQuizFinished)
                 })
             })
