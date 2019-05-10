@@ -7,6 +7,7 @@ import {TimedCircularProgress} from "../../components/common/TimedCircularProgre
 
 interface PropTypes {
     user: User
+    isOwn?: boolean
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const UserSummary = ({user}: PropTypes) => {
+export const UserSummary = ({user, isOwn}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
 
@@ -82,8 +83,7 @@ export const UserSummary = ({user}: PropTypes) => {
                     <Hidden smUp>
                         <Typography variant="h6">{user.username}</Typography>
                     </Hidden>
-                    <IconButton title={t("Follow")} about={t("Follow")}
-                                className={classes.iconButton}><PersonAdd/></IconButton>
+                    {!isOwn && <IconButton title={t("Follow")} about={t("Follow")} className={classes.iconButton}><PersonAdd/></IconButton>}
                 </div>
                 <div className={classes.stats}>
                     <div className={classes.statCount}><Favorite className={classes.icon}/>{user.totalSubscribers}</div>

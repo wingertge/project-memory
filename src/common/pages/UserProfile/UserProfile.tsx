@@ -35,7 +35,7 @@ export const UserProfile = () => {
         <Grid container spacing={4} className={classes.root} justify="flex-start">
             <Grid item xs={12} lg={6}>
                 <div className={classes.summaryContainer}>
-                    <UserSummary user={user} />
+                    <UserSummary user={user} isOwn={isOwn} />
                     <UserLanguages userId={id}/>
                     <Badges userId={id} />
                 </div>
