@@ -25,9 +25,9 @@ export const UserProfile = () => {
     const classes = useStyles()
     let {match: {params: {id}}} = useRouter<{id: string}>()
     const userId = useID()
-    const user = useUser(userId)
     const isOwn = !id || id === userId
     id = id || userId
+    const user = useUser(id)
 
     if(!user) return <TimedCircularProgress />
 
