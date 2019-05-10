@@ -43,7 +43,7 @@ const validators = {
 export const UserSearch = () => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {match: {params}} = useRouter<RouteParams>()
+    const {match: {params}, history} = useRouter<RouteParams>()
     const {query, valid} = useValidatedFormState<RouteParams>({query: params.query || ""}, validators)
     const {data, error, loading} = useUsersQuery({skip: !valid, variables: {filter: {limit: 20, search: query.value}}})
     const users = oc(data).users([]) as User[]
@@ -67,7 +67,7 @@ export const UserSearch = () => {
             </div>
             <div className={classes.resultList}>
                 {users.map(user => (
-                    <div key={user.id} className={classes.result}>
+                    <div key={user.id} className={classes.result} onClick={() => history.push(`/profile/${user.id}`)}>
                         <UserSummary user={user} />
                     </div>
                 ))}
