@@ -59,7 +59,7 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
     const {history, match: {params: {id, page: pageString = "0", sortDirection = "asc", sortBy = "meaning"}}} = useRouter<RouteTypes>()
     const page = parseInt(pageString, 10)
     const {name} = useValidatedFormState<Form>({name: deck.name}, deckPropsValidators)
-    const {Toast, openToast} = useToast("Successfully saved profile")
+    const {Toast, openToast} = useToast("Successfully saved deck")
     const [mutationError, setMutationError] = useState<ApolloError | undefined>(undefined)
     const updateDeck = useUpdateDeckMutation({variables: {id, deckInput: {name: name.value}}})
     const save = () => updateDeck().then(({errors}) => {
