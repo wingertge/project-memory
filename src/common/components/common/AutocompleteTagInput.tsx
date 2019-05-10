@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-const renderInput = ({value, chips, onChange, ...other}: ChipInputProps & {chips: string[]}) => <ChipInput clearInputValueOnChange onUpdateInput={onChange} value={chips} {...other} />
+const renderInput = ({value, chips, onChange, ...other}: ChipInputProps & {chips: string[]}) => <ChipInput clearInputValueOnChange blurBehavior="add" onUpdateInput={onChange} value={chips} {...other} />
 const renderSuggestion = (suggestion, {query, isHighlighted}) => {
     const matches = match(suggestion, query)
     const parts = parse(suggestion, matches)
