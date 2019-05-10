@@ -106,7 +106,7 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
             <Heading>{t("Feed")}</Heading>
             {isOwn && (
                 <div>
-                    <TextField multiline className={classes.newPostInput} variant="outlined" rows={3} rowsMax={12} onKeyPress={keyHandler}
+                    <TextField multiline label={t("Create a Post")} className={classes.newPostInput} variant="outlined" rows={3} rowsMax={12} onKeyPress={keyHandler}
                                value={newPostContent.value} onChange={newPostContent.onChange} error={!!newPostContent.error} helperText={newPostContent.error} />
                     <Grow in={notEmpty(newPostContent.value.trim())} mountOnEnter unmountOnExit>
                         <div className={classes.postButtonContainer}>
