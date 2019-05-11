@@ -1,4 +1,4 @@
-import {Avatar, Button, Typography} from "@material-ui/core"
+import {Avatar, Typography} from "@material-ui/core"
 import {fade} from "@material-ui/core/styles"
 import {CloudUpload} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
@@ -113,10 +113,6 @@ export const ImageUploader = ({
     fileContainerStyle = {},
     withLabel = true,
     labelStyles = {},
-    buttonText = "Choose images",
-    buttonType = "contained",
-    buttonColor = "primary",
-    buttonStyles = {},
     name,
     singleImage = false,
     accept = "accept=image/*",
@@ -128,7 +124,6 @@ export const ImageUploader = ({
     const [files, setFiles] = useState<File[]>([])
     const [notAcceptedFileType, setNotAcceptedFileType] = useState<string[]>([])
     const [notAcceptedFileSize, setNotAcceptedFileSize] = useState<string[]>([])
-    const [inputElement, setInputElement] = useState<any>(null)
 
     useEffect(() => {if(onChange) onChange(files)}, [files])
     useEffect(() => {if(defaultImage) setPictures([defaultImage])}, [defaultImage])
@@ -169,15 +164,11 @@ export const ImageUploader = ({
     const onDrop = useCallback(onDropFiles, [])
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
-    const onUploadClick = e => {e.target.value = null}
-
 /*    const removeImage = (picture: string) => {
         const removeIndex = pictures.findIndex(pic => pic === picture)
         setPictures(current => current.filter((e, index) => index !== removeIndex))
         setFiles(current => current.filter((e, index) => index !== removeIndex))
     }*/
-
-    const triggerFileUpload = () => {inputElement!.click()}
 
     const Errors = () => (
         <>
@@ -215,7 +206,7 @@ export const ImageUploader = ({
 
     return (
         <div style={style} className={classes.root}>
-            <div style={fileContainerStyle} {...getRootProps()} className={classes.fileContainer}>
+            <div style={fileContainerStyle} className={classes.fileContainer}>
                 <div {...getRootProps()} className={classes.dropZone}>
                     {withIcon && pictures.length === 0 && <CloudUpload/>}
                     {withLabel && pictures.length === 0 && (
@@ -224,15 +215,11 @@ export const ImageUploader = ({
                         </Typography>
                     )}
                     {withPreview && pictures.length > 0 && <Preview />}
-                    <input type="file" ref={input => setInputElement(input)} name={t(name!)} multiple={singleImage} {...getInputProps()}
-                           onChange={e => {e.persist(); onDropFiles(Array.from(e.target.files!))}} onClick={onUploadClick} accept={accept} />
+                    <input type="file" name={name} multiple={singleImage} {...getInputProps({accept})} />
                 </div>
                 <div>
                     <Errors />
                 </div>
-                <Button variant={buttonType} color={buttonColor} style={buttonStyles} onClick={triggerFileUpload} className={classes.button}>
-                    {t(buttonText)}
-                </Button>
             </div>
         </div>
     )
