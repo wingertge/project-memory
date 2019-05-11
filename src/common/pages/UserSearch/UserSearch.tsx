@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     result: {
         width: "100%",
         maxWidth: 650,
-        margin: theme.spacing(2)
+        margin: theme.spacing(2),
+        cursor: "pointer"
     },
     search: {
         padding: theme.spacing(2, 3)
@@ -49,7 +50,6 @@ export const UserSearch = () => {
     const users = oc(data).users([]) as User[]
 
     if(error) return <ApolloErrorBox error={error} />
-    if(loading) return <TimedCircularProgress />
 
     return (
         <div>
@@ -65,13 +65,15 @@ export const UserSearch = () => {
                     autoFocus
                 />
             </div>
-            <div className={classes.resultList}>
-                {users.map(user => (
-                    <div key={user.id} className={classes.result} onClick={() => history.push(`/profile/${user.id}`)}>
-                        <UserSummary user={user} />
-                    </div>
-                ))}
-            </div>
+            {loading ? <TimedCircularProgress /> : (
+                <div className={classes.resultList}>
+                    {users.map(user => (
+                        <div key={user.id} className={classes.result} onClick={() => history.push(`/profile/${user.id}`)}>
+                            <UserSummary user={user} />
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

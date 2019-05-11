@@ -11,12 +11,8 @@ import {Theme} from "../../theme"
 
 interface PropTypes {
     className?: string
-    buttonType?: "contained" | "outlined" | "text"
-    buttonColor?: "primary" | "secondary" | "default" | "inherit"
     fileContainerStyle?: object
     onChange?: (files: File[]) => void
-    buttonClassName?: string
-    buttonStyles?: object
     withPreview?: boolean
     accept?: string
     name?: string
@@ -81,7 +77,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         borderStyle: "dashed",
         borderWidth: 2,
         borderColor: fade(theme.palette.text.primary, 0.4),
-        borderRadius: 8
+        borderRadius: 8,
+        cursor: "pointer"
     },
     button: {
         margin: theme.spacing(2)
