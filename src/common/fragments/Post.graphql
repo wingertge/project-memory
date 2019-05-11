@@ -8,4 +8,5 @@ fragment shallowPostFields on Post {
         picture
     }
     content
+    likeCount
 }

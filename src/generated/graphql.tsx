@@ -799,9 +799,10 @@ export type Mutation = {
   editCard?: Maybe<Card>;
   deleteCards?: Maybe<Deck>;
   submitReview?: Maybe<Review>;
-  createPost?: Maybe<Array<Maybe<Post>>>;
+  createPost?: Maybe<Array<Post>>;
   editPost?: Maybe<Post>;
-  deletePost?: Maybe<Array<Maybe<Post>>>;
+  deletePost?: Maybe<Array<Post>>;
+  changePostLikeStatus?: Maybe<Post>;
   addDeck?: Maybe<User>;
   updateDeck?: Maybe<Deck>;
   deleteDeck: User;
@@ -943,6 +944,12 @@ export type MutationEditPostArgs = {
 export type MutationDeletePostArgs = {
   id: Scalars["ID"];
   filter?: Maybe<PostFilterInput>;
+};
+
+export type MutationChangePostLikeStatusArgs = {
+  id: Scalars["ID"];
+  userID: Scalars["ID"];
+  value: Scalars["Boolean"];
 };
 
 export type MutationAddDeckArgs = {
@@ -1587,6 +1594,12 @@ export type Post = {
   by: User;
   content?: Maybe<Scalars["String"]>;
   originalPost?: Maybe<Post>;
+  likeCount: Scalars["Int"];
+  isLikedBy: Scalars["Boolean"];
+};
+
+export type PostIsLikedByArgs = {
+  userID: Scalars["ID"];
 };
 
 export type PostFilterInput = {
@@ -1868,7 +1881,7 @@ export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
 
 export type ShallowPostFieldsFragment = { __typename?: "Post" } & Pick<
   Post,
-  "id" | "createdAt" | "type" | "content"
+  "id" | "createdAt" | "type" | "content" | "likeCount"
 > & { by: { __typename?: "User" } & Pick<User, "id" | "username" | "picture"> };
 
 export type AddPostMutationVariables = {
@@ -1879,13 +1892,11 @@ export type AddPostMutationVariables = {
 export type AddPostMutation = { __typename?: "Mutation" } & {
   createPost: Maybe<
     Array<
-      Maybe<
-        { __typename?: "Post" } & {
-          originalPost: Maybe<
-            { __typename?: "Post" } & ShallowPostFieldsFragment
-          >;
-        } & ShallowPostFieldsFragment
-      >
+      { __typename?: "Post" } & {
+        originalPost: Maybe<
+          { __typename?: "Post" } & ShallowPostFieldsFragment
+        >;
+      } & ShallowPostFieldsFragment
     >
   >;
 };
@@ -1897,6 +1908,18 @@ export type AddTagMutationVariables = {
 
 export type AddTagMutation = { __typename?: "Mutation" } & {
   addTagToDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "tags">>;
+};
+
+export type ChangePostLikeMutationVariables = {
+  id: Scalars["ID"];
+  userId: Scalars["ID"];
+  value: Scalars["Boolean"];
+};
+
+export type ChangePostLikeMutation = { __typename?: "Mutation" } & {
+  changePostLikeStatus: Maybe<
+    { __typename?: "Post" } & Pick<Post, "id" | "isLikedBy">
+  >;
 };
 
 export type AddCardMutationVariables = {
@@ -2005,7 +2028,7 @@ export type DeletePostMutationVariables = {
 };
 
 export type DeletePostMutation = { __typename?: "Mutation" } & {
-  deletePost: Maybe<Array<Maybe<{ __typename?: "Post" } & Pick<Post, "id">>>>;
+  deletePost: Maybe<Array<{ __typename?: "Post" } & Pick<Post, "id">>>;
 };
 
 export type RemoveTagMutationVariables = {
@@ -2196,6 +2219,7 @@ export type PageQuery = { __typename?: "Query" } & {
 
 export type FeedQueryVariables = {
   userId: Scalars["ID"];
+  currentUserId: Scalars["ID"];
   filter?: Maybe<PostFilterInput>;
 };
 
@@ -2205,11 +2229,12 @@ export type FeedQuery = { __typename?: "Query" } & {
         feed: Maybe<
           Array<
             Maybe<
-              { __typename?: "Post" } & {
-                originalPost: Maybe<
-                  { __typename?: "Post" } & ShallowPostFieldsFragment
-                >;
-              } & ShallowPostFieldsFragment
+              { __typename?: "Post" } & Pick<Post, "isLikedBy"> & {
+                  originalPost: Maybe<
+                    { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
+                      ShallowPostFieldsFragment
+                  >;
+                } & ShallowPostFieldsFragment
             >
           >
         >;
@@ -2478,6 +2503,7 @@ export const shallowPostFieldsFragmentDoc = gql`
       picture
     }
     content
+    likeCount
   }
 `;
 export const AddPostDocument = gql`
@@ -2574,6 +2600,55 @@ export function useAddTagMutation(
     AddTagDocument,
     baseOptions
   );
+}
+export const ChangePostLikeDocument = gql`
+  mutation ChangePostLike($id: ID!, $userId: ID!, $value: Boolean!) {
+    changePostLikeStatus(id: $id, userID: $userId, value: $value) {
+      id
+      isLikedBy(userID: $userId)
+    }
+  }
+`;
+export type ChangePostLikeMutationFn = ReactApollo.MutationFn<
+  ChangePostLikeMutation,
+  ChangePostLikeMutationVariables
+>;
+export type ChangePostLikeProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ChangePostLikeMutation,
+    ChangePostLikeMutationVariables
+  >
+> &
+  TChildProps;
+export function withChangePostLike<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ChangePostLikeMutation,
+    ChangePostLikeMutationVariables,
+    ChangePostLikeProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ChangePostLikeMutation,
+    ChangePostLikeMutationVariables,
+    ChangePostLikeProps<TChildProps>
+  >(ChangePostLikeDocument, {
+    alias: "withChangePostLike",
+    ...operationOptions
+  });
+}
+
+export function useChangePostLikeMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ChangePostLikeMutation,
+    ChangePostLikeMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ChangePostLikeMutation,
+    ChangePostLikeMutationVariables
+  >(ChangePostLikeDocument, baseOptions);
 }
 export const AddCardDocument = gql`
   mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
@@ -3646,13 +3721,15 @@ export function usePageQuery(
   );
 }
 export const FeedDocument = gql`
-  query Feed($userId: ID!, $filter: PostFilterInput) {
+  query Feed($userId: ID!, $currentUserId: ID!, $filter: PostFilterInput) {
     user(id: $userId) {
       id
       feed(filter: $filter) {
         ...shallowPostFields
+        isLikedBy(userID: $currentUserId)
         originalPost {
           ...shallowPostFields
+          isLikedBy(userID: $currentUserId)
         }
       }
     }

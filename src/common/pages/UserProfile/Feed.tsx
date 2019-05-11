@@ -7,7 +7,7 @@ import {FeedDocument, Post, useAddPostMutation, useFeedQuery} from "../../../gen
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Heading from "../../components/common/Heading"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import {useUser, useValidatedFormState} from "../../hooks"
+import {useID, useUser, useValidatedFormState} from "../../hooks"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import PostDisplay from "./PostDisplay"
 
@@ -42,9 +42,11 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
+    const currentUserId = useID()
     const {data, loading, error} = useFeedQuery({
         variables: {
             userId,
+            currentUserId,
             filter: {
                 limit: 20
             }

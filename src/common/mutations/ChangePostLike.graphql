@@ -1,0 +1,6 @@
+mutation ChangePostLike($id: ID!, $userId: ID!, $value: Boolean!) {
+    changePostLikeStatus(id: $id, userID: $userId, value: $value) {
+        id
+        isLikedBy(userID: $userId)
+    }
+}

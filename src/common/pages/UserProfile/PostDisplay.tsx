@@ -11,9 +11,11 @@ import {Delete, Repeat, ReportProblem, ThumbUp, ThumbUpOutlined} from "@material
 import clsx from "clsx"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {Post, useDeletePostMutation} from "../../../generated/graphql"
+import useRouter from "use-react-router/use-react-router"
+import {Post, useChangePostLikeMutation, useDeletePostMutation} from "../../../generated/graphql"
 import ReactMarkdown from "react-markdown"
 import breaks from "remark-breaks"
+import {useID} from "../../hooks"
 
 interface PropTypes {
     post: Post
@@ -70,11 +72,27 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const isLiked = false
+    const {history} = useRouter()
+    const userId = useID()
+    const isLiked = post.isLikedBy
     const deletePost = useDeletePostMutation({
         variables: {id: post.id},
         refetchQueries: ["Feed"]
     })
+    const changeLikeStatus = useChangePostLikeMutation()
+    const toggleLike = () => {
+        changeLikeStatus({
+            variables: {id: post.id, userId, value: !isLiked},
+            optimisticResponse: {
+                __typename: "Mutation",
+                changePostLikeStatus: {
+                    __typename: "Post",
+                    id: post.id,
+                    isLikedBy: !isLiked
+                }
+            }
+        })
+    }
 
     return (
         <div className={classes.post}>
@@ -88,7 +106,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                 {post.type === "repost" && (
                     <Card>
                         <CardContent>
-                            <div className={classes.header}>
+                            <div className={classes.header} onClick={() => history.push(`/profile/${post.originalPost!.by.id}`)} style={{cursor: "pointer"}}>
                                 <Avatar src={post.originalPost!.by.picture} className={classes.avatar} />
                                 <Typography style={{fontWeight: "bold"}}>{post.originalPost!.by.username}</Typography>
                             </div>
@@ -103,7 +121,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                                 <Repeat className={classes.actionIcon} />
                             </IconButton>
                         )}
-                        <IconButton title={isLiked ? t("Unlike") : t("Like")} className={classes.actionButton}>
+                        <IconButton title={isLiked ? t("Unlike") : t("Like")} onClick={toggleLike} className={classes.actionButton}>
                             {isLiked ? <ThumbUp className={classes.actionIcon} /> : <ThumbUpOutlined className={classes.actionIcon} />}
                         </IconButton>
                         <div style={{flex: "1 1 100%"}} />
