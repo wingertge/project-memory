@@ -45,15 +45,16 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginBottom: theme.spacing(-0.5)
     },
     actions: {
-        display: "flex"
+        display: "flex",
+        alignItems: "center",
+        padding: theme.spacing(1, 0, -1, 0)
     },
     actionIcon: {
         width: 24,
         height: 24
     },
     actionButton: {
-        padding: theme.spacing(0.5),
-        margin: theme.spacing(1, 0, -1, 0)
+        padding: theme.spacing(0.5)
     },
     content: {
         "& > p": {
@@ -66,6 +67,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     gutterBottom: {
         marginBottom: theme.spacing(1)
+    },
+    likeCount: {
+        marginLeft: theme.spacing(0.5)
     }
 }))
 
@@ -124,6 +128,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                         <IconButton title={isLiked ? t("Unlike") : t("Like")} onClick={toggleLike} className={classes.actionButton}>
                             {isLiked ? <ThumbUp className={classes.actionIcon} /> : <ThumbUpOutlined className={classes.actionIcon} />}
                         </IconButton>
+                        <Typography className={classes.likeCount}>{post.likeCount}</Typography>
                         <div style={{flex: "1 1 100%"}} />
                         <IconButton title={t("Report")} className={classes.actionButton}>
                             <ReportProblem className={classes.actionIcon} />

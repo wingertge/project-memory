@@ -1918,7 +1918,7 @@ export type ChangePostLikeMutationVariables = {
 
 export type ChangePostLikeMutation = { __typename?: "Mutation" } & {
   changePostLikeStatus: Maybe<
-    { __typename?: "Post" } & Pick<Post, "id" | "isLikedBy">
+    { __typename?: "Post" } & Pick<Post, "id" | "isLikedBy" | "likeCount">
   >;
 };
 
@@ -2606,6 +2606,7 @@ export const ChangePostLikeDocument = gql`
     changePostLikeStatus(id: $id, userID: $userId, value: $value) {
       id
       isLikedBy(userID: $userId)
+      likeCount
     }
   }
 `;

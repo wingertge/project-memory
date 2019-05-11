@@ -7,7 +7,7 @@ import {FeedDocument, Post, useAddPostMutation, useFeedQuery} from "../../../gen
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import Heading from "../../components/common/Heading"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import {useID, useUser, useValidatedFormState} from "../../hooks"
+import {useID, useToast, useUser, useValidatedFormState} from "../../hooks"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import PostDisplay from "./PostDisplay"
 
@@ -91,6 +91,7 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
                 }
             }
         })
+        openToast()
     }
 
     const keyHandler = event => {
@@ -99,36 +100,40 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
             if(notEmpty(newPostContent.value.trim()) && valid) addPost()
         }
     }
+    const {Toast, openToast} = useToast("Reposted")
 
     if(error) return <ApolloErrorBox error={error} />
     if(loading) return <TimedCircularProgress />
 
     return (
-        <div className={classes.feed}>
-            <Heading>{t("Feed")}</Heading>
-            {isOwn && (
-                <div>
-                    <TextField multiline label={t("Create a Post")} className={classes.newPostInput} variant="outlined" rows={3} rowsMax={12} onKeyPress={keyHandler}
-                               value={newPostContent.value} onChange={newPostContent.onChange} error={!!newPostContent.error} helperText={newPostContent.error} />
-                    <Grow in={notEmpty(newPostContent.value.trim())} mountOnEnter unmountOnExit>
-                        <div className={classes.postButtonContainer}>
-                            <Typography color={shorterThan(4001)(newPostContent.value) ? "textSecondary" : "error"}>{newPostContent.value.trim().length}/4000</Typography>
-                            <Button variant="contained" color="primary" className={classes.postButton} disabled={!notEmpty(newPostContent.value.trim()) || !valid} onClick={() => addPost()}>{t("Post")}</Button>
-                        </div>
-                    </Grow>
-                </div>
-            )}
-            <List>
-                {feed.map((post, i) => (
-                    <ListItem key={post.id} disableGutters>
-                        <div style={{width: "100%"}}>
-                            <PostDisplay post={post} isOwn={isOwn} onRepostClick={repost} />
-                            {i < feed.length - 1 && <Divider />}
-                        </div>
-                    </ListItem>
-                ))}
-            </List>
-        </div>
+        <>
+            <Toast />
+            <div className={classes.feed}>
+                <Heading>{t("Feed")}</Heading>
+                {isOwn && (
+                    <div>
+                        <TextField multiline label={t("Create a Post")} className={classes.newPostInput} variant="outlined" rows={3} rowsMax={12} onKeyPress={keyHandler}
+                                   value={newPostContent.value} onChange={newPostContent.onChange} error={!!newPostContent.error} helperText={newPostContent.error} />
+                        <Grow in={notEmpty(newPostContent.value.trim())} mountOnEnter unmountOnExit>
+                            <div className={classes.postButtonContainer}>
+                                <Typography color={shorterThan(4001)(newPostContent.value) ? "textSecondary" : "error"}>{newPostContent.value.trim().length}/4000</Typography>
+                                <Button variant="contained" color="primary" className={classes.postButton} disabled={!notEmpty(newPostContent.value.trim()) || !valid} onClick={() => addPost()}>{t("Post")}</Button>
+                            </div>
+                        </Grow>
+                    </div>
+                )}
+                <List>
+                    {feed.map((post, i) => (
+                        <ListItem key={post.id} disableGutters>
+                            <div style={{width: "100%"}}>
+                                <PostDisplay post={post} isOwn={isOwn} onRepostClick={repost} />
+                                {i < feed.length - 1 && <Divider />}
+                            </div>
+                        </ListItem>
+                    ))}
+                </List>
+            </div>
+        </>
     )
 }
 
