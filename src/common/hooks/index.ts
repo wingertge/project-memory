@@ -2,7 +2,6 @@ import {Dispatch, SetStateAction, useEffect, useState} from "react"
 import {oc} from "ts-optchain"
 import {
     ReviewsCountDocument,
-    ReviewsDocument,
     useCurrentUserIdQuery, useNowQuery,
     useProfileQuery,
     User,
@@ -42,10 +41,11 @@ export const useNow = (): Date => {
 }
 
 export const useUpdateNow = () => {
+    const userId = useID()
     return useUpdateNowMutation({
         refetchQueries: [
-            {query: ReviewsCountDocument},
-            {query: ReviewsDocument}
+            {query: ReviewsCountDocument, variables: {userId, filter: {}}},
+            "Reviews"
         ]
     })
 }

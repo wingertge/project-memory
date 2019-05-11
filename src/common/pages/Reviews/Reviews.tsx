@@ -42,12 +42,11 @@ export const Reviews = () => {
 
     const submitReview = (testedField: ReviewFields, correct: boolean) => {
         setSaving(true)
-        updateNow()
         submitReviewMutate({
             variables: {reviewId: currentReview!.id, field: testedField, correct},
             optimisticResponse: () => {
                 const newReviewedFields = [...currentReview!.reviewedFields!, testedField]
-                const done = currentReview!.reviewedFields!.length === 3 || currentReview!.reviewedFields!.length === 2 && !currentReview!.card!.pronunciation
+                const done = newReviewedFields.length === 3 || newReviewedFields.length === 2 && !currentReview!.card!.pronunciation
                 const isCorrect = !correct ? false : currentReview!.correct
                 const response = {
                     __typename: "Mutation",
@@ -57,15 +56,19 @@ export const Reviews = () => {
                         box: currentReview!.box,
                         reviewedFields: newReviewedFields,
                         correct: isCorrect,
-                        nextReviewAt: done ? new Date(8640000000000000) : new Date()
+                        nextReviewAt: done ? new Date(8640000000000000) : currentReview!.nextReviewAt
                     }
                 }
-                const newReviews = [...reviews.filter(review => review.id === currentReview!.id)]
+                const newReviews = [...reviews.filter(review => review.id !== currentReview!.id)]
                 if (!done) newReviews.push({
                     ...response.submitReview,
                     card: currentReview!.card
                 } as any)
                 else setCompletedReviews([...completedReviews, {review: currentReview!, correct: isCorrect!}])
+                if(newReviews.length === 0) {
+                    exit()
+                    return response as any
+                }
                 setCurrentReview(randomElement(newReviews))
                 return response as any
             }
@@ -73,6 +76,10 @@ export const Reviews = () => {
             setSaving(false)
             setMutationError((errors && errors.length > 0 && errors[0] as any) || undefined)
         })
+    }
+
+    const exit = () => {
+        updateNow().then(() => setDone(true))
     }
 
     useEffect(() => setCurrentReview(randomElement(reviews)), [loading])
@@ -85,8 +92,8 @@ export const Reviews = () => {
             {mutationError && <ApolloErrorBox error={mutationError} />}
             {currentReview && !isDone &&
             <ReviewDisplay review={currentReview} submitDisabled={saving} onSubmit={submitReview}
-                           onExit={() => setDone(true)}/>}
-            {(!currentReview && id || isDone) && <ReviewsFinished reviews={Object.values(completedReviews)}/>}
+                           onExit={exit}/>}
+            {isDone && <ReviewsFinished reviews={Object.values(completedReviews)}/>}
         </>
     )
 }

@@ -61,8 +61,7 @@ export const Header = () => {
         variables: {
             userId: user && user.id,
             filter: {toBeReviewedBy: now}
-        },
-        ssr: false
+        }
     })
 
     const pendingReviews = oc(reviewsData).user.reviewsCount() || undefined

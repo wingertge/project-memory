@@ -17,6 +17,7 @@ export type Scalars = {
    * Long can represent values between -(2^63) and 2^63 - 1.
    */
   Long: any;
+  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
   /** Custom scalar representing the hex color code value */
   HEX: any;
@@ -1759,7 +1760,7 @@ export type ReviewFilterInput = {
   boxes?: Maybe<Array<Maybe<Scalars["Int"]>>>;
 };
 
-export type ReviewSortOptions = "reviewDate" | "box";
+export type ReviewSortOptions = "nextReviewAt" | "box";
 
 /** Representing a RGBA color value: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#rgb()_and_rgba() */
 export type Rgba = {

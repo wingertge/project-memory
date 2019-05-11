@@ -47,7 +47,7 @@ export const UpcomingReviews = () => {
         variables: {
             userId: id,
             filter: {
-                sortBy: "reviewDate",
+                sortBy: "nextReviewAt",
                 sortDirection: "asc",
                 limit: 1
             }
