@@ -31,6 +31,10 @@ export type AggregateAsset = {
   count: Scalars["Int"];
 };
 
+export type AggregateHelpPage = {
+  count: Scalars["Int"];
+};
+
 export type AggregateLocation = {
   count: Scalars["Int"];
 };
@@ -51,6 +55,7 @@ export type Asset = Node & {
   size?: Maybe<Scalars["Float"]>;
   mimeType?: Maybe<Scalars["String"]>;
   mainImagePage?: Maybe<Array<Page>>;
+  mainImageHelpPage?: Maybe<Array<HelpPage>>;
   /** Get the url for the asset with provided transformations applied. */
   url: Scalars["String"];
 };
@@ -58,6 +63,16 @@ export type Asset = Node & {
 export type AssetMainImagePageArgs = {
   where?: Maybe<PageWhereInput>;
   orderBy?: Maybe<PageOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type AssetMainImageHelpPageArgs = {
+  where?: Maybe<HelpPageWhereInput>;
+  orderBy?: Maybe<HelpPageOrderByInput>;
   skip?: Maybe<Scalars["Int"]>;
   after?: Maybe<Scalars["String"]>;
   before?: Maybe<Scalars["String"]>;
@@ -87,11 +102,28 @@ export type AssetCreateInput = {
   size?: Maybe<Scalars["Float"]>;
   mimeType?: Maybe<Scalars["String"]>;
   mainImagePage?: Maybe<PageCreateManyWithoutMainImageInput>;
+  mainImageHelpPage?: Maybe<HelpPageCreateManyWithoutMainImageInput>;
+};
+
+export type AssetCreateOneWithoutMainImageHelpPageInput = {
+  create?: Maybe<AssetCreateWithoutMainImageHelpPageInput>;
+  connect?: Maybe<AssetWhereUniqueInput>;
 };
 
 export type AssetCreateOneWithoutMainImagePageInput = {
   create?: Maybe<AssetCreateWithoutMainImagePageInput>;
   connect?: Maybe<AssetWhereUniqueInput>;
+};
+
+export type AssetCreateWithoutMainImageHelpPageInput = {
+  status?: Maybe<Status>;
+  handle: Scalars["String"];
+  fileName: Scalars["String"];
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+  mainImagePage?: Maybe<PageCreateManyWithoutMainImageInput>;
 };
 
 export type AssetCreateWithoutMainImagePageInput = {
@@ -102,6 +134,7 @@ export type AssetCreateWithoutMainImagePageInput = {
   width?: Maybe<Scalars["Float"]>;
   size?: Maybe<Scalars["Float"]>;
   mimeType?: Maybe<Scalars["String"]>;
+  mainImageHelpPage?: Maybe<HelpPageCreateManyWithoutMainImageInput>;
 };
 
 /** An edge in a connection. */
@@ -189,6 +222,7 @@ export type AssetUpdateInput = {
   size?: Maybe<Scalars["Float"]>;
   mimeType?: Maybe<Scalars["String"]>;
   mainImagePage?: Maybe<PageUpdateManyWithoutMainImageInput>;
+  mainImageHelpPage?: Maybe<HelpPageUpdateManyWithoutMainImageInput>;
 };
 
 export type AssetUpdateManyMutationInput = {
@@ -201,6 +235,15 @@ export type AssetUpdateManyMutationInput = {
   mimeType?: Maybe<Scalars["String"]>;
 };
 
+export type AssetUpdateOneWithoutMainImageHelpPageInput = {
+  create?: Maybe<AssetCreateWithoutMainImageHelpPageInput>;
+  connect?: Maybe<AssetWhereUniqueInput>;
+  disconnect?: Maybe<Scalars["Boolean"]>;
+  delete?: Maybe<Scalars["Boolean"]>;
+  update?: Maybe<AssetUpdateWithoutMainImageHelpPageDataInput>;
+  upsert?: Maybe<AssetUpsertWithoutMainImageHelpPageInput>;
+};
+
 export type AssetUpdateOneWithoutMainImagePageInput = {
   create?: Maybe<AssetCreateWithoutMainImagePageInput>;
   connect?: Maybe<AssetWhereUniqueInput>;
@@ -208,6 +251,17 @@ export type AssetUpdateOneWithoutMainImagePageInput = {
   delete?: Maybe<Scalars["Boolean"]>;
   update?: Maybe<AssetUpdateWithoutMainImagePageDataInput>;
   upsert?: Maybe<AssetUpsertWithoutMainImagePageInput>;
+};
+
+export type AssetUpdateWithoutMainImageHelpPageDataInput = {
+  status?: Maybe<Status>;
+  handle?: Maybe<Scalars["String"]>;
+  fileName?: Maybe<Scalars["String"]>;
+  height?: Maybe<Scalars["Float"]>;
+  width?: Maybe<Scalars["Float"]>;
+  size?: Maybe<Scalars["Float"]>;
+  mimeType?: Maybe<Scalars["String"]>;
+  mainImagePage?: Maybe<PageUpdateManyWithoutMainImageInput>;
 };
 
 export type AssetUpdateWithoutMainImagePageDataInput = {
@@ -218,6 +272,12 @@ export type AssetUpdateWithoutMainImagePageDataInput = {
   width?: Maybe<Scalars["Float"]>;
   size?: Maybe<Scalars["Float"]>;
   mimeType?: Maybe<Scalars["String"]>;
+  mainImageHelpPage?: Maybe<HelpPageUpdateManyWithoutMainImageInput>;
+};
+
+export type AssetUpsertWithoutMainImageHelpPageInput = {
+  update: AssetUpdateWithoutMainImageHelpPageDataInput;
+  create: AssetCreateWithoutMainImageHelpPageInput;
 };
 
 export type AssetUpsertWithoutMainImagePageInput = {
@@ -425,6 +485,9 @@ export type AssetWhereInput = {
   mainImagePage_every?: Maybe<PageWhereInput>;
   mainImagePage_some?: Maybe<PageWhereInput>;
   mainImagePage_none?: Maybe<PageWhereInput>;
+  mainImageHelpPage_every?: Maybe<HelpPageWhereInput>;
+  mainImageHelpPage_some?: Maybe<HelpPageWhereInput>;
+  mainImageHelpPage_none?: Maybe<HelpPageWhereInput>;
 };
 
 export type AssetWhereUniqueInput = {
@@ -535,6 +598,8 @@ export type DeckInput = {
 
 export type DeckSortBy = "name" | "cardCount" | "rating" | "subscriberCount";
 
+export type DisplayType = "Public" | "Unlisted" | "Private";
+
 export type DocumentFileTypes =
   | "jpg"
   | "odp"
@@ -586,6 +651,540 @@ export type DocumentOutputInput = {
 export type DocumentTransformationInput = {
   /** Changes the output for the file. */
   output?: Maybe<DocumentOutputInput>;
+};
+
+export type HelpPage = Node & {
+  status: Status;
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+  slug: Scalars["String"];
+  header?: Maybe<Scalars["String"]>;
+  mainImage?: Maybe<Asset>;
+  intro?: Maybe<RichText>;
+  main?: Maybe<RichText>;
+  outro?: Maybe<RichText>;
+  references?: Maybe<RichText>;
+  title: Scalars["String"];
+  displayType?: Maybe<DisplayType>;
+};
+
+/** A connection to a list of items. */
+export type HelpPageConnection = {
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A list of edges. */
+  edges: Array<Maybe<HelpPageEdge>>;
+  aggregate: AggregateHelpPage;
+};
+
+export type HelpPageCreateInput = {
+  status?: Maybe<Status>;
+  slug: Scalars["String"];
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+  references?: Maybe<Scalars["RichTextAST"]>;
+  title: Scalars["String"];
+  displayType?: Maybe<DisplayType>;
+  mainImage?: Maybe<AssetCreateOneWithoutMainImageHelpPageInput>;
+};
+
+export type HelpPageCreateManyWithoutMainImageInput = {
+  create?: Maybe<Array<HelpPageCreateWithoutMainImageInput>>;
+  connect?: Maybe<Array<HelpPageWhereUniqueInput>>;
+};
+
+export type HelpPageCreateWithoutMainImageInput = {
+  status?: Maybe<Status>;
+  slug: Scalars["String"];
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["Json"]>;
+  main?: Maybe<Scalars["Json"]>;
+  outro?: Maybe<Scalars["Json"]>;
+  references?: Maybe<Scalars["Json"]>;
+  title: Scalars["String"];
+  displayType?: Maybe<DisplayType>;
+};
+
+/** An edge in a connection. */
+export type HelpPageEdge = {
+  /** The item at the end of the edge. */
+  node: HelpPage;
+  /** A cursor for use in pagination. */
+  cursor: Scalars["String"];
+};
+
+export type HelpPageOrderByInput =
+  | "status_ASC"
+  | "status_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "header_ASC"
+  | "header_DESC"
+  | "intro_ASC"
+  | "intro_DESC"
+  | "main_ASC"
+  | "main_DESC"
+  | "outro_ASC"
+  | "outro_DESC"
+  | "references_ASC"
+  | "references_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "displayType_ASC"
+  | "displayType_DESC";
+
+export type HelpPagePreviousValues = {
+  status: Status;
+  updatedAt: Scalars["DateTime"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["ID"];
+  slug: Scalars["String"];
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<RichText>;
+  main?: Maybe<RichText>;
+  outro?: Maybe<RichText>;
+  references?: Maybe<RichText>;
+  title: Scalars["String"];
+  displayType?: Maybe<DisplayType>;
+};
+
+export type HelpPageScalarWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<HelpPageScalarWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<HelpPageScalarWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<HelpPageScalarWhereInput>>;
+  status?: Maybe<Status>;
+  /** All values that are not equal to given value. */
+  status_not?: Maybe<Status>;
+  /** All values that are contained in given list. */
+  status_in?: Maybe<Array<Status>>;
+  /** All values that are not contained in given list. */
+  status_not_in?: Maybe<Array<Status>>;
+  updatedAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: Maybe<Scalars["DateTime"]>;
+  createdAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  createdAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  createdAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  createdAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: Maybe<Scalars["DateTime"]>;
+  id?: Maybe<Scalars["ID"]>;
+  /** All values that are not equal to given value. */
+  id_not?: Maybe<Scalars["ID"]>;
+  /** All values that are contained in given list. */
+  id_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values less than the given value. */
+  id_lt?: Maybe<Scalars["ID"]>;
+  /** All values less than or equal the given value. */
+  id_lte?: Maybe<Scalars["ID"]>;
+  /** All values greater than the given value. */
+  id_gt?: Maybe<Scalars["ID"]>;
+  /** All values greater than or equal the given value. */
+  id_gte?: Maybe<Scalars["ID"]>;
+  /** All values containing the given string. */
+  id_contains?: Maybe<Scalars["ID"]>;
+  /** All values not containing the given string. */
+  id_not_contains?: Maybe<Scalars["ID"]>;
+  /** All values starting with the given string. */
+  id_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values ending with the given string. */
+  id_ends_with?: Maybe<Scalars["ID"]>;
+  /** All values not ending with the given string. */
+  id_not_ends_with?: Maybe<Scalars["ID"]>;
+  slug?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  slug_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  slug_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  slug_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  slug_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  slug_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  slug_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  slug_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  slug_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  slug_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  slug_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  slug_not_ends_with?: Maybe<Scalars["String"]>;
+  header?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  header_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  header_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  header_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  header_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  header_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  header_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  header_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  header_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  header_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  header_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  header_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  header_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  header_not_ends_with?: Maybe<Scalars["String"]>;
+  title?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  title_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  title_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  title_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  title_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  title_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  title_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  title_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  title_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  title_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  title_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  title_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  title_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  title_not_ends_with?: Maybe<Scalars["String"]>;
+  displayType?: Maybe<DisplayType>;
+  /** All values that are not equal to given value. */
+  displayType_not?: Maybe<DisplayType>;
+  /** All values that are contained in given list. */
+  displayType_in?: Maybe<Array<DisplayType>>;
+  /** All values that are not contained in given list. */
+  displayType_not_in?: Maybe<Array<DisplayType>>;
+};
+
+export type HelpPageSubscriptionPayload = {
+  mutation: MutationType;
+  node?: Maybe<HelpPage>;
+  updatedFields?: Maybe<Array<Scalars["String"]>>;
+  previousValues?: Maybe<HelpPagePreviousValues>;
+};
+
+export type HelpPageSubscriptionWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<HelpPageSubscriptionWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<HelpPageSubscriptionWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<HelpPageSubscriptionWhereInput>>;
+  /** The subscription event gets dispatched when it's listed in mutation_in */
+  mutation_in?: Maybe<Array<MutationType>>;
+  /** The subscription event gets only dispatched when one of the updated fields names is included in this list */
+  updatedFields_contains?: Maybe<Scalars["String"]>;
+  /** The subscription event gets only dispatched when all of the field names included in this list have been updated */
+  updatedFields_contains_every?: Maybe<Array<Scalars["String"]>>;
+  /** The subscription event gets only dispatched when some of the field names included in this list have been updated */
+  updatedFields_contains_some?: Maybe<Array<Scalars["String"]>>;
+  node?: Maybe<HelpPageWhereInput>;
+};
+
+export type HelpPageUpdateInput = {
+  status?: Maybe<Status>;
+  slug?: Maybe<Scalars["String"]>;
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+  references?: Maybe<Scalars["RichTextAST"]>;
+  title?: Maybe<Scalars["String"]>;
+  displayType?: Maybe<DisplayType>;
+  mainImage?: Maybe<AssetUpdateOneWithoutMainImageHelpPageInput>;
+};
+
+export type HelpPageUpdateManyDataInput = {
+  status?: Maybe<Status>;
+  slug?: Maybe<Scalars["String"]>;
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["Json"]>;
+  main?: Maybe<Scalars["Json"]>;
+  outro?: Maybe<Scalars["Json"]>;
+  references?: Maybe<Scalars["Json"]>;
+  title?: Maybe<Scalars["String"]>;
+  displayType?: Maybe<DisplayType>;
+};
+
+export type HelpPageUpdateManyMutationInput = {
+  status?: Maybe<Status>;
+  slug?: Maybe<Scalars["String"]>;
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["RichTextAST"]>;
+  main?: Maybe<Scalars["RichTextAST"]>;
+  outro?: Maybe<Scalars["RichTextAST"]>;
+  references?: Maybe<Scalars["RichTextAST"]>;
+  title?: Maybe<Scalars["String"]>;
+  displayType?: Maybe<DisplayType>;
+};
+
+export type HelpPageUpdateManyWithoutMainImageInput = {
+  create?: Maybe<Array<HelpPageCreateWithoutMainImageInput>>;
+  connect?: Maybe<Array<HelpPageWhereUniqueInput>>;
+  set?: Maybe<Array<HelpPageWhereUniqueInput>>;
+  disconnect?: Maybe<Array<HelpPageWhereUniqueInput>>;
+  delete?: Maybe<Array<HelpPageWhereUniqueInput>>;
+  update?: Maybe<Array<HelpPageUpdateWithWhereUniqueWithoutMainImageInput>>;
+  updateMany?: Maybe<Array<HelpPageUpdateManyWithWhereNestedInput>>;
+  deleteMany?: Maybe<Array<HelpPageScalarWhereInput>>;
+  upsert?: Maybe<Array<HelpPageUpsertWithWhereUniqueWithoutMainImageInput>>;
+};
+
+export type HelpPageUpdateManyWithWhereNestedInput = {
+  where: HelpPageScalarWhereInput;
+  data: HelpPageUpdateManyDataInput;
+};
+
+export type HelpPageUpdateWithoutMainImageDataInput = {
+  status?: Maybe<Status>;
+  slug?: Maybe<Scalars["String"]>;
+  header?: Maybe<Scalars["String"]>;
+  intro?: Maybe<Scalars["Json"]>;
+  main?: Maybe<Scalars["Json"]>;
+  outro?: Maybe<Scalars["Json"]>;
+  references?: Maybe<Scalars["Json"]>;
+  title?: Maybe<Scalars["String"]>;
+  displayType?: Maybe<DisplayType>;
+};
+
+export type HelpPageUpdateWithWhereUniqueWithoutMainImageInput = {
+  where: HelpPageWhereUniqueInput;
+  data: HelpPageUpdateWithoutMainImageDataInput;
+};
+
+export type HelpPageUpsertWithWhereUniqueWithoutMainImageInput = {
+  where: HelpPageWhereUniqueInput;
+  update: HelpPageUpdateWithoutMainImageDataInput;
+  create: HelpPageCreateWithoutMainImageInput;
+};
+
+export type HelpPageWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: Maybe<Array<HelpPageWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: Maybe<Array<HelpPageWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: Maybe<Array<HelpPageWhereInput>>;
+  status?: Maybe<Status>;
+  /** All values that are not equal to given value. */
+  status_not?: Maybe<Status>;
+  /** All values that are contained in given list. */
+  status_in?: Maybe<Array<Status>>;
+  /** All values that are not contained in given list. */
+  status_not_in?: Maybe<Array<Status>>;
+  updatedAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: Maybe<Scalars["DateTime"]>;
+  createdAt?: Maybe<Scalars["DateTime"]>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: Maybe<Scalars["DateTime"]>;
+  /** All values that are contained in given list. */
+  createdAt_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: Maybe<Array<Scalars["DateTime"]>>;
+  /** All values less than the given value. */
+  createdAt_lt?: Maybe<Scalars["DateTime"]>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than the given value. */
+  createdAt_gt?: Maybe<Scalars["DateTime"]>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: Maybe<Scalars["DateTime"]>;
+  id?: Maybe<Scalars["ID"]>;
+  /** All values that are not equal to given value. */
+  id_not?: Maybe<Scalars["ID"]>;
+  /** All values that are contained in given list. */
+  id_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: Maybe<Array<Scalars["ID"]>>;
+  /** All values less than the given value. */
+  id_lt?: Maybe<Scalars["ID"]>;
+  /** All values less than or equal the given value. */
+  id_lte?: Maybe<Scalars["ID"]>;
+  /** All values greater than the given value. */
+  id_gt?: Maybe<Scalars["ID"]>;
+  /** All values greater than or equal the given value. */
+  id_gte?: Maybe<Scalars["ID"]>;
+  /** All values containing the given string. */
+  id_contains?: Maybe<Scalars["ID"]>;
+  /** All values not containing the given string. */
+  id_not_contains?: Maybe<Scalars["ID"]>;
+  /** All values starting with the given string. */
+  id_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: Maybe<Scalars["ID"]>;
+  /** All values ending with the given string. */
+  id_ends_with?: Maybe<Scalars["ID"]>;
+  /** All values not ending with the given string. */
+  id_not_ends_with?: Maybe<Scalars["ID"]>;
+  slug?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  slug_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  slug_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  slug_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  slug_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  slug_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  slug_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  slug_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  slug_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  slug_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  slug_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  slug_not_ends_with?: Maybe<Scalars["String"]>;
+  header?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  header_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  header_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  header_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  header_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  header_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  header_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  header_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  header_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  header_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  header_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  header_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  header_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  header_not_ends_with?: Maybe<Scalars["String"]>;
+  title?: Maybe<Scalars["String"]>;
+  /** All values that are not equal to given value. */
+  title_not?: Maybe<Scalars["String"]>;
+  /** All values that are contained in given list. */
+  title_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values that are not contained in given list. */
+  title_not_in?: Maybe<Array<Scalars["String"]>>;
+  /** All values less than the given value. */
+  title_lt?: Maybe<Scalars["String"]>;
+  /** All values less than or equal the given value. */
+  title_lte?: Maybe<Scalars["String"]>;
+  /** All values greater than the given value. */
+  title_gt?: Maybe<Scalars["String"]>;
+  /** All values greater than or equal the given value. */
+  title_gte?: Maybe<Scalars["String"]>;
+  /** All values containing the given string. */
+  title_contains?: Maybe<Scalars["String"]>;
+  /** All values not containing the given string. */
+  title_not_contains?: Maybe<Scalars["String"]>;
+  /** All values starting with the given string. */
+  title_starts_with?: Maybe<Scalars["String"]>;
+  /** All values not starting with the given string. */
+  title_not_starts_with?: Maybe<Scalars["String"]>;
+  /** All values ending with the given string. */
+  title_ends_with?: Maybe<Scalars["String"]>;
+  /** All values not ending with the given string. */
+  title_not_ends_with?: Maybe<Scalars["String"]>;
+  displayType?: Maybe<DisplayType>;
+  /** All values that are not equal to given value. */
+  displayType_not?: Maybe<DisplayType>;
+  /** All values that are contained in given list. */
+  displayType_in?: Maybe<Array<DisplayType>>;
+  /** All values that are not contained in given list. */
+  displayType_not_in?: Maybe<Array<DisplayType>>;
+  mainImage?: Maybe<AssetWhereInput>;
+};
+
+export type HelpPageWhereUniqueInput = {
+  id?: Maybe<Scalars["ID"]>;
+  slug?: Maybe<Scalars["String"]>;
 };
 
 export type Identity = {
@@ -775,18 +1374,24 @@ export type Mutation = {
   createAsset: Asset;
   createLocation: Location;
   createPage: Page;
+  createHelpPage: HelpPage;
   updateAsset?: Maybe<Asset>;
   updatePage?: Maybe<Page>;
+  updateHelpPage?: Maybe<HelpPage>;
   deleteAsset?: Maybe<Asset>;
   deleteLocation?: Maybe<Location>;
   deletePage?: Maybe<Page>;
+  deleteHelpPage?: Maybe<HelpPage>;
   upsertAsset: Asset;
   upsertPage: Page;
+  upsertHelpPage: HelpPage;
   updateManyAssets: BatchPayload;
   updateManyPages: BatchPayload;
+  updateManyHelpPages: BatchPayload;
   deleteManyAssets: BatchPayload;
   deleteManyLocations: BatchPayload;
   deleteManyPages: BatchPayload;
+  deleteManyHelpPages: BatchPayload;
   authenticate?: Maybe<AuthResult>;
   logout?: Maybe<Scalars["Boolean"]>;
   editUser?: Maybe<User>;
@@ -821,6 +1426,10 @@ export type MutationCreatePageArgs = {
   data: PageCreateInput;
 };
 
+export type MutationCreateHelpPageArgs = {
+  data: HelpPageCreateInput;
+};
+
 export type MutationUpdateAssetArgs = {
   data: AssetUpdateInput;
   where: AssetWhereUniqueInput;
@@ -829,6 +1438,11 @@ export type MutationUpdateAssetArgs = {
 export type MutationUpdatePageArgs = {
   data: PageUpdateInput;
   where: PageWhereUniqueInput;
+};
+
+export type MutationUpdateHelpPageArgs = {
+  data: HelpPageUpdateInput;
+  where: HelpPageWhereUniqueInput;
 };
 
 export type MutationDeleteAssetArgs = {
@@ -843,6 +1457,10 @@ export type MutationDeletePageArgs = {
   where: PageWhereUniqueInput;
 };
 
+export type MutationDeleteHelpPageArgs = {
+  where: HelpPageWhereUniqueInput;
+};
+
 export type MutationUpsertAssetArgs = {
   where: AssetWhereUniqueInput;
   create: AssetCreateInput;
@@ -855,6 +1473,12 @@ export type MutationUpsertPageArgs = {
   update: PageUpdateInput;
 };
 
+export type MutationUpsertHelpPageArgs = {
+  where: HelpPageWhereUniqueInput;
+  create: HelpPageCreateInput;
+  update: HelpPageUpdateInput;
+};
+
 export type MutationUpdateManyAssetsArgs = {
   data: AssetUpdateManyMutationInput;
   where?: Maybe<AssetWhereInput>;
@@ -863,6 +1487,11 @@ export type MutationUpdateManyAssetsArgs = {
 export type MutationUpdateManyPagesArgs = {
   data: PageUpdateManyMutationInput;
   where?: Maybe<PageWhereInput>;
+};
+
+export type MutationUpdateManyHelpPagesArgs = {
+  data: HelpPageUpdateManyMutationInput;
+  where?: Maybe<HelpPageWhereInput>;
 };
 
 export type MutationDeleteManyAssetsArgs = {
@@ -875,6 +1504,10 @@ export type MutationDeleteManyLocationsArgs = {
 
 export type MutationDeleteManyPagesArgs = {
   where?: Maybe<PageWhereInput>;
+};
+
+export type MutationDeleteManyHelpPagesArgs = {
+  where?: Maybe<HelpPageWhereInput>;
 };
 
 export type MutationAuthenticateArgs = {
@@ -1624,12 +2257,15 @@ export type Query = {
   assets: Array<Maybe<Asset>>;
   locations: Array<Maybe<Location>>;
   pages: Array<Maybe<Page>>;
+  helpPages: Array<Maybe<HelpPage>>;
   asset?: Maybe<Asset>;
   location?: Maybe<Location>;
   page?: Maybe<Page>;
+  helpPage?: Maybe<HelpPage>;
   assetsConnection: AssetConnection;
   locationsConnection: LocationConnection;
   pagesConnection: PageConnection;
+  helpPagesConnection: HelpPageConnection;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
   users?: Maybe<Array<Maybe<User>>>;
@@ -1675,6 +2311,16 @@ export type QueryPagesArgs = {
   last?: Maybe<Scalars["Int"]>;
 };
 
+export type QueryHelpPagesArgs = {
+  where?: Maybe<HelpPageWhereInput>;
+  orderBy?: Maybe<HelpPageOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
 export type QueryAssetArgs = {
   where: AssetWhereUniqueInput;
 };
@@ -1685,6 +2331,10 @@ export type QueryLocationArgs = {
 
 export type QueryPageArgs = {
   where: PageWhereUniqueInput;
+};
+
+export type QueryHelpPageArgs = {
+  where: HelpPageWhereUniqueInput;
 };
 
 export type QueryAssetsConnectionArgs = {
@@ -1710,6 +2360,16 @@ export type QueryLocationsConnectionArgs = {
 export type QueryPagesConnectionArgs = {
   where?: Maybe<PageWhereInput>;
   orderBy?: Maybe<PageOrderByInput>;
+  skip?: Maybe<Scalars["Int"]>;
+  after?: Maybe<Scalars["String"]>;
+  before?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryHelpPagesConnectionArgs = {
+  where?: Maybe<HelpPageWhereInput>;
+  orderBy?: Maybe<HelpPageOrderByInput>;
   skip?: Maybe<Scalars["Int"]>;
   after?: Maybe<Scalars["String"]>;
   before?: Maybe<Scalars["String"]>;
@@ -2194,6 +2854,38 @@ export type ProfileQuery = { __typename?: "Query" } & {
       | "badges"
       | "totalRating"
       | "totalSubscribers"
+    >
+  >;
+};
+
+export type HelpPageQueryVariables = {
+  slug: Scalars["String"];
+};
+
+export type HelpPageQuery = { __typename?: "Query" } & {
+  helpPage: Maybe<
+    { __typename?: "HelpPage" } & Pick<
+      HelpPage,
+      "id" | "createdAt" | "displayType" | "title" | "header"
+    > & {
+        mainImage: Maybe<{ __typename?: "Asset" } & ImageFragment>;
+        intro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        main: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        outro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        references: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+      }
+  >;
+};
+
+export type HelpPageListQueryVariables = {};
+
+export type HelpPageListQuery = { __typename?: "Query" } & {
+  helpPages: Array<
+    Maybe<
+      { __typename?: "HelpPage" } & Pick<
+        HelpPage,
+        "id" | "createdAt" | "title" | "slug"
+      >
     >
   >;
 };
@@ -3663,6 +4355,105 @@ export function useProfileQuery(
     ProfileDocument,
     baseOptions
   );
+}
+export const HelpPageDocument = gql`
+  query HelpPage($slug: String!) {
+    helpPage(where: { slug: $slug }) {
+      id
+      createdAt
+      displayType
+      title
+      header
+      mainImage {
+        ...image
+      }
+      intro {
+        raw
+      }
+      main {
+        raw
+      }
+      outro {
+        raw
+      }
+      references {
+        raw
+      }
+    }
+  }
+  ${imageFragmentDoc}
+`;
+export type HelpPageProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<HelpPageQuery, HelpPageQueryVariables>
+> &
+  TChildProps;
+export function withHelpPage<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    HelpPageQuery,
+    HelpPageQueryVariables,
+    HelpPageProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    HelpPageQuery,
+    HelpPageQueryVariables,
+    HelpPageProps<TChildProps>
+  >(HelpPageDocument, {
+    alias: "withHelpPage",
+    ...operationOptions
+  });
+}
+
+export function useHelpPageQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<HelpPageQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<HelpPageQuery, HelpPageQueryVariables>(
+    HelpPageDocument,
+    baseOptions
+  );
+}
+export const HelpPageListDocument = gql`
+  query HelpPageList {
+    helpPages(where: { displayType: Public }) {
+      id
+      createdAt
+      title
+      slug
+    }
+  }
+`;
+export type HelpPageListProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<HelpPageListQuery, HelpPageListQueryVariables>
+> &
+  TChildProps;
+export function withHelpPageList<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    HelpPageListQuery,
+    HelpPageListQueryVariables,
+    HelpPageListProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    HelpPageListQuery,
+    HelpPageListQueryVariables,
+    HelpPageListProps<TChildProps>
+  >(HelpPageListDocument, {
+    alias: "withHelpPageList",
+    ...operationOptions
+  });
+}
+
+export function useHelpPageListQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<HelpPageListQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    HelpPageListQuery,
+    HelpPageListQueryVariables
+  >(HelpPageListDocument, baseOptions);
 }
 export const PageDocument = gql`
   query Page($slug: String!) {

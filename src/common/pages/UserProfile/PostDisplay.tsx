@@ -92,7 +92,8 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                 changePostLikeStatus: {
                     __typename: "Post",
                     id: post.id,
-                    isLikedBy: !isLiked
+                    isLikedBy: !isLiked,
+                    likeCount: isLiked ? post.likeCount - 1 : post.likeCount + 1
                 }
             }
         })

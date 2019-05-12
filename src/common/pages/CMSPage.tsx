@@ -1,4 +1,4 @@
-import {Grid, Theme, Typography} from "@material-ui/core"
+import {Button, Grid, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
@@ -6,6 +6,7 @@ import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
 import {usePageQuery} from "../../generated/graphql"
+import LinkButton from "../components/common/LinkButton"
 import Loading from "../components/common/Loading"
 import RichText from "../components/common/RichText"
 import {TimedCircularProgress} from "../components/common/TimedCircularProgress"
@@ -110,22 +111,38 @@ export const CMSPage = ({slug}: PropTypes) => {
                 <Grid container spacing={8}>
                     {page.intro!.raw && (
                         <Grid item xs={12} component="section">
-                            <RichText raw={page.intro!.raw} />
+                            <RichText
+                                raw={page.intro!.raw}
+                                linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
+                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                            />
                         </Grid>
                     )}
                     {page.main!.raw && (
                         <Grid item xs={12} component="section">
-                            <RichText raw={page.main!.raw} />
+                            <RichText
+                                raw={page.main!.raw}
+                                linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
+                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                            />
                         </Grid>
                     )}
                     {page.blurbs && page.blurbs.map(({raw}) => (
                         <Grid item xs={12} lg={6} component="section" key={v4()} className={classes.blurbs}>
-                            <RichText raw={raw} />
+                            <RichText
+                                raw={raw}
+                                linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
+                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                            />
                         </Grid>
                     ))}
                     {page.outro!.raw && (
                         <Grid item xs={12} component="section">
-                            <RichText raw={page.outro!.raw} />
+                            <RichText
+                                raw={page.outro!.raw}
+                                linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
+                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                            />
                         </Grid>
                     )}
                 </Grid>

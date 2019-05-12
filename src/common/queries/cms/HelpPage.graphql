@@ -1,0 +1,14 @@
+query HelpPage($slug: String!) {
+    helpPage(where: {slug: $slug}) {
+        id
+        createdAt
+        displayType
+        title
+        header
+        mainImage {...image}
+        intro {raw}
+        main {raw}
+        outro {raw}
+        references {raw}
+    }
+}

@@ -98,5 +98,16 @@
   "Reposted": "Reposted",
   "Project Memory": "Project Memory",
   "Login - Project Memory": "Login - Project Memory",
-  "Dashboard - Project Memory": "Dashboard - Project Memory"
+  "Dashboard - Project Memory": "Dashboard - Project Memory",
+  "Installing an IME": "Installing an IME",
+  "How to install an IME": "How to install an IME",
+  "Test content": "Test content",
+  "Page not found - Project Memory": "Page not found - Project Memory",
+  "Linking to index": "Linking to index",
+  "An important part of learning certain some languages, such as Chinese or Japanese, is to have a way of inputting the language's characters. This is where an Input Method Editor (IME) comes in. Chinese, for example, has tens of thousands of disparate characters that would be impossible to type on a keyboard. So the IME has three stages: take user input and store it temporarily in an IME context, match phrases in the input, then use a dictionary (usually a personalized one) to find the correct characters. The user can navigate possible solutions if the default one wasn't correct, then confirm the input to turn it into real letters. In this article, we'll describe how to install such an IME, so you can get on with learning ASAP.": "An important part of learning certain some languages, such as Chinese or Japanese, is to have a way of inputting the language's characters. This is where an Input Method Editor (IME) comes in. Chinese, for example, has tens of thousands of disparate characters that would be impossible to type on a keyboard. So the IME has three stages: take user input and store it temporarily in an IME context, match phrases in the input, then use a dictionary (usually a personalized one) to find the correct characters. The user can navigate possible solutions if the default one wasn't correct, then confirm the input to turn it into real letters. In this article, we'll describe how to install such an IME, so you can get on with learning ASAP.",
+  "Windows": "Windows",
+  "On Windows, the process of adding an IME is rather simple. First, open the search bar using the Windows Key, then type \"language and keyboard\" and select the result \"Edit language and keyboard options\".": "On Windows, the process of adding an IME is rather simple. First, open the search bar using the Windows Key, then type \"language and keyboard\" and select the result \"Edit language and keyboard options\".",
+  "You'll see this window. Click \"Add a language\", then select the language you want and click \"Next\". Select at least \"Basic Typing\" (this should be mandatory anyways) and click \"Install\".": "You'll see this window. Click \"Add a language\", then select the language you want and click \"Next\". Select at least \"Basic Typing\" (this should be mandatory anyways) and click \"Install\".",
+  "Reviews": "Reviews",
+  "This process can take a few minutes, since it needs to download new files from Microsoft, but once it's done, you can switch to your new input method via the taskbar (just click on the language code), or by pressing Windows + Enter to quickly switch between layouts.": "This process can take a few minutes, since it needs to download new files from Microsoft, but once it's done, you can switch to your new input method via the taskbar (just click on the language code), or by pressing Windows + Enter to quickly switch between layouts."
 }

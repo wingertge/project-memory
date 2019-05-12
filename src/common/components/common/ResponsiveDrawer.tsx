@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             //width: "25%",
             width: 300
         }
+    },
+    headerPadding: {
+        height: theme.spacing(8)
     }
 }))
 
@@ -32,7 +35,7 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
 
     return (
         <div className={classes.drawer}>
-            <Hidden smUp>
+            <Hidden smUp implementation="css">
                 <Drawer
                     container={container}
                     variant="temporary"
@@ -46,11 +49,13 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
                     {children}
                 </Drawer>
             </Hidden>
-            <Hidden xsDown>
+            <Hidden xsDown implementation="css">
                 <Drawer classes={{
                     paper: classes.drawerPaper
                 }} variant="permanent" open>
+                    <div className={classes.headerPadding} />
                     {children}
+                    <div style={{height: 72}} />
                 </Drawer>
             </Hidden>
         </div>

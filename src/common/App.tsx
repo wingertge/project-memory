@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         footer: {
             backgroundColor: theme.palette.background.paper,
             marginTop: theme.spacing(4),
-            padding: theme.spacing(2)
+            padding: theme.spacing(2),
+            zIndex: theme.zIndex.drawer + 1,
+            borderTop: "1px solid rgba(255, 255, 255, 0.12)"
         },
         patreonButton: {
             width: 170,

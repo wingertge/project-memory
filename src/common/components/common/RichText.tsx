@@ -1,5 +1,5 @@
 /* tslint:disable:object-literal-key-quotes */
-import {Button, Typography} from "@material-ui/core"
+import {Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import debug from "debug"
@@ -8,7 +8,8 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import v4 from "uuid/v4"
 import {Theme} from "../../theme"
-import LinkButton from "./LinkButton"
+import {Link as RouterLink} from "react-router-dom"
+import {Link as A} from "@material-ui/core"
 
 interface DocumentTree {
     nodes: Node[]
@@ -48,12 +49,21 @@ interface LinkData {
 }
 
 interface PropTypes {
-    raw: {document: DocumentTree}
+    raw: {document: DocumentTree},
+    linkComponent?: any
+    externalLinkComponent?: any
+}
+
+interface RendererPropTypes extends Node {
+    components: {
+        link: any
+        externalLink: any
+    }
 }
 
 const log = debug("app:RichText")
 
-const HeadingOne = ({nodes}: Node) => {
+const HeadingOne = ({nodes}: RendererPropTypes) => {
     const {t} = useTranslation()
 
     return nodes!.some(({leaves}) => leaves!.some(({text}) => text !== "")) && nodes!.map(({leaves}) => (
@@ -65,7 +75,7 @@ const HeadingOne = ({nodes}: Node) => {
     ))
 }
 
-const HeadingTwo = ({nodes}: Node) => {
+const HeadingTwo = ({nodes}: RendererPropTypes) => {
     const {t} = useTranslation()
 
     return nodes!.some(({leaves}) => leaves!.some(({text}) => text !== "")) && nodes!.map(({leaves}) => (
@@ -77,32 +87,34 @@ const HeadingTwo = ({nodes}: Node) => {
     ))
 }
 
-const Paragraph = ({nodes}: Node) => (
-    <div style={{minHeight: "1rem"}}>
-        {nodes!.map(renderNode)}
+const Paragraph = ({nodes, components}: RendererPropTypes) => (
+    <div style={{minHeight: "1rem"}} className="paragraph">
+        {nodes!.map(node => renderNode({...node, components}))}
     </div>
 )
 
-const Image = ({data, nodes}: Node) => {
+const Image = ({data, nodes, components}: RendererPropTypes) => {
     const {width, height} = data as ImageData
 
     return (
         <div>
             <GraphImg image={data} alt="Image" style={{maxWidth: width, maxHeight: height, margin: "32px auto"}} />
-            {nodes!.map(renderNode)}
+            {nodes!.map(node => renderNode({...node, components}))}
         </div>
     )
 }
 
-const Link = ({data, nodes}: Node) => {
+const Link = ({data, nodes, components}: RendererPropTypes) => {
     const {href} = data as LinkData
     const isLocal = href.startsWith("https://www.project-memory.org")
     const link = isLocal ? href.split("www.project-memory.org")[1] : href
-    const content = nodes!.map(renderNode)
+    const content = nodes!.map(node => renderNode({...node, components}))
+    const Component = components.link
+    const ExternalComponent = components.externalLink
 
     return content.length !== 0 && isLocal ? (
-        <LinkButton to={link} variant="contained" color="primary">{content}</LinkButton>
-    ) : <Button href={link} variant="contained" color="primary">{content}</Button>
+        <Component to={link}>{content}</Component>
+    ) : <ExternalComponent href={link} variant="contained" color="primary">{content}</ExternalComponent>
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -123,7 +135,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-const Text = ({leaves}: Node) => {
+const Text = ({leaves}: RendererPropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
 
@@ -148,35 +160,35 @@ const Text = ({leaves}: Node) => {
     )
 }
 
-const BulletedList = ({nodes}: Node) => (
+const BulletedList = ({nodes, components}: RendererPropTypes) => (
     <ul>
-        {nodes!.map(renderNode)}
+        {nodes!.map(node => renderNode({...node, components}))}
     </ul>
 )
 
-const NumberedList = ({nodes}: Node) => (
+const NumberedList = ({nodes, components}: RendererPropTypes) => (
     <ol>
-        {nodes!.map(renderNode)}
+        {nodes!.map(node => renderNode({...node, components}))}
     </ol>
 )
 
-const ListItem = ({nodes}: Node) => {
+const ListItem = ({nodes, components}: RendererPropTypes) => {
     return (
         <li>
-            {nodes!.map(renderNode)}
+            {nodes!.map(node => renderNode({...node, components}))}
         </li>
     )
 }
 
-const ListItemChild = ({nodes}: Node) => {
+const ListItemChild = ({nodes, components}: RendererPropTypes) => {
     return (
         <>
-            {nodes!.map(renderNode)}
+            {nodes!.map(node => renderNode({...node, components}))}
         </>
     )
 }
 
-const renderNode = (node: Node) => {
+const renderNode = (node: RendererPropTypes) => {
     const Renderer = objectRenderers[node.object](node.type)
     if(!Renderer) log(`Couldn't find renderer for object ${node.object} and type ${node.type}`)
     return <Renderer key={v4()} {...node} />
@@ -206,13 +218,17 @@ const renderers = {
     "numbered-list": NumberedList
 }
 
-export const RichText = ({raw: {document: {nodes}}}: PropTypes) => {
+export const RichText = ({raw: {document: {nodes}}, linkComponent = RouterLink, externalLinkComponent = A}: PropTypes) => {
+    const components = {
+        link: linkComponent,
+        externalLink: externalLinkComponent
+    }
     return (
         <div>
             {nodes.map(node => {
                 const Renderer = objectRenderers[node.object](node.type)
                 if(!Renderer) log(`Couldn't find renderer for object ${node.object} and type ${node.type}`)
-                return <Renderer key={v4()} {...node} />
+                return <Renderer key={v4()} {...node} components={components} />
             })}
         </div>
     )

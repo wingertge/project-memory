@@ -68,7 +68,7 @@ export const Feed = ({isOwn, userId}: PropTypes) => {
         },
         optimisticResponse: {
             __typename: "Mutation",
-            createPost: [{id: "asd", type: "post", by: user, createdAt: new Date().toISOString(), content: newPostContent.value, __typename: "Post", originalPost: null}, ...feed.slice(0, 19)]
+            createPost: [{id: "asd", type: "post", by: user, createdAt: new Date().toISOString(), content: newPostContent.value, __typename: "Post", originalPost: null, likeCount: 0, isLikedBy: false}, ...feed.slice(0, 19)] as any
         },
         refetchQueries: [
             {query: FeedDocument, variables: {userId, filter: {limit: 20}}}

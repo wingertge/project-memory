@@ -1,0 +1,8 @@
+query HelpPageList {
+    helpPages(where: {displayType: Public}) {
+        id
+        createdAt
+        title
+        slug
+    }
+}
