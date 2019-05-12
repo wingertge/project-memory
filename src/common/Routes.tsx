@@ -107,7 +107,7 @@ const Routes = () => (
             if(typeof window === "undefined") { return <Redirect to="/"/> }
             Auth.logout()
         }} />
-        <AuthenticatedRoute path="/help/:slug*" component={Helpdesk} />
+        <Route path="/help/:slug*" component={Helpdesk} />
         <AuthenticatedRoute path="/test" component={TestBed} />
         <AuthenticatedRoute path="/lessons" component={Lessons} />
         <AuthenticatedRoute path="/reviews" component={Reviews} />

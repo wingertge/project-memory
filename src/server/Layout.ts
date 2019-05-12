@@ -43,7 +43,7 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
             <div id="root">${markup}</div>
             <script>
               window.__PRELOADED_STATE__ = ${serialize(initialState)}
-              window.__AUTH__ = "${authToken}"
+              window.__AUTH__ = ${authToken ? `"${authToken}"` : "undefined"}
               window.__PRELOADED_I18N__ = ${serialize(i18Store)}
               window.__INITIAL_LANG__ = "${lang}"
               window.__REACT_APP_API_ENDPOINT__ = "${proc.env.REACT_APP_API_ENDPOINT}"
