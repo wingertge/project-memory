@@ -5,7 +5,6 @@ import {
     Theme,
     Tooltip
 } from "@material-ui/core"
-import {Close} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
@@ -56,13 +55,13 @@ export const ProfilePictureSelector = () => {
                                 </IconButton>
                             </Tooltip>
                         </Grid>
-                        <Grid item xs className={classes.removeButton}>
+{/*                        <Grid item xs className={classes.removeButton}>
                             <Tooltip title={t("Remove Profile Picture")} placement="right-end">
                                 <IconButton className={classes.iconButton}>
                                     <Close/>
                                 </IconButton>
                             </Tooltip>
-                        </Grid>
+                        </Grid>*/}
                     </Grid>
                 </Grid>
             </Grid>
