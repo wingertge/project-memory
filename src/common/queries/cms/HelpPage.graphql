@@ -8,6 +8,8 @@ query HelpPage($slug: String!) {
         mainImage {...image}
         intro {raw}
         main {raw}
+        foldTitles
+        folds {raw}
         outro {raw}
         references {raw}
     }

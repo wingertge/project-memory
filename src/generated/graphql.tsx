@@ -667,6 +667,8 @@ export type HelpPage = Node & {
   references?: Maybe<RichText>;
   title: Scalars["String"];
   displayType?: Maybe<DisplayType>;
+  folds: Array<RichText>;
+  foldTitles: Array<Scalars["String"]>;
 };
 
 /** A connection to a list of items. */
@@ -676,6 +678,14 @@ export type HelpPageConnection = {
   /** A list of edges. */
   edges: Array<Maybe<HelpPageEdge>>;
   aggregate: AggregateHelpPage;
+};
+
+export type HelpPageCreatefoldsInput = {
+  set?: Maybe<Array<Scalars["RichTextAST"]>>;
+};
+
+export type HelpPageCreatefoldTitlesInput = {
+  set?: Maybe<Array<Scalars["String"]>>;
 };
 
 export type HelpPageCreateInput = {
@@ -688,6 +698,8 @@ export type HelpPageCreateInput = {
   references?: Maybe<Scalars["RichTextAST"]>;
   title: Scalars["String"];
   displayType?: Maybe<DisplayType>;
+  folds?: Maybe<HelpPageCreatefoldsInput>;
+  foldTitles?: Maybe<HelpPageCreatefoldTitlesInput>;
   mainImage?: Maybe<AssetCreateOneWithoutMainImageHelpPageInput>;
 };
 
@@ -706,6 +718,8 @@ export type HelpPageCreateWithoutMainImageInput = {
   references?: Maybe<Scalars["Json"]>;
   title: Scalars["String"];
   displayType?: Maybe<DisplayType>;
+  folds?: Maybe<HelpPageCreatefoldsInput>;
+  foldTitles?: Maybe<HelpPageCreatefoldTitlesInput>;
 };
 
 /** An edge in a connection. */
@@ -755,6 +769,8 @@ export type HelpPagePreviousValues = {
   references?: Maybe<RichText>;
   title: Scalars["String"];
   displayType?: Maybe<DisplayType>;
+  folds: Array<RichText>;
+  foldTitles: Array<Scalars["String"]>;
 };
 
 export type HelpPageScalarWhereInput = {
@@ -943,6 +959,14 @@ export type HelpPageSubscriptionWhereInput = {
   node?: Maybe<HelpPageWhereInput>;
 };
 
+export type HelpPageUpdatefoldsInput = {
+  set?: Maybe<Array<Scalars["RichTextAST"]>>;
+};
+
+export type HelpPageUpdatefoldTitlesInput = {
+  set?: Maybe<Array<Scalars["String"]>>;
+};
+
 export type HelpPageUpdateInput = {
   status?: Maybe<Status>;
   slug?: Maybe<Scalars["String"]>;
@@ -953,6 +977,8 @@ export type HelpPageUpdateInput = {
   references?: Maybe<Scalars["RichTextAST"]>;
   title?: Maybe<Scalars["String"]>;
   displayType?: Maybe<DisplayType>;
+  folds?: Maybe<HelpPageUpdatefoldsInput>;
+  foldTitles?: Maybe<HelpPageUpdatefoldTitlesInput>;
   mainImage?: Maybe<AssetUpdateOneWithoutMainImageHelpPageInput>;
 };
 
@@ -966,6 +992,8 @@ export type HelpPageUpdateManyDataInput = {
   references?: Maybe<Scalars["Json"]>;
   title?: Maybe<Scalars["String"]>;
   displayType?: Maybe<DisplayType>;
+  folds?: Maybe<HelpPageUpdatefoldsInput>;
+  foldTitles?: Maybe<HelpPageUpdatefoldTitlesInput>;
 };
 
 export type HelpPageUpdateManyMutationInput = {
@@ -978,6 +1006,8 @@ export type HelpPageUpdateManyMutationInput = {
   references?: Maybe<Scalars["RichTextAST"]>;
   title?: Maybe<Scalars["String"]>;
   displayType?: Maybe<DisplayType>;
+  folds?: Maybe<HelpPageUpdatefoldsInput>;
+  foldTitles?: Maybe<HelpPageUpdatefoldTitlesInput>;
 };
 
 export type HelpPageUpdateManyWithoutMainImageInput = {
@@ -1007,6 +1037,8 @@ export type HelpPageUpdateWithoutMainImageDataInput = {
   references?: Maybe<Scalars["Json"]>;
   title?: Maybe<Scalars["String"]>;
   displayType?: Maybe<DisplayType>;
+  folds?: Maybe<HelpPageUpdatefoldsInput>;
+  foldTitles?: Maybe<HelpPageUpdatefoldTitlesInput>;
 };
 
 export type HelpPageUpdateWithWhereUniqueWithoutMainImageInput = {
@@ -2866,11 +2898,12 @@ export type HelpPageQuery = { __typename?: "Query" } & {
   helpPage: Maybe<
     { __typename?: "HelpPage" } & Pick<
       HelpPage,
-      "id" | "createdAt" | "displayType" | "title" | "header"
+      "id" | "createdAt" | "displayType" | "title" | "header" | "foldTitles"
     > & {
         mainImage: Maybe<{ __typename?: "Asset" } & ImageFragment>;
         intro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
         main: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
+        folds: Array<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
         outro: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
         references: Maybe<{ __typename?: "RichText" } & Pick<RichText, "raw">>;
       }
@@ -4371,6 +4404,10 @@ export const HelpPageDocument = gql`
         raw
       }
       main {
+        raw
+      }
+      foldTitles
+      folds {
         raw
       }
       outro {

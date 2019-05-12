@@ -21,6 +21,7 @@ import {Layout} from "./Layout"
 import {getBundleScripts} from "./ReactLoadable"
 import jwt from "jsonwebtoken"
 import proc from "./env"
+import device from "express-device"
 
 const server = express()
 // tslint:disable-next-line:no-console
@@ -34,6 +35,7 @@ initI18n(() => {
         .use(cookieParser(proc.env.COOKIE_SECRET))
         .use(morgan("tiny"))
         .use(I18NextMiddleware.handle(i18n, {removeLngFromUrl: false}))
+        .use(device.capture())
         .post("/locales/add/:lng/:ns", I18NextMiddleware.missingKeyHandler(i18n))
         .get("/*", async (req, res) => {
             const routeParams = req.params[0].split("/")

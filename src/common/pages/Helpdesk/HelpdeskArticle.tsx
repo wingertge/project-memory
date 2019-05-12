@@ -1,4 +1,5 @@
-import {Hidden, Typography} from "@material-ui/core"
+import {ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Hidden, Typography} from "@material-ui/core"
+import {ExpandMore} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
@@ -41,6 +42,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         padding: theme.spacing(0, 8),
         "& .paragraph": {
             textAlign: "left"
+        },
+        [theme.breakpoints.down("xs")]: {
+            padding: theme.spacing(0, 2)
         }
     },
     section: {
@@ -80,6 +84,30 @@ export const HelpdeskArticle = ({slug}: PropTypes) => {
                 {article.main!.raw && (
                     <section className={classes.section}>
                         <RichText raw={article.main!.raw} />
+                    </section>
+                )}
+                {article.folds!.length > 0 && (
+                    <section className={classes.section}>
+                        {article.folds.map((fold, index) => {
+                            const title = article.foldTitles![index]
+                            return (
+                                <React.Fragment key={title}>
+                                    <Hidden smUp>
+                                        <ExpansionPanel>
+                                            <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
+                                                <Typography variant="h6">{t(title)}</Typography>
+                                            </ExpansionPanelSummary>
+                                            <ExpansionPanelDetails>
+                                                <RichText raw={fold.raw}/>
+                                            </ExpansionPanelDetails>
+                                        </ExpansionPanel>
+                                    </Hidden>
+                                    <Hidden xsDown>
+                                        <RichText raw={fold.raw} />
+                                    </Hidden>
+                                </React.Fragment>
+                            )
+                        })}
                     </section>
                 )}
                 {article.outro!.raw && (
