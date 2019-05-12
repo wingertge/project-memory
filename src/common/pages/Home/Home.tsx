@@ -88,13 +88,14 @@ const Home = () => {
 
     if(error || globalDecks.error || userLangs.error) return <ApolloErrorBox error={error || globalDecks.error || userLangs.error} />
     if(loading || globalDecks.loading || userLangs.loading || !user) return <TimedCircularProgress />
+    if(!user || !user.introStep) return <Redirect to="/login" />
 
     return (
         <div>
             <Helmet>
                 <title>{t("Dashboard - Project Memory")}</title>
             </Helmet>
-            {!user.introStep || user.introStep !== -1 && <Redirect to="/intro"/>}
+            {user.introStep !== -1 && <Redirect to="/intro"/>}
             {lessonsCount > 0 && (
                 <div className={classes.lessonsBox}>
                     <Typography variant="h6" gutterBottom>

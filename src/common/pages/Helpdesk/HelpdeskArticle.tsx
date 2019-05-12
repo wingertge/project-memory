@@ -1,4 +1,4 @@
-import {Typography} from "@material-ui/core"
+import {Hidden, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         }
     },
     main: {
-        padding: theme.spacing(2, 8),
+        padding: theme.spacing(0, 8),
         "& .paragraph": {
             textAlign: "left"
         }
@@ -61,6 +61,11 @@ export const HelpdeskArticle = ({slug}: PropTypes) => {
     return (
         <div className={classes.root}>
             <main className={classes.main}>
+                <Hidden smUp implementation="css">
+                    <Typography variant="subtitle1" gutterBottom color="textSecondary">
+                        {t("Swipe from the left to see a list of articles.")}
+                    </Typography>
+                </Hidden>
                 {article.header && <Typography variant="h5">{t(article.header)}</Typography>}
                 {article.mainImage && (
                     <div style={{

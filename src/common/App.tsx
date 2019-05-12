@@ -1,4 +1,4 @@
-import {Button, Grid, Theme, Typography} from "@material-ui/core"
+import {Button, Grid, Hidden, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
 import Helmet from "react-helmet"
@@ -8,6 +8,7 @@ import LinkButton from "./components/common/LinkButton"
 import {useNow} from "./hooks"
 import Routes from "./Routes"
 import PatreonButton from "./assets/become_a_patron_button@2x.png"
+import PatreonButtonSmall from "./assets/Patreon_Mark_Coral.svg"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
         root: {
@@ -32,6 +33,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             width: 170,
             height: 40,
             borderRadius: 4
+        },
+        patreonButtonSmall: {
+            width: 40,
+            height: 40
         },
         footerButton: {
             height: 40
@@ -82,7 +87,12 @@ export const App = () => {
             <footer className={classes.footer}>
                 <Grid container>
                     <Grid item container direction="column" justify="center" xs={3}>
-                        <Typography>{t("© {{year}} Genna Wingert", {year: now.getFullYear()})}</Typography>
+                        <Hidden xsDown implementation="css">
+                            <Typography>{t("© {{year}} Genna Wingert", {year: now.getFullYear()})}</Typography>
+                        </Hidden>
+                        <Hidden smUp implementation="css">
+                            <Typography>{t("© {{year}}", {year: now.getFullYear()})}</Typography>
+                        </Hidden>
                     </Grid>
                     <Grid item xs={3} style={{textAlign: "center"}}>
                         <LinkButton to="/help" className={classes.footerButton}>{t("Help")}</LinkButton>
@@ -91,9 +101,16 @@ export const App = () => {
                         <LinkButton to="/contact" className={classes.footerButton}>{t("Contact")}</LinkButton>
                     </Grid>
                     <Grid item xs={3} style={{textAlign: "right"}}>
-                        <Button href="https://www.patreon.com/bePatron?u=17099413" style={{padding: 0}}>
-                            <img alt={t("Become a Patron!")} src={PatreonButton} className={classes.patreonButton} />
-                        </Button>
+                        <Hidden xsDown implementation="css">
+                            <Button href="https://www.patreon.com/bePatron?u=17099413" style={{padding: 0}}>
+                                <img alt={t("Become a Patron!")} src={PatreonButton} className={classes.patreonButton}/>
+                            </Button>
+                        </Hidden>
+                        <Hidden smUp implementation="js">
+                            <Button href="https://www.patreon.com/bePatron?u=17099413" style={{padding: 0}}>
+                                <img src={PatreonButtonSmall} alt={t("Become a Patron!")} className={classes.patreonButtonSmall}/>
+                            </Button>
+                        </Hidden>
                         {/*<a href="https://www.patreon.com/bePatron?u=17099413" data-patreon-widget-type="become-patron-button">Become a Patron!</a>*/}
                     </Grid>
                 </Grid>

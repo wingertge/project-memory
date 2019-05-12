@@ -1,4 +1,4 @@
-import {Drawer, Hidden, Theme} from "@material-ui/core"
+import {Drawer, Hidden, SwipeableDrawer, Theme} from "@material-ui/core"
 import {createStyles, makeStyles, useTheme} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
@@ -15,12 +15,18 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             //width: "25%",
             width: 300,
             flexShrink: 0
+        },
+        [theme.breakpoints.down("sm")]: {
+            width: "75%"
         }
     },
     drawerPaper: {
         [theme.breakpoints.up("sm")]: {
             //width: "25%",
             width: 300
+        },
+        [theme.breakpoints.down("sm")]: {
+            width: "75%"
         }
     },
     headerPadding: {
@@ -36,18 +42,19 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
     return (
         <div className={classes.drawer}>
             <Hidden smUp implementation="css">
-                <Drawer
+                <SwipeableDrawer
                     container={container}
                     variant="temporary"
                     anchor={theme.direction === "rtl" ? "right" : "left"}
                     open={open}
                     onClose={() => setOpen(false)}
+                    onOpen={() => setOpen(true)}
                     classes={{
                         paper: classes.drawerPaper
                     }}
                 >
                     {children}
-                </Drawer>
+                </SwipeableDrawer>
             </Hidden>
             <Hidden xsDown implementation="css">
                 <Drawer classes={{
