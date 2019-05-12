@@ -102,7 +102,7 @@ export const HelpdeskArticle = ({slug}: PropTypes) => {
                                             </ExpansionPanelDetails>
                                         </ExpansionPanel>
                                     </Hidden>
-                                    <Hidden xsDown>
+                                    <Hidden xsDown initialWidth="lg">
                                         <Typography variant="h6">{t(title)}</Typography>
                                         <RichText raw={fold.raw} />
                                     </Hidden>
