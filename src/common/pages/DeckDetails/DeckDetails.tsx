@@ -1,5 +1,7 @@
 import {useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {Deck, useDeckDetailsQuery} from "../../../generated/graphql"
@@ -34,6 +36,7 @@ export const deckPropsValidators: ValidatorMap<Form> = {
 }
 
 export const DeckDetails = () => {
+    const {t} = useTranslation()
     const {match: {params: {id}}} = useRouter<RouteTypes>()
     const userId = useID()
 
@@ -52,6 +55,9 @@ export const DeckDetails = () => {
 
     return (
         <>
+            <Helmet>
+                <title>{t("Deck {{deckName}} - Project Memory", {deckName: deck.name})}</title>
+            </Helmet>
             <div>
                 {!isOwn && <DeckProperties deck={deck} />}
                 {isOwn && <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} />}

@@ -1,6 +1,8 @@
 /* tslint:disable:prefer-const */
 import {useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
+import {useTranslation} from "react-i18next"
 import {
     LessonsCountDocument,
     Review,
@@ -16,6 +18,7 @@ interface PropTypes {
 }
 
 export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
+    const {t} = useTranslation()
     let [finishedReviews, setFinishedReviews] = useState<Review[]>([])
     let [remainingReviews, setRemainingReviews] = useState(reviews)
     let [currentReview, setCurrentReview] = useState(randomElement(remainingReviews))
@@ -52,7 +55,12 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
     }
 
     return (
-        <ReviewDisplay review={currentReview} onSubmit={submitReview} exitDisabled/>
+        <>
+            <Helmet>
+                <title>{t("Review Lessons - Project Memory")}</title>
+            </Helmet>
+            <ReviewDisplay review={currentReview} onSubmit={submitReview} exitDisabled />
+        </>
     )
 }
 

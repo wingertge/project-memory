@@ -1,6 +1,7 @@
 import {Button, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
@@ -30,6 +31,9 @@ export const FinishedStep = () => {
 
     return (
         <>
+            <Helmet>
+                <title>{t("Ready for Project Memory")}</title>
+            </Helmet>
             <Typography variant="h6">
                 {t("Aaand - Done! You're good to go now, enjoy Project Memory! If you have any more questions feel free to look at our beginner's guide or ask it on the forum.")}
             </Typography>

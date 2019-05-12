@@ -1,6 +1,7 @@
 import {Button, Card, IconButton, makeStyles, Theme, Tooltip, Typography} from "@material-ui/core"
 import {MoreHoriz} from "@material-ui/icons"
 import React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {Redirect} from "react-router"
 import {oc} from "ts-optchain"
@@ -90,6 +91,9 @@ const Home = () => {
 
     return (
         <div>
+            <Helmet>
+                <title>{t("Dashboard - Project Memory")}</title>
+            </Helmet>
             {!user.introStep || user.introStep !== -1 && <Redirect to="/intro"/>}
             {lessonsCount > 0 && (
                 <div className={classes.lessonsBox}>

@@ -2,6 +2,7 @@ import {Button, MenuItem, TextField, Theme} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
 import {useEffect, useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {
@@ -106,6 +107,9 @@ export const DeckDiscovery = () => {
 
     return (
         <div>
+            <Helmet>
+                <title>{t("Discover new Decks - Project Memory")}</title>
+            </Helmet>
             <div className={classes.filterContainer}>
                 <div className={classes.filterRow}>
                     <TextField fullWidth label={t("Search")} value={search.value} onChange={search.onChange} />

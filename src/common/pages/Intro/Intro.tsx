@@ -1,6 +1,7 @@
 import {Hidden, MobileStepper, Slide, Step, StepLabel, Stepper, Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {Redirect} from "react-router"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
@@ -37,6 +38,9 @@ export const Intro = () => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>{t("Get started with Project Memory")}</title>
+            </Helmet>
             <Hidden xsDown implementation="css">
                 <Stepper activeStep={introStep || 0}>
                     {stepsLabels.map(label => (

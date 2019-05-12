@@ -1,6 +1,7 @@
 import {Button, Card, CardContent, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {Review, useReviewsCountQuery} from "../../../generated/graphql"
 import Checkmark from "../../assets/checkmark.png"
@@ -76,6 +77,9 @@ export const ReviewsFinished = ({reviews, onReviewMore = () => {}}: PropTypes) =
 
     return (
         <div>
+            <Helmet>
+                <title>{t("Reviews Done - Project Memory")}</title>
+            </Helmet>
             <Typography variant="h5">{t("Great! You've finished {{num}} reviews.", {num: reviews.length})}</Typography>
             <LinkButton to="/" variant="outlined" className={classes.button}>{t("Back to Home")}</LinkButton>
             {reviewCount > 0 && <Button onClick={onReviewMore} variant="contained" color="primary" className={classes.button}>{t("Review more")}</Button>}

@@ -1,6 +1,8 @@
 import {ApolloError} from "apollo-client"
 import {useEffect, useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {
     Review,
@@ -20,6 +22,7 @@ type ReviewMap = Array<{
 }>
 
 export const Reviews = () => {
+    const {t} = useTranslation()
     const id = useID()
     const now = useNow()
     const {data, loading, error} = useReviewsQuery({
@@ -89,6 +92,9 @@ export const Reviews = () => {
 
     return (
         <>
+            <Helmet>
+                <title>{t("Reviews - Project Memory")}</title>
+            </Helmet>
             {mutationError && <ApolloErrorBox error={mutationError} />}
             {currentReview && !isDone &&
             <ReviewDisplay review={currentReview} submitDisabled={saving} onSubmit={submitReview}

@@ -1,6 +1,7 @@
 import {Button, Grid, TextField, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
@@ -43,6 +44,9 @@ export const ConfirmUsernameStep = () => {
 
     return (
         <>
+            <Helmet>
+                <title>{t("Confirm your username - Project Memory")}</title>
+            </Helmet>
             <Typography variant="h6">
                 {t("Fantastic! Just double check your automatically assigned username and change it if you don't want it to represent you in the Project Memory community (don't worry, I won't judge about that weird email address).")}
             </Typography>

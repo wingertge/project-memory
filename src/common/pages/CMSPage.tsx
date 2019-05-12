@@ -2,6 +2,8 @@ import {Grid, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
+import Helmet from "react-helmet"
+import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
 import {usePageQuery} from "../../generated/graphql"
 import Loading from "../components/common/Loading"
@@ -77,6 +79,7 @@ const NotFound = Loadable({
 })
 
 export const CMSPage = ({slug}: PropTypes) => {
+    const {t} = useTranslation()
     const classes = useStyles()
     const {match: {params: {slug: routeSlug}}} = useRouter<{slug: string}>()
     slug = slug || routeSlug
@@ -89,6 +92,9 @@ export const CMSPage = ({slug}: PropTypes) => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>{page.header ? t(`${page.header} - Project Memory`) : t("Project Memory")}</title>
+            </Helmet>
             <Typography variant="h4">{page.header}</Typography>
             {page.mainImage && (
                 <div style={{

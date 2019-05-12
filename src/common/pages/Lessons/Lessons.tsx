@@ -10,6 +10,7 @@ import {KeyboardArrowLeft, KeyboardArrowRight} from "@material-ui/icons"
 import {createStyles, makeStyles, useTheme} from "@material-ui/styles"
 import {useEffect, useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {Review, useLessonsQuery} from "../../../generated/graphql"
@@ -96,6 +97,9 @@ export const Lessons = () => {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>{t("Lessons - Project Memory")}</title>
+            </Helmet>
             <Hidden smDown implementation="css">
                 <Stepper activeStep={lessonIndex}>
                     {[...lessons.keys()].map(step => (

@@ -1,6 +1,8 @@
 import {Grid, Theme} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import Helmet from "react-helmet"
+import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {useID, useUser} from "../../hooks"
@@ -23,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const UserProfile = () => {
     const classes = useStyles()
+    const {t} = useTranslation()
     let {match: {params: {id}}} = useRouter<{id: string}>()
     const userId = useID()
     const isOwn = !id || id === userId
@@ -33,6 +36,9 @@ export const UserProfile = () => {
 
     return (
         <Grid container spacing={4} className={classes.root} justify="flex-start">
+            <Helmet>
+                <title>{t("{{username}}'s Profile - Project Memory", {username: user.username})}</title>
+            </Helmet>
             <Grid item xs={12} lg={6}>
                 <div className={classes.summaryContainer}>
                     <UserSummary user={user} isOwn={isOwn} />

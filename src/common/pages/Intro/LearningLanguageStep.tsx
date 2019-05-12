@@ -2,6 +2,7 @@ import {Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {Language, useAddLanguageToUserMutation, useUpdateProfileMutation} from "../../../generated/graphql"
 import {useID} from "../../hooks"
@@ -53,6 +54,9 @@ export const LearningLanguageStep = () => {
 
     return (
         <>
+            <Helmet>
+                <title>{t("Learning Language - Project Memory")}</title>
+            </Helmet>
             <div className={classes.titleContainer}>
                 <Typography variant="h6">
                     {t("Great! Now for a language you'd like to learn. Don't worry, you can change this or add more later.")}

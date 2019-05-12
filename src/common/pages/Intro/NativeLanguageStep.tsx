@@ -2,6 +2,7 @@ import {Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {Language, useUpdateProfileMutation} from "../../../generated/graphql"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
@@ -47,6 +48,9 @@ export const NativeLanguageStep = () => {
 
     return (
         <>
+            <Helmet>
+                <title>{t("Native Language - Project Memory")}</title>
+            </Helmet>
             <div className={classes.titleContainer}>
                 <Typography variant="h6">
                     {t("Hello, {{username}}! Welcome to Project Memory (dun dun dun). How about you pick your native language to start with?", {username: user.username})}

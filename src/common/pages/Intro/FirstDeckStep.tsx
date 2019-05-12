@@ -8,6 +8,7 @@ import {
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {
@@ -97,6 +98,9 @@ export const FirstDeckStep = () => {
 
     return (
         <Grid container direction="column">
+            <Helmet>
+                <title>{t("First Deck - Project Memory")}</title>
+            </Helmet>
             <Grid item xs>
                 <Typography variant="h6">
                     {t("Alright, done. Let's create our first deck!")}

@@ -1,4 +1,4 @@
-import reactHelmet from "react-helmet"
+import ReactHelmet from "react-helmet"
 import serialize from "serialize-javascript"
 import proc from "./env"
 
@@ -19,7 +19,7 @@ const icons = `
 
 export const Layout = (parameters: { markup: string, initialState: object, css: string, authToken: string, i18Store: object, lang: string, bundle: string }) => {
     const {markup, initialState, css, authToken, i18Store, lang, bundle} = parameters
-    const helmet = reactHelmet.renderStatic(markup)
+    const helmet = ReactHelmet.renderStatic()
 
     return `<!doctype html>
         <html lang="">

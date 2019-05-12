@@ -1,6 +1,7 @@
 import {Button, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
 import Checkmark from "../../assets/checkmark.png"
@@ -27,6 +28,9 @@ export const SectionFinished = ({lessonCount}: PropTypes) => {
 
     return (
         <div>
+            <Helmet>
+                <title>{t("Finished some Lessons - Project Memory")}</title>
+            </Helmet>
             <Typography variant="h5" className={classes.all}>{t("Done!")}</Typography>
             <img src={Checkmark} alt={t("Done")} className={classes.image}/>
             <Typography variant="body1" className={classes.all}>

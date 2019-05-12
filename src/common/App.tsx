@@ -1,6 +1,7 @@
 import {Button, Grid, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
+import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import AppHeader from "./components/common/Header"
 import LinkButton from "./components/common/LinkButton"
@@ -69,6 +70,9 @@ export const App = () => {
     const now = useNow()
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title>{t("Project Memory")}</title>
+            </Helmet>
             <AppHeader/>
             <div className={classes.content}>
                 <Routes/>
