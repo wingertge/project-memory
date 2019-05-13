@@ -1,9 +1,10 @@
-import {Avatar, Card, Hidden, IconButton, makeStyles, Theme, Typography} from "@material-ui/core"
-import {Favorite, PersonAdd, ThumbUp} from "@material-ui/icons"
+import {Avatar, Card, Hidden, IconButton, makeStyles, Theme, Tooltip, Typography} from "@material-ui/core"
+import {Favorite, PersonAdd, ThumbUp, PersonAddOutlined} from "@material-ui/icons"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {User} from "../../../generated/graphql"
+import {AggregatedFeedDocument, useChangeFollowingStatusMutation, User} from "../../../generated/graphql"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import {useID} from "../../hooks"
 
 interface PropTypes {
     user: User
@@ -69,21 +70,45 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const UserSummary = ({user, isOwn}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
+    const currentUserId = useID()
+
+    const changeFollowingStatusMutate = useChangeFollowingStatusMutation()
 
     if(!user) return <TimedCircularProgress />
+
+    const toggleFollow = () => {
+        changeFollowingStatusMutate({
+            variables: {userId: user.id, currentUserId, value: !user.isFollowedBy},
+            optimisticResponse: {
+                __typename: "Mutation",
+                changeFollowingStatus: {
+                    __typename: "User",
+                    id: user.id,
+                    isFollowedBy: !user.isFollowedBy
+                }
+            },
+            refetchQueries: [{query: AggregatedFeedDocument, variables: {userId: currentUserId, filter: {limit: 20, sortBy: "createdAt", sortDirection: "desc"}}}]
+        })
+    }
 
     return (
         <Card className={classes.card}>
             <Avatar className={classes.avatar} src={user.picture}/>
             <div className={classes.container}>
                 <div className={classes.usernameContainer}>
-                    <Hidden xsDown>
+                    <Hidden xsDown initialWidth="lg">
                         <Typography variant="h4">{user.username}</Typography>
                     </Hidden>
                     <Hidden smUp>
                         <Typography variant="h6">{user.username}</Typography>
                     </Hidden>
-                    {!isOwn && <IconButton title={t("Follow")} about={t("Follow")} className={classes.iconButton}><PersonAdd/></IconButton>}
+                    {!isOwn && (
+                        <Tooltip title={user.isFollowedBy ? t("Unfollow") : t("Follow")} about={t("Follow")}>
+                            <IconButton onClick={toggleFollow} className={classes.iconButton}>
+                                {user.isFollowedBy ? <PersonAdd/> : <PersonAddOutlined/>}
+                            </IconButton>
+                        </Tooltip>
+                    )}
                 </div>
                 <div className={classes.stats}>
                     <div className={classes.statCount}><Favorite className={classes.icon}/>{user.totalSubscribers}</div>

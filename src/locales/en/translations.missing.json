@@ -124,5 +124,18 @@
   "Android (Gboard)": "Android (Gboard)",
   "Search for user {{query}} - Project Memory": "Search for user {{query}} - Project Memory",
   "Search": "Search",
-  "Settings - Project Memory": "Settings - Project Memory"
+  "Settings - Project Memory": "Settings - Project Memory",
+  "{{username}}'s Profile - Project Memory": "{{username}}'s Profile - Project Memory",
+  "Badges": "Badges",
+  "Chicken Neo": "Chicken Neo",
+  "I made dis": "I made dis",
+  "German": "German",
+  "User's decks": "User's decks",
+  "Feed": "Feed",
+  "Create a Post": "Create a Post",
+  "Post": "Post",
+  "Delete": "Delete",
+  "Dashboard": "Dashboard",
+  "UserFeed": "UserFeed",
+  "Unfollow": "Unfollow"
 }

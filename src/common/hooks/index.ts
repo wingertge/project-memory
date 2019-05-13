@@ -10,9 +10,11 @@ import {
 
 export const useUser = (id?: string) => {
     id = id || useID()
+    const currentUserId = useID()
     const {data} = useProfileQuery({
         variables: {
-            id
+            id,
+            currentUserId
         },
         errorPolicy: "ignore"
     })

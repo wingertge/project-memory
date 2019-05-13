@@ -1557,7 +1557,7 @@ export type MutationDeleteUserArgs = {
 
 export type MutationChangeFollowingStatusArgs = {
   id: Scalars["ID"];
-  followID: Scalars["ID"];
+  followerID: Scalars["ID"];
   value: Scalars["Boolean"];
 };
 
@@ -2521,8 +2521,10 @@ export type User = {
   totalRating: Scalars["Int"];
   totalSubscribers: Scalars["Int"];
   badges: Array<Maybe<Scalars["String"]>>;
+  isFollowedBy: Scalars["Boolean"];
   introStep?: Maybe<Scalars["Int"]>;
   feed?: Maybe<Array<Maybe<Post>>>;
+  subscriptionFeed?: Maybe<Array<Maybe<Post>>>;
 };
 
 export type UserReviewQueueArgs = {
@@ -2537,7 +2539,15 @@ export type UserLessonQueueArgs = {
   filter?: Maybe<ReviewFilterInput>;
 };
 
+export type UserIsFollowedByArgs = {
+  id: Scalars["ID"];
+};
+
 export type UserFeedArgs = {
+  filter?: Maybe<PostFilterInput>;
+};
+
+export type UserSubscriptionFeedArgs = {
   filter?: Maybe<PostFilterInput>;
 };
 
@@ -2768,6 +2778,18 @@ export type AddLanguageToUserMutation = { __typename?: "Mutation" } & {
   >;
 };
 
+export type ChangeFollowingStatusMutationVariables = {
+  userId: Scalars["ID"];
+  currentUserId: Scalars["ID"];
+  value: Scalars["Boolean"];
+};
+
+export type ChangeFollowingStatusMutation = { __typename?: "Mutation" } & {
+  changeFollowingStatus: Maybe<
+    { __typename?: "User" } & Pick<User, "id" | "isFollowedBy">
+  >;
+};
+
 export type ChangeLikeStatusMutationVariables = {
   userId: Scalars["ID"];
   deckId: Scalars["ID"];
@@ -2850,6 +2872,30 @@ export type UpdateProfileMutation = { __typename?: "Mutation" } & {
   >;
 };
 
+export type AggregatedFeedQueryVariables = {
+  userId: Scalars["ID"];
+  filter?: Maybe<PostFilterInput>;
+};
+
+export type AggregatedFeedQuery = { __typename?: "Query" } & {
+  user: Maybe<
+    { __typename?: "User" } & Pick<User, "id"> & {
+        subscriptionFeed: Maybe<
+          Array<
+            Maybe<
+              { __typename?: "Post" } & Pick<Post, "isLikedBy"> & {
+                  originalPost: Maybe<
+                    { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
+                      ShallowPostFieldsFragment
+                  >;
+                } & ShallowPostFieldsFragment
+            >
+          >
+        >;
+      }
+  >;
+};
+
 export type CurrentUserIdQueryVariables = {};
 
 export type CurrentUserIdQuery = { __typename?: "Query" } & Pick<
@@ -2870,6 +2916,7 @@ export type NowQuery = { __typename?: "Query" } & Pick<Query, "now">;
 
 export type ProfileQueryVariables = {
   id: Scalars["ID"];
+  currentUserId: Scalars["ID"];
 };
 
 export type ProfileQuery = { __typename?: "Query" } & {
@@ -2886,6 +2933,7 @@ export type ProfileQuery = { __typename?: "Query" } & {
       | "badges"
       | "totalRating"
       | "totalSubscribers"
+      | "isFollowedBy"
     >
   >;
 };
@@ -3968,6 +4016,63 @@ export function useAddLanguageToUserMutation(
     AddLanguageToUserMutationVariables
   >(AddLanguageToUserDocument, baseOptions);
 }
+export const ChangeFollowingStatusDocument = gql`
+  mutation ChangeFollowingStatus(
+    $userId: ID!
+    $currentUserId: ID!
+    $value: Boolean!
+  ) {
+    changeFollowingStatus(
+      id: $userId
+      followerID: $currentUserId
+      value: $value
+    ) {
+      id
+      isFollowedBy(id: $currentUserId)
+    }
+  }
+`;
+export type ChangeFollowingStatusMutationFn = ReactApollo.MutationFn<
+  ChangeFollowingStatusMutation,
+  ChangeFollowingStatusMutationVariables
+>;
+export type ChangeFollowingStatusProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ChangeFollowingStatusMutation,
+    ChangeFollowingStatusMutationVariables
+  >
+> &
+  TChildProps;
+export function withChangeFollowingStatus<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ChangeFollowingStatusMutation,
+    ChangeFollowingStatusMutationVariables,
+    ChangeFollowingStatusProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ChangeFollowingStatusMutation,
+    ChangeFollowingStatusMutationVariables,
+    ChangeFollowingStatusProps<TChildProps>
+  >(ChangeFollowingStatusDocument, {
+    alias: "withChangeFollowingStatus",
+    ...operationOptions
+  });
+}
+
+export function useChangeFollowingStatusMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ChangeFollowingStatusMutation,
+    ChangeFollowingStatusMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ChangeFollowingStatusMutation,
+    ChangeFollowingStatusMutationVariables
+  >(ChangeFollowingStatusDocument, baseOptions);
+}
 export const ChangeLikeStatusDocument = gql`
   mutation ChangeLikeStatus($userId: ID!, $deckId: ID!, $value: Boolean) {
     changeLikeStatus(id: $deckId, userID: $userId, value: $value) {
@@ -4234,6 +4339,53 @@ export function useUpdateProfileMutation(
     UpdateProfileMutationVariables
   >(UpdateProfileDocument, baseOptions);
 }
+export const AggregatedFeedDocument = gql`
+  query AggregatedFeed($userId: ID!, $filter: PostFilterInput) {
+    user(id: $userId) {
+      id
+      subscriptionFeed(filter: $filter) {
+        ...shallowPostFields
+        isLikedBy(userID: $userId)
+        originalPost {
+          ...shallowPostFields
+          isLikedBy(userID: $userId)
+        }
+      }
+    }
+  }
+  ${shallowPostFieldsFragmentDoc}
+`;
+export type AggregatedFeedProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<AggregatedFeedQuery, AggregatedFeedQueryVariables>
+> &
+  TChildProps;
+export function withAggregatedFeed<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    AggregatedFeedQuery,
+    AggregatedFeedQueryVariables,
+    AggregatedFeedProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    AggregatedFeedQuery,
+    AggregatedFeedQueryVariables,
+    AggregatedFeedProps<TChildProps>
+  >(AggregatedFeedDocument, {
+    alias: "withAggregatedFeed",
+    ...operationOptions
+  });
+}
+
+export function useAggregatedFeedQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<AggregatedFeedQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<
+    AggregatedFeedQuery,
+    AggregatedFeedQueryVariables
+  >(AggregatedFeedDocument, baseOptions);
+}
 export const CurrentUserIdDocument = gql`
   query CurrentUserID {
     currentUserID @client
@@ -4343,7 +4495,7 @@ export function useNowQuery(
   );
 }
 export const ProfileDocument = gql`
-  query Profile($id: ID!) {
+  query Profile($id: ID!, $currentUserId: ID!) {
     user(id: $id) {
       id
       username
@@ -4355,6 +4507,7 @@ export const ProfileDocument = gql`
       badges
       totalRating
       totalSubscribers
+      isFollowedBy(id: $currentUserId)
     }
   }
 `;

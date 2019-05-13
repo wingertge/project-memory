@@ -1,0 +1,6 @@
+mutation ChangeFollowingStatus($userId: ID!, $currentUserId: ID!, $value: Boolean!) {
+    changeFollowingStatus(id: $userId, followerID: $currentUserId, value: $value) {
+        id
+        isFollowedBy(id: $currentUserId)
+    }
+}

@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         },
         content: {
             textAlign: "center",
-            marginTop: theme.spacing(2),
+            //marginTop: theme.spacing(2),
             flex: "1 1 100%"
         },
         footer: {

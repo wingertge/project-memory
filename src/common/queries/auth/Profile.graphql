@@ -1,4 +1,4 @@
-query Profile($id: ID!) {
+query Profile($id: ID!, $currentUserId: ID!) {
     user(id: $id) {
         id
         username
@@ -10,5 +10,6 @@ query Profile($id: ID!) {
         badges
         totalRating
         totalSubscribers
+        isFollowedBy(id: $currentUserId)
     }
 }

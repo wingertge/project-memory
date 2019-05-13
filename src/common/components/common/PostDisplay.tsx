@@ -101,7 +101,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
 
     return (
         <div className={classes.post}>
-            <div className={classes.header}>
+            <div className={classes.header} onClick={() => {if(!isOwn) history.push(`/profile/${post.by.id}`)}} style={{cursor: isOwn ? "default" : "pointer"}}>
                 <Avatar src={post.by.picture} className={classes.avatar} />
                 <Typography style={{fontWeight: "bold"}}>{post.by.username}</Typography>
                 {post.type === "repost" && <Repeat className={classes.repostIcon} />}

@@ -9,7 +9,7 @@ import Loadable from "react-loadable"
 import TestBed from "./pages/TestBed"
 
 const Home = Loadable({
-    loader: () => import("./pages/Home/Home"),
+    loader: () => import("./pages/Home"),
     loading: Loading,
     timeout: 10000
 })
@@ -21,7 +21,7 @@ const Callback = Loadable({
 })
 
 const Settings = Loadable({
-    loader: () => import("./pages/Settings/Settings"),
+    loader: () => import("./pages/Settings"),
     loading: Loading,
     timeout: 10000
 })
@@ -39,7 +39,7 @@ const Login = Loadable({
 })
 
 const Lessons = Loadable({
-    loader: () => import("./pages/Lessons/Lessons"),
+    loader: () => import("./pages/Lessons"),
     loading: Loading,
     timeout: 1000
 })
