@@ -49,6 +49,7 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
                     open={open}
                     onClose={() => setOpen(false)}
                     onOpen={() => setOpen(true)}
+                    swipeAreaWidth={50}
                     disableBackdropTransition
                     classes={{
                         paper: classes.drawerPaper
