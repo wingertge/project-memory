@@ -11,6 +11,8 @@ import {Theme} from "../../theme"
 
 interface PropTypes {
     slug: string
+    setDrawerOpen: (val: boolean) => void
+    drawerOpen
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -51,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const HelpdeskArticle = ({slug}: PropTypes) => {
+export const HelpdeskArticle = ({slug, setDrawerOpen, drawerOpen}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {data, loading, error} = useHelpPageQuery({variables: {slug}})
@@ -65,8 +67,8 @@ export const HelpdeskArticle = ({slug}: PropTypes) => {
         <div className={classes.root}>
             <main className={classes.main}>
                 <Hidden smUp implementation="css">
-                    <Typography variant="subtitle1" gutterBottom color="textSecondary">
-                        {t("Swipe from the left to see a list of articles.")}
+                    <Typography variant="subtitle1" gutterBottom color="textSecondary" onClick={() => setDrawerOpen(!drawerOpen)} style={{cursor: "pointer"}}>
+                        {t("See a list of all articles.")}
                     </Typography>
                 </Hidden>
                 {article.header && <Typography variant="h5">{t(article.header)}</Typography>}

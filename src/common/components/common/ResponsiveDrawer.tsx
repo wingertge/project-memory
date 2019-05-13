@@ -1,6 +1,6 @@
 import {Drawer, Hidden, SwipeableDrawer, Theme} from "@material-ui/core"
 import {createStyles, makeStyles, useTheme} from "@material-ui/styles"
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import * as React from "react"
 
 interface PropTypes {
@@ -38,6 +38,8 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
     const theme = useTheme<Theme>()
     const classes = useStyles()
     const [open, setOpen] = useState(isOpen)
+
+    useEffect(() => setOpen(isOpen), [isOpen])
 
     return (
         <div className={classes.drawer}>

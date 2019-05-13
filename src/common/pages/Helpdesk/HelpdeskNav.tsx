@@ -7,7 +7,11 @@ import {useHelpPageListQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import ResponsiveDrawer from "../../components/common/ResponsiveDrawer"
 
-export const HelpdeskNav = () => {
+interface PropTypes {
+    drawerOpen: boolean
+}
+
+export const HelpdeskNav = ({drawerOpen}: PropTypes) => {
     const {t} = useTranslation()
     const {history} = useRouter()
     const {data, loading, error} = useHelpPageListQuery()
@@ -17,7 +21,7 @@ export const HelpdeskNav = () => {
     const pages = oc(data).helpPages([])
 
     return (
-        <ResponsiveDrawer isOpen={false}>
+        <ResponsiveDrawer isOpen={drawerOpen}>
             {!loading && (
                 <List component="nav" disablePadding>
                     {pages.map(page => (
