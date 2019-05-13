@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         [theme.breakpoints.up("md")]: {
             padding: theme.spacing(2, 6)
         }
+    },
+    tabs: {
+        backgroundColor: theme.palette.background.paper
     }
 }))
 
@@ -33,7 +36,7 @@ const Home = ({initialTab = 0}: PropTypes) => {
 
     return (
         <div>
-            <Tabs value={tabIndex} onChange={(_, newIndex) => setTabIndex(newIndex)} indicatorColor="primary">
+            <Tabs value={tabIndex} onChange={(_, newIndex) => setTabIndex(newIndex)} indicatorColor="primary" className={classes.tabs}>
                 <Tab label={t("Dashboard")} />
                 <Tab label={t("Feed")} />
             </Tabs>
