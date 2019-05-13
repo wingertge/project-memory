@@ -7,7 +7,6 @@ import {useTranslation} from "react-i18next"
 import {useHelpPageQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import RichText from "../../components/common/RichText"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import {Theme} from "../../theme"
 
 interface PropTypes {
@@ -57,7 +56,7 @@ export const HelpdeskArticle = ({slug}: PropTypes) => {
     const {t} = useTranslation()
     const {data, loading, error} = useHelpPageQuery({variables: {slug}})
 
-    if(loading) return <TimedCircularProgress />
+    if(loading) return null
     if(error) return <ApolloErrorBox error={error} />
 
     const article = data!.helpPage!

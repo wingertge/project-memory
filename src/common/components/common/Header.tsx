@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     logo: {
         width: 40,
         height: 40,
-        margin: theme.spacing(0, 1, 0, -1.5)
+        margin: theme.spacing(0, 1, 0, -1.5),
+        cursor: "pointer"
     }
 }))
 
@@ -83,7 +84,7 @@ export const Header = () => {
     return (
         <AppBar position="sticky" className={classes.appBar}>
             <Toolbar>
-                <img src={Logo} alt={t("Logo")} className={classes.logo}/>
+                <img src={Logo} alt={t("Logo")} className={classes.logo} onClick={() => history.push("/")} />
                 <Typography variant="h6" color="inherit">
                     <LinkButton to="/" className={classes.navbarLink}>{t("Home")}</LinkButton>
                 </Typography>

@@ -86,8 +86,8 @@ export const CMSPage = ({slug}: PropTypes) => {
     slug = slug || routeSlug
     const {data, error, loading} = usePageQuery({variables: {slug}})
 
-    if(!data || !data.page || error) return <NotFound />
     if(loading) return <TimedCircularProgress />
+    if(!data || !data.page || error) return <NotFound />
 
     const page = data.page!
 
