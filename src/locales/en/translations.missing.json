@@ -121,5 +121,8 @@
   "Index": "Index",
   "Content goes here": "Content goes here",
   "Android": "Android",
-  "Android (Gboard)": "Android (Gboard)"
+  "Android (Gboard)": "Android (Gboard)",
+  "Search for user {{query}} - Project Memory": "Search for user {{query}} - Project Memory",
+  "Search": "Search",
+  "Settings - Project Memory": "Settings - Project Memory"
 }

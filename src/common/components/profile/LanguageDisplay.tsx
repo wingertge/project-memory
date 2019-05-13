@@ -27,9 +27,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 interface PropTypes {
     language: Language
     onDelete?: () => void
+    onClick?: () => void
 }
 
-export const LanguageDisplay = ({language, onDelete}: PropTypes) => {
+export const LanguageDisplay = ({language, onDelete, onClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {name, nativeName} = language
@@ -39,6 +40,7 @@ export const LanguageDisplay = ({language, onDelete}: PropTypes) => {
             avatar={<LanguageIcon language={language} />}
             label={`${t(name)} (${nativeName})`}
             onDelete={onDelete}
+            onClick={onClick}
             className={classes.chip}
         />
     )

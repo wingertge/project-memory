@@ -3,15 +3,15 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {oc} from "ts-optchain"
-import {Language, useAddLanguageToUserMutation} from "../../../generated/graphql"
-import {useID} from "../../hooks"
+import {Language} from "../../../generated/graphql"
 import LargeLanguageDisplay from "../Intro/LargeLanguageDisplay"
 import LargeLanguagePicker from "../Intro/LargeLanguagePicker"
 
 interface PropTypes {
     languages: Language[]
     closeDialog: () => void
+    onSave: (language: Language) => void
+    buttonText?: string
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -23,31 +23,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const LanguagePicker = ({languages, closeDialog}: PropTypes) => {
+export const LanguagePicker = ({closeDialog, onSave, buttonText}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const id = useID()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
-    const addLanguageMutate = useAddLanguageToUserMutation({
-        variables: {userId: id, languageId: oc(language).id("")},
-        optimisticResponse: () => ({
-            __typename: "Mutation",
-            addLanguageToUser: {
-                __typename: "User",
-                id,
-                languages: [...languages, language!].map(lang => ({
-                    __typename: "Language",
-                    id: lang.id,
-                    name: lang.name,
-                    nativeName: lang.nativeName,
-                    languageCode: lang.languageCode
-                })) as any
-            }
-        })
-    })
 
-    const addLanguage = () => {
-        addLanguageMutate()
+    const save = () => {
+        onSave(language!)
         closeDialog()
     }
 
@@ -63,7 +45,7 @@ export const LanguagePicker = ({languages, closeDialog}: PropTypes) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog}>{t("Cancel")}</Button>
-                <Button onClick={addLanguage}>{t("Add")}</Button>
+                <Button onClick={save}>{t(buttonText || "Add")}</Button>
             </DialogActions>
         </>
     )

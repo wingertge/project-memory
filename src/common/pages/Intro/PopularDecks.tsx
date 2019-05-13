@@ -2,22 +2,15 @@ import {Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {oc} from "ts-optchain"
-import {
-    Deck,
-    useUserLanguagesQuery,
-    useShallowDecksQuery,
-    useUpdateProfileMutation,
-    useChangeSubscriptionStatusMutation
-} from "../../../generated/graphql"
+import {Deck, useShallowDecksQuery, useUserLanguagesQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/common/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
 import DeckDisplay from "../../components/profile/DecksOverview/DeckDisplay"
-import {useID} from "../../hooks"
-import {isSubscribed} from "../../selectors"
+import {useID, useSubscriptionToggle} from "../../hooks"
 
 interface PropTypes {
-    exclusive?: boolean
-    decks: Deck[]
+    decks: Deck[],
+    onSave?: () => void
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -30,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const PopularDecks = ({exclusive, decks}: PropTypes) => {
+export const PopularDecks = ({decks, onSave = () => {}}: PropTypes) => {
     const classes = useStyles()
     const id = useID()
     const userLangs = useUserLanguagesQuery({variables: {userId: id}})
@@ -38,23 +31,8 @@ export const PopularDecks = ({exclusive, decks}: PropTypes) => {
     const ownedDecks = oc(userDecks.data).user.ownedDecks([]) as Deck[]
     const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
 
-    const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
-    const updateSubscriptionStatusMutate = useChangeSubscriptionStatusMutation()
-    const updateSubscriptionStatus = (deck: Deck) => updateSubscriptionStatusMutate({
-        variables: {
-            userId: id,
-            deckId: deck.id,
-            value: !isSubscribed({decks: subscribedDecks, id: deck.id})
-        },
-        optimisticResponse: {
-            __typename: "Mutation",
-            changeSubscriptionStatus: {
-                __typename: "User",
-                id,
-                subscribedDecks: isSubscribed({decks: subscribedDecks, id: deck.id}) ? subscribedDecks.filter(d => d.id !== deck.id) : [...subscribedDecks, deck]
-            }
-        }
-    }).then(() => {if(!exclusive) updateProfile()})
+    const subscriptionToggle = useSubscriptionToggle()
+    const toggleSubscription = (deck: Deck) => subscriptionToggle(deck).then(onSave)
 
     if(userLangs.error || userDecks.error) return <ApolloErrorBox error={userLangs.error || userDecks.error!} />
     if(userLangs.loading || userDecks.loading) return <TimedCircularProgress />
@@ -65,7 +43,7 @@ export const PopularDecks = ({exclusive, decks}: PropTypes) => {
                 <DeckDisplay
                     key={deck.id}
                     deck={deck}
-                    onFavoriteClicked={() => updateSubscriptionStatus(deck)}
+                    onFavoriteClicked={() => toggleSubscription(deck)}
                     owned={ownedDecks.some(otherDeck => otherDeck.id === deck.id)}
                     subscribed={subscribedDecks.some(otherDeck => otherDeck.id === deck.id)}
                 />

@@ -124,7 +124,7 @@ export const FirstDeckStep = () => {
                     {t("Or you can pick from one of these highly rated community ones.")}
                 </Typography>
             </Grid>
-            <PopularDecks decks={decks} />
+            <PopularDecks decks={decks} onSave={updateProfile} />
         </Grid>
     )
 }

@@ -1,9 +1,12 @@
-import {Chip, Theme, Typography} from "@material-ui/core"
+import {Button, Chip, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
-import {Deck} from "../../../generated/graphql"
+import {Deck, useShallowDecksQuery} from "../../../generated/graphql"
+import {useID, useSubscriptionToggle} from "../../hooks"
+
 interface PropTypes {
     deck: Deck
 }
@@ -31,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         justifyContent: "flex-start",
         alignItems: "center",
         flexDirection: "column"
+    },
+    subscribeButton: {
+        margin: theme.spacing(1)
     }
 }))
 
@@ -39,6 +45,18 @@ export const DeckProperties = ({deck}: PropTypes) => {
     const {t} = useTranslation()
     const {history} = useRouter()
     const tags = deck.tags
+    const userId = useID()
+
+    const {data} = useShallowDecksQuery({
+        variables: {
+            id: userId
+        }
+    })
+
+    const subscribedDecks = oc(data).user.subscribedDecks([]) as Deck[]
+    const subscribed = subscribedDecks.some(d => d.id === deck.id)
+
+    const toggleSubscription = useSubscriptionToggle()
 
     return (
         <div>
@@ -48,6 +66,9 @@ export const DeckProperties = ({deck}: PropTypes) => {
                     {t("by {{username}}", {username: deck.owner.username})}
                 </Typography>
             </div>
+            <Button variant="contained" color="primary" onClick={() => toggleSubscription(deck)} className={classes.subscribeButton}>
+                {subscribed ? t("Unsubscribe") : t("Subscribe")}
+            </Button>
             {tags.length > 0 && (
                 <div className={classes.tagsContainer}>
                     <Typography variant="h6">{t("Tags")}</Typography>
