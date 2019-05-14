@@ -2,7 +2,6 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
 import {Button, Card, CardContent, CardActions, Theme, Typography} from "@material-ui/core"
 import {useTranslation} from "react-i18next"
-import Heading from "./Heading"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     errorBox: {
@@ -36,9 +35,9 @@ export const ErrorBox = ({title, text, retry}: PropTypes) => {
     return (
         <Card className={classes.errorBox}>
             <CardContent className={classes.cardContent}>
-                <Heading color="error">
+                <Typography variant="h5" color="error">
                     {title}
-                </Heading>
+                </Typography>
                 <Typography variant="body1" gutterBottom color="error">
                     {text}
                 </Typography>

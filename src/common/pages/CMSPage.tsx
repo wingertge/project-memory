@@ -9,7 +9,7 @@ import {usePageQuery} from "../../generated/graphql"
 import LinkButton from "../components/common/LinkButton"
 import Loading from "../components/common/Loading"
 import RichText from "../components/common/RichText"
-import {TimedCircularProgress} from "../components/common/TimedCircularProgress"
+import {TimedCircularProgress} from "../components/apollo/TimedCircularProgress"
 import Loadable from "react-loadable"
 import v4 from "uuid/v4"
 

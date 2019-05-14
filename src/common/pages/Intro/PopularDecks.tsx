@@ -3,9 +3,9 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {oc} from "ts-optchain"
 import {Deck, useShallowDecksQuery, useUserLanguagesQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import DeckDisplay from "../../components/profile/DecksOverview/DeckDisplay"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
+import DeckDisplay from "../Settings/DecksOverview/DeckDisplay"
 import {useID, useSubscriptionToggle} from "../../hooks"
 
 interface PropTypes {

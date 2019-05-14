@@ -9,7 +9,7 @@ import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useValidatedFormState, useToast, ValidatorMap} from "../../hooks"
 import {isEqualTo, passwordStrongEnough} from "../../util/validationUtils"
 import {useTranslation} from "react-i18next"
-import WithErrorBox from "../common/WithErrorBox"
+import WithErrorBox from "../../components/apollo/WithErrorBox"
 
 interface PropTypes {
     passwordExists: boolean

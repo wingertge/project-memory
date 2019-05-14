@@ -19,7 +19,7 @@ import {
     useUpdateProfileMutation,
     useUserLanguagesQuery
 } from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {useFormState, useID} from "../../hooks"
 import PopularDecks from "./PopularDecks"
 

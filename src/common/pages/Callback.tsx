@@ -3,7 +3,7 @@ import React from "react"
 import {useTranslation} from "react-i18next"
 import {Redirect} from "react-router"
 import useRouter from "use-react-router/use-react-router"
-import ErrorBox from "../components/common/ErrorBox"
+import ErrorBox from "../components/apollo/ErrorBox"
 
 export const Callback = () => {
     const {t} = useTranslation()

@@ -6,8 +6,8 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {Deck, useShallowDecksQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import PopularDecks from "../Intro/PopularDecks"
 
 interface PropTypes {

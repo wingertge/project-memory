@@ -3,7 +3,6 @@ import {makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {FeedDocument, Post, useAddPostMutation} from "../../../generated/graphql"
-import Heading from "../../components/common/Heading"
 import {useToast, useUser, useValidatedFormState} from "../../hooks"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import PostDisplay from "./PostDisplay"
@@ -93,7 +92,7 @@ export const Feed = ({isOwn = false, userId, feed}: PropTypes) => {
         <>
             <Toast />
             <div className={classes.feed}>
-                <Heading>{t("Feed")}</Heading>
+                <Typography variant="h5">{t("Feed")}</Typography>
                 {isOwn && (
                     <div>
                         <TextField multiline label={t("Create a Post")} className={classes.newPostInput} variant="outlined" rows={3} rowsMax={12} onKeyPress={keyHandler}

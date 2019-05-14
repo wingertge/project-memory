@@ -20,7 +20,7 @@ import {
     useAddCardMutation,
     useUpdateCardMutation
 } from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {useID, useToast, useValidatedFormState, ValidatorMap} from "../../hooks"
 import {shorterThan} from "../../util/validationUtils"
 import {Column, SortDirection} from "./DeckDetails"

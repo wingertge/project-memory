@@ -1,4 +1,4 @@
-import {Button, TextField, Theme} from "@material-ui/core"
+import {Button, TextField, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
 import {ApolloError} from "apollo-client"
 import {useState} from "react"
@@ -13,8 +13,7 @@ import {
     useUpdateDeckMutation
 } from "../../../generated/graphql"
 import AutocompleteTagInput from "../../components/common/AutocompleteTagInput"
-import Heading from "../../components/common/Heading"
-import WithErrorBox from "../../components/common/WithErrorBox"
+import WithErrorBox from "../../components/apollo/WithErrorBox"
 import {useConfirmDialog, useDialog, useID, useToast, useValidatedFormState} from "../../hooks"
 import {deckPropsValidators, Form, RouteTypes} from "./DeckDetails"
 import EditCardForm from "./EditCardForm"
@@ -129,9 +128,9 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
             <Dialog />
             <ConfirmDeleteDialog />
             <WithErrorBox prop={{error: mutationError}} retry={save}>
-                <Heading>
+                <Typography variant="h5">
                     {t("Edit Deck")}
-                </Heading>
+                </Typography>
                 <form className={classes.form}>
                     <TextField label={t("Deck Name")} value={name.value} onChange={name.onChange} className={classes.textField}/>
                     <AutocompleteTagInput label={t("Tags")} chips={tags} fullWidth

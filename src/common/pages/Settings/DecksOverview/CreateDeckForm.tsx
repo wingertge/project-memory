@@ -18,8 +18,8 @@ import {useID, ValidatorMap} from "../../../hooks"
 import {useToast} from "../../../hooks"
 import {useValidatedFormState} from "../../../hooks"
 import {longerThan, notEmpty, shorterThan} from "../../../util/validationUtils"
-import ApolloErrorBox from "../../common/ApolloErrorBox"
-import WithErrorBox from "../../common/WithErrorBox"
+import ApolloErrorBox from "../../../components/apollo/ApolloErrorBox"
+import WithErrorBox from "../../../components/apollo/WithErrorBox"
 
 export interface PropTypes {
     closeDialog: () => void

@@ -3,17 +3,20 @@ import {
 } from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import LanguageSettings from "../../pages/Settings/LanguageSettings"
-import Spacer from "../common/Spacer"
+import {Theme} from "../../theme"
+import LanguageSettings from "./LanguageSettings"
 import ProfileSettingsContent from "./ProfileSettingsContent"
 
-const useStyles = makeStyles(createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     card: {
         flexGrow: 1
     },
     cardContent: {
         padding: 12,
         marginBottom: -12
+    },
+    spacer: {
+        height: theme.spacing(1)
     }
 }))
 
@@ -25,7 +28,7 @@ export const ProfileSettings = () => {
             <CardContent className={classes.cardContent}>
                 <ProfileSettingsContent/>
             </CardContent>
-            <Spacer/>
+            <div className={classes.spacer}/>
             <LanguageSettings/>
         </Card>
     )

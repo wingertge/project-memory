@@ -6,9 +6,9 @@ import {useTranslation} from "react-i18next"
 import {Review, useReviewsCountQuery} from "../../../generated/graphql"
 import Checkmark from "../../assets/checkmark.png"
 import Error from "../../assets/error.png"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import LinkButton from "../../components/common/LinkButton"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useID, useNow} from "../../hooks"
 
 interface PropTypes {

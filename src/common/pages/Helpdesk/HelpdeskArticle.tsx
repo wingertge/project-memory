@@ -5,7 +5,7 @@ import clsx from "clsx"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {useHelpPageQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import RichText from "../../components/common/RichText"
 import {Theme} from "../../theme"
 

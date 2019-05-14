@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
 import {useHelpPageListQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import ResponsiveDrawer from "../../components/common/ResponsiveDrawer"
 
 interface PropTypes {

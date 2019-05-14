@@ -9,7 +9,7 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {Language, useLanguagesQuery, useUserLanguagesQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import LanguageIcon from "../../components/common/LanguageIcon"
 import {useID} from "../../hooks"
 

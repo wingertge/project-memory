@@ -3,9 +3,8 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
-import Spacer from "../../components/common/Spacer"
-import DecksOverview from "../../components/profile/DecksOverview"
-import ProfileSettings from "../../components/profile/ProfileSettings"
+import DecksOverview from "./DecksOverview"
+import ProfileSettings from "./ProfileSettings"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
         root: {
@@ -16,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             flexDirection: "column",
             width: "100%",
             padding: theme.spacing(0, 2)
+        },
+        spacer: {
+            height: theme.spacing(2)
         },
         toolbar: theme.mixins.toolbar
     })
@@ -30,12 +32,9 @@ export const Settings = () => {
             <Helmet>
                 <title>{t("Settings - Project Memory")}</title>
             </Helmet>
-{/*            <ResponsiveDrawer isOpen={true}>
-                <div className={classes.toolbar}/>
-            </ResponsiveDrawer>*/}
             <div className={classes.settingsBox}>
                 <ProfileSettings />
-                <Spacer multiplier={2}/>
+                <div className={classes.spacer} />
                 <DecksOverview />
             </div>
         </div>

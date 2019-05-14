@@ -7,7 +7,7 @@ import {useTranslation} from "react-i18next"
 import moment from "moment"
 import {oc} from "ts-optchain"
 import {Review, useReviewsCountQuery, useReviewsQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {useID, useNow} from "../../hooks"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

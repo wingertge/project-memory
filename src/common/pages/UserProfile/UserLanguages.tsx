@@ -3,9 +3,9 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {oc} from "ts-optchain"
 import {Language, useUserLanguagesQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import LanguageDisplay from "../../components/profile/LanguageDisplay"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
+import LanguageDisplay from "../Settings/LanguageDisplay"
 
 interface PropTypes {
     userId: string

@@ -2,9 +2,9 @@ import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {Post, useAggregatedFeedQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import Feed from "../../components/common/Feed"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useID} from "../../hooks"
 
 export const AggregatedFeed = () => {

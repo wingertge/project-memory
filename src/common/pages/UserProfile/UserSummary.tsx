@@ -3,7 +3,7 @@ import {Favorite, PersonAdd, ThumbUp, PersonAddOutlined} from "@material-ui/icon
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {AggregatedFeedDocument, useChangeFollowingStatusMutation, User} from "../../../generated/graphql"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useID} from "../../hooks"
 
 interface PropTypes {

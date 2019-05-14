@@ -1,4 +1,4 @@
-import {Button, Grid, Hidden, TextField, Theme} from "@material-ui/core"
+import {Button, Grid, Hidden, TextField, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {ApolloError} from "apollo-client"
 import {useState} from "react"
@@ -9,9 +9,8 @@ import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useToast, useUser, useValidatedFormState, ValidatorMap} from "../../hooks"
 import {isEmail, notEmpty, shorterThan} from "../../util/validationUtils"
 import {usernameValidator} from "../../util/validators"
-import ApolloErrorBox from "../common/ApolloErrorBox"
-import Heading from "../common/Heading"
-import {TimedCircularProgress} from "../common/TimedCircularProgress"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import PasswordChangeDialog from "./PasswordChangeDialog"
 import ProfilePictureSelector from "./ProfilePictureSelector"
 
@@ -127,7 +126,7 @@ export const ProfileSettingsContent = () => {
                     <Grid container direction="column" justify="space-between" alignItems="stretch"
                           className={classes.formWrapper}>
                         <Grid item className={classes.header}>
-                            <Heading>{t("Profile")}</Heading>
+                            <Typography variant="h5">{t("Profile")}</Typography>
                         </Grid>
                         <Grid item container direction="row" justify="flex-end" alignItems="stretch" className={classes.form} spacing={3}>
                             <Grid item xs container direction="column" justify="flex-end" alignItems="stretch">
@@ -177,7 +176,7 @@ export const ProfileSettingsContent = () => {
             </Hidden>
             <Hidden smUp implementation="css">
                 <div className={classes.mobileRoot}>
-                    <Heading>{t("Profile")}</Heading>
+                    <Typography variant="h5">{t("Profile")}</Typography>
                     <div className={classes.container}>
                         <ProfilePictureSelector/>
                         <div className={classes.mobileFormWrapper}>

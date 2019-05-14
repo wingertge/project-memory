@@ -12,10 +12,10 @@ import {
     useShallowDecksQuery,
     useUserLanguagesQuery
 } from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import AutocompleteTagInput from "../../components/common/AutocompleteTagInput"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import DeckDisplay from "../../components/profile/DecksOverview/DeckDisplay"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
+import DeckDisplay from "../Settings/DecksOverview/DeckDisplay"
 import {useFormState, useID} from "../../hooks"
 
 const sortOptions = [

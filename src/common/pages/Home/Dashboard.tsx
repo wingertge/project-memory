@@ -12,8 +12,8 @@ import {
     useLessonsCountQuery,
     useUserLanguagesQuery
 } from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useUser} from "../../hooks"
 import PopularDecks from "../Intro/PopularDecks"
 import StageCounts from "./StageCounts"

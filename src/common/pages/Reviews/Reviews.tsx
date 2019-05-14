@@ -10,7 +10,7 @@ import {
     useReviewsQuery,
     useSubmitReviewMutation
 } from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {useID, useNow, useUpdateNow} from "../../hooks"
 import {randomElement} from "../../util"
 import ReviewDisplay from "./ReviewDisplay"

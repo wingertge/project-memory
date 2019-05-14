@@ -1,12 +1,12 @@
-import {Card, CardContent, Theme} from "@material-ui/core"
+import {Card, CardContent, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
+import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {Deck, useShallowDecksQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
-import Heading from "../../components/common/Heading"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
-import DeckDisplay from "../../components/profile/DecksOverview/DeckDisplay"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
+import DeckDisplay from "../Settings/DecksOverview/DeckDisplay"
 import {useID} from "../../hooks"
 
 interface PropTypes {
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export const DeckList = ({userId, isOwn}: PropTypes) => {
     const classes = useStyles()
+    const {t} = useTranslation()
     const {data, error, loading} = useShallowDecksQuery({
         variables: {id: userId}
     })
@@ -50,7 +51,7 @@ export const DeckList = ({userId, isOwn}: PropTypes) => {
         <>
             <Card>
                 <CardContent className={classes.cardContent}>
-                    <Heading>Decks</Heading>
+                    <Typography variant="h5">{t("Decks")}</Typography>
                     <div className={classes.deckList}>
                         {ownedDecks.map(deck => (
                             <DeckDisplay key={deck!.id} deck={deck} owned={isOwn} subscribed={userSubscribedDecks.some(a => a.id === deck.id)}/>

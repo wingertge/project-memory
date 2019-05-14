@@ -10,7 +10,7 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
+import useRouter from "use-react-router"
 import {
     Deck, useChangeLikeStatusMutation,
     useChangeSubscriptionStatusMutation,
@@ -18,7 +18,7 @@ import {
 } from "../../../../generated/graphql"
 import DeckImg from "../../../assets/deck.png"
 import {useID} from "../../../hooks"
-import LanguageIcon from "../../common/LanguageIcon"
+import LanguageIcon from "../../../components/common/LanguageIcon"
 
 interface PropTypes {
     owned: boolean

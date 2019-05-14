@@ -1,9 +1,9 @@
 import * as React from "react"
 import {oc} from "ts-optchain"
 import {Post, useFeedQuery} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/common/ApolloErrorBox"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import Feed from "../../components/common/Feed"
-import {TimedCircularProgress} from "../../components/common/TimedCircularProgress"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useID} from "../../hooks"
 
 interface PropTypes {

@@ -1,7 +1,7 @@
 import {CircularProgress} from "@material-ui/core"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import ErrorBox from "./ErrorBox"
+import ErrorBox from "../apollo/ErrorBox"
 import LoadingComponentProps = LoadableExport.LoadingComponentProps
 
 export const Loading = ({error, retry, pastDelay, timedOut}: LoadingComponentProps) => {
