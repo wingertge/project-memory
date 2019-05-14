@@ -30,7 +30,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         }
     },
     headerPadding: {
-        height: theme.spacing(8)
+        height: theme.spacing(7),
+        "@media (min-width:0px) and (orientation: landscape)": {
+            height: theme.spacing(6)
+        },
+        [theme.breakpoints.up(600)]: {
+            height: theme.spacing(8)
+        }
     }
 }))
 

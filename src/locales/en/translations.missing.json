@@ -141,5 +141,16 @@
   "See a list of all articles.": "See a list of all articles.",
   "You have {{lessonsCount}} unreviewed lessons": "You have {{lessonsCount}} unreviewed lessons",
   "Review now": "Review now",
-  "n/a": "n/a"
+  "n/a": "n/a",
+  "Got a question? First, check if there's already a help article in the sidebar. If you still can't figure it out, feel free to ask your question and look at other user's questions on our ": "Got a question? First, check if there's already a help article in the sidebar. If you still can't figure it out, feel free to ask your question and look at other user's questions on our ",
+  "question board": "question board",
+  ".": ".",
+  "Ask a question": "Ask a question",
+  "Question": "Question",
+  "Author": "Author",
+  "opened {{time}} by {{username}}": "opened {{time}} by {{username}}",
+  "{{messageCount}} messages": "{{messageCount}} messages",
+  "New Question": "New Question",
+  "Title": "Title",
+  "Leave your question": "Leave your question"
 }
