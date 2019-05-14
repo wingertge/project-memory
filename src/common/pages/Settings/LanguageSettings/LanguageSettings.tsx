@@ -1,7 +1,6 @@
 import {
-    Avatar,
+    Avatar, Box,
     Chip,
-    List,
     ListItem, Theme,
     Typography
 } from "@material-ui/core"
@@ -27,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         flexDirection: "row",
         padding: 0,
         maxWidth: "100%",
-        overflow: "auto"
+        flexWrap: "wrap"
     },
     languageListItem: {
         width: "inherit",
@@ -135,7 +134,7 @@ export const LanguageSettings = () => {
                     <Typography variant="subtitle1" className={classes.label}>{t("Native Language")}</Typography>
                     {nativeLanguage && <LanguageDisplay language={nativeLanguage} onClick={() => openDialog({onSave: setNativeLanguage, buttonText: "Save"})} />}
                     <Typography variant="subtitle1" className={classes.label}>{t("Learning Languages")}</Typography>
-                    <List className={classes.languageList}>
+                    <Box className={classes.languageList}>
                         {languages.map(lang => (
                             <ListItem key={lang.id} className={classes.languageListItem}>
                                 <LanguageDisplay language={lang} onDelete={() => removeLanguage(lang)}/>
@@ -145,7 +144,7 @@ export const LanguageSettings = () => {
                             <Chip avatar={<Avatar><Add/></Avatar>} onClick={() => openDialog({onSave: addLanguage})}
                                   label={t("Add")}/>
                         </ListItem>
-                    </List>
+                    </Box>
                 </div>
             </div>
         </>
