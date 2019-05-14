@@ -3,8 +3,8 @@ import {
 } from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
-import {Theme} from "../../theme"
-import LanguageSettings from "./LanguageSettings"
+import {Theme} from "../../../theme"
+import LanguageSettings from "../LanguageSettings"
 import ProfileSettingsContent from "./ProfileSettingsContent"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -26,10 +26,10 @@ export const ProfileSettings = () => {
     return (
         <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-                <ProfileSettingsContent/>
+                <ProfileSettingsContent />
             </CardContent>
             <div className={classes.spacer}/>
-            <LanguageSettings/>
+            <LanguageSettings />
         </Card>
     )
 }

@@ -6,7 +6,7 @@ import clsx from "clsx"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {toggle} from "../../util"
+import {toggle} from "../../../util"
 
 interface PropTypes {
     numSelected: number

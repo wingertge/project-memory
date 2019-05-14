@@ -15,10 +15,10 @@ import {
     useAddLanguageToUserMutation,
     useRemoveLanguageFromUserMutation, useUpdateProfileMutation,
     useUserLanguagesQuery
-} from "../../../generated/graphql"
-import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+} from "../../../../generated/graphql"
+import ApolloErrorBox from "../../../components/apollo/ApolloErrorBox"
 import LanguageDisplay from "./LanguageDisplay"
-import {useDialog, useID, useUser} from "../../hooks"
+import {useDialog, useID, useUser} from "../../../hooks"
 import LanguagePicker from "./LanguagePicker"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

@@ -5,7 +5,7 @@ import {oc} from "ts-optchain"
 import {Language, useUserLanguagesQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
-import LanguageDisplay from "../Settings/LanguageDisplay"
+import LanguageDisplay from "../Settings/LanguageSettings/LanguageDisplay"
 
 interface PropTypes {
     userId: string

@@ -1,9 +1,9 @@
 import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@material-ui/core"
 import React, {useState} from "react"
 import {useTranslation} from "react-i18next"
-import {useUploadProfilePictureMutation} from "../../../generated/graphql"
-import {useID} from "../../hooks"
-import ImageUploader from "../../components/common/ImageUploader"
+import {useUploadProfilePictureMutation} from "../../../../generated/graphql"
+import {useID} from "../../../hooks"
+import ImageUploader from "../../../components/common/ImageUploader"
 
 const ProfilePictureUploadDialog = ({closeDialog}) => {
     const {t} = useTranslation()

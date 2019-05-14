@@ -15,13 +15,13 @@ import {Dispatch, SetStateAction, useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
-import {Deck, useCardsQuery, useDeleteCardsMutation} from "../../../generated/graphql"
-import {useConfirmDialog, useDialog, useFormState} from "../../hooks"
-import EditCardForm from "./EditCardForm"
+import useRouter from "use-react-router"
+import {Deck, useCardsQuery, useDeleteCardsMutation} from "../../../../generated/graphql"
+import {useConfirmDialog, useDialog, useFormState} from "../../../hooks"
+import EditCardForm from "../EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
-import {Column, SortDirection} from "./DeckDetails"
+import {Column, SortDirection} from "../DeckDetails"
 
 interface PropTypes {
     rowsPerPage: number

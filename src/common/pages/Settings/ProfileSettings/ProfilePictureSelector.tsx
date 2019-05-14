@@ -8,7 +8,7 @@ import {
 import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {useDialog, useUser} from "../../hooks"
+import {useDialog, useUser} from "../../../hooks"
 import ProfilePictureUploadDialog from "./ProfilePictureUploadDialog"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

@@ -3,9 +3,9 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {Language} from "../../../generated/graphql"
-import LargeLanguageDisplay from "../Intro/LargeLanguageDisplay"
-import LargeLanguagePicker from "../Intro/LargeLanguagePicker"
+import {Language} from "../../../../generated/graphql"
+import LargeLanguageDisplay from "../../Intro/LargeLanguageDisplay"
+import LargeLanguagePicker from "../../Intro/LargeLanguagePicker"
 
 interface PropTypes {
     languages: Language[]

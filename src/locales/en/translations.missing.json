@@ -138,5 +138,8 @@
   "Dashboard": "Dashboard",
   "UserFeed": "UserFeed",
   "Unfollow": "Unfollow",
-  "See a list of all articles.": "See a list of all articles."
+  "See a list of all articles.": "See a list of all articles.",
+  "You have {{lessonsCount}} unreviewed lessons": "You have {{lessonsCount}} unreviewed lessons",
+  "Review now": "Review now",
+  "n/a": "n/a"
 }

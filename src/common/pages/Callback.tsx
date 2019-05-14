@@ -10,7 +10,7 @@ export const Callback = () => {
     const {location: {search}} = useRouter()
     const query = parse(search.replace("?", ""))
     const code = query.code as string
-    const redirectTo = "/"
+    const redirectTo = query.state.replace(/"/g, "").replace("#", "")
 
     if (!code) return <ErrorBox title={t("Error")} text={t("Missing Authorization code from URL")}/>
 
