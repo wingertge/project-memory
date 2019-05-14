@@ -1,5 +1,5 @@
 import validator from "validator"
-import {UNICODE_INVALID_CHARACTERS} from "../constants"
+import {UNICODE_INVALID_CHARACTERS} from "../hooks/constants"
 import {length as unicodeLength} from "stringz"
 import {PasswordPolicy, charsets} from "password-sheriff"
 

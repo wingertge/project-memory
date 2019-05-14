@@ -7,21 +7,20 @@ import DecksOverview from "./DecksOverview"
 import ProfileSettings from "./ProfileSettings"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-        root: {
-            display: "flex"
-        },
-        settingsBox: {
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            padding: theme.spacing(0, 2)
-        },
-        spacer: {
-            height: theme.spacing(2)
-        },
-        toolbar: theme.mixins.toolbar
-    })
-)
+    root: {
+        display: "flex"
+    },
+    settingsBox: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        padding: theme.spacing(0, 2)
+    },
+    spacer: {
+        height: theme.spacing(2)
+    },
+    toolbar: theme.mixins.toolbar
+}))
 
 export const Settings = () => {
     const classes = useStyles()

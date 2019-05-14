@@ -5,8 +5,8 @@ import {onError} from "apollo-link-error"
 import {BatchHttpLink} from "apollo-link-batch-http"
 import {RetryLink} from "apollo-link-retry"
 import fetch from "node-fetch"
-import localResolvers from "../common/localResolvers"
-import localTypeDefs from "../common/localTypeDefs"
+import localResolvers from "../common/apollo/localResolvers"
+import localTypeDefs from "../common/apollo/localTypeDefs"
 import proc from "./env"
 
 // tslint:disable-next-line:no-var-requires
