@@ -1,6 +1,6 @@
 /* eslint-disable */
 const ReactLoadablePlugin = require("react-loadable/webpack").ReactLoadablePlugin
-const razzleHeroku = require("razzle-heroku")
+//const razzleHeroku = require("razzle-heroku")
 
 const modifiedFileLoader = {
     exclude: [
@@ -61,9 +61,11 @@ module.exports = {
                     ]
                 }
             }
-            return razzleHeroku(newConfig, {target, dev}, webpack)
+            //return razzleHeroku(newConfig, {target, dev}, webpack)
+            return newConfig
         }
 
-        return razzleHeroku(config, {target, dev}, webpack)
+        //return razzleHeroku(config, {target, dev}, webpack)
+        return config
     }
 }

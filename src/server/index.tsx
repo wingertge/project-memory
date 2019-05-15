@@ -2,6 +2,7 @@ import {CssBaseline} from "@material-ui/core"
 import {ThemeProvider, ServerStyleSheets} from "@material-ui/styles"
 import cookieParser from "cookie-parser"
 import express from "express"
+import * as path from "path"
 import React from "react"
 import {ApolloProvider, getMarkupFromTree} from "react-apollo-hooks"
 import {renderToString} from "react-dom/server"
@@ -25,13 +26,13 @@ import device from "express-device"
 
 const server = express()
 // tslint:disable-next-line:no-console
-console.log(process.env.RAZZLE_PUBLIC_DIR)
+console.log(process.env.NODE_ENV === "production" ? path.join(__dirname, "../build/public") : "public")
 
 initI18n(() => {
     server
         .disable("x-powered-by")
         .use("/locales", express.static(`${appSrc}/locales`))
-        .use(express.static(process.env.RAZZLE_PUBLIC_DIR!))
+        .use(express.static(process.env.NODE_ENV === "production" ? path.join(__dirname, "../build/public") : "public"))
         .use(cookieParser(proc.env.COOKIE_SECRET))
         .use(morgan("tiny"))
         .use(I18NextMiddleware.handle(i18n, {removeLngFromUrl: false}))
