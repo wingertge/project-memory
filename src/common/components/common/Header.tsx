@@ -50,7 +50,7 @@ export const Header = () => {
     const {t} = useTranslation()
     const {history, location} = useRouter()
     const [anchorEl, setAnchorEl] = useState<any>(null)
-    const openMenu = event => authenticated ? setAnchorEl(event.currentTarget) : Auth.login(true, location)
+    const openMenu = event => authenticated ? setAnchorEl(event.currentTarget) : Auth.login(true, location.pathname)
     const closeMenu = () => setAnchorEl(null)
     const user = useUser()
     const authenticated = !!user

@@ -1,5 +1,4 @@
 import auth0 from "auth0-js"
-import {Location} from "history"
 
 class Auth {
     private auth0 = new auth0.WebAuth({
@@ -9,14 +8,14 @@ class Auth {
         audience: window.__REACT_APP_AUTH0_AUDIENCE__
     })
 
-    login = (redirectBack = true, location: string | Location<any> = "/") => {
+    login = (redirectBack = true, location: string = "/") => {
         const params = {
             responseType: "code",
             scope: "openid profile email update:current_user_metadata",
             state: "/"
         }
         if (redirectBack) {
-            params.state = JSON.stringify(location)
+            params.state = location
         }
 
         this.auth0.authorize(params)
