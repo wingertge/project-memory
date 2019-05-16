@@ -34,7 +34,13 @@ type State<T> = {
     }
 }
 
-export const useValidatedFormState = <T extends object = any>(defaults: T, validatorMap: ValidatorMap<T>, transformers: TransformerMap<T> = {}): ValidatedFormState<T> => {
+interface Options<T> {
+    transformers?: TransformerMap<T>
+    enableInitialValidation?: boolean
+}
+
+export const useValidatedFormState = <T extends object = any>(defaults: T, validatorMap: ValidatorMap<T>, options: Options<T> = {}): ValidatedFormState<T> => {
+    const {enableInitialValidation = true, transformers = {}} = options
     const keys = Object.keys(defaults)
     const state = keys.map(prop => {
         const [value, set] = useState(defaults[prop])
@@ -45,8 +51,8 @@ export const useValidatedFormState = <T extends object = any>(defaults: T, valid
     const {t} = useTranslation()
 
     const withChangeHandlers = state.map(({prop, value, set}) => {
-        const checkValid = () => {
-            const error = validate(prop, value, validatorMap[prop] || [], state, t)
+        const checkValid = (val: string) => {
+            const error = validate(prop, val, validatorMap[prop] || [], state, t)
             if(error !== errors[prop]) {
                 if(!error) delete errors[prop]
                 else errors[prop] = error
@@ -56,13 +62,13 @@ export const useValidatedFormState = <T extends object = any>(defaults: T, valid
         }
 
         const onChange = event => {
-            checkValid()
             const transformer = transformers[prop] || (val => val)
             const eventValue = transformer(event.target.value)
+            checkValid(eventValue)
             set(eventValue)
         }
 
-        checkValid()
+        if(enableInitialValidation) checkValid(value)
 
         return {
             prop,

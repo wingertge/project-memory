@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useEffect, useState} from "react"
+import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react"
 import {oc} from "ts-optchain"
 import {
     ReviewsCountDocument,
@@ -50,6 +50,14 @@ export const useUpdateNow = () => {
             "Reviews"
         ]
     })
+}
+
+export const usePrevious = <T>(value: T): T => {
+    const ref = useRef<T>()
+    useEffect(() => {
+        ref.current = value
+    })
+    return ref.current!
 }
 
 export * from "./useDialog"
