@@ -18,9 +18,6 @@ interface PropTypes {
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    root: {
-        paddingTop: theme.spacing(2)
-    },
     mainImage: {
         width: "100%",
         margin: "0 auto",
@@ -71,6 +68,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     blurbs: {
         textAlign: "left"
+    },
+    header: {
+        marginTop: theme.spacing(2)
     }
 }))
 
@@ -90,13 +90,14 @@ export const CMSPage = ({slug}: PropTypes) => {
     if(!data || !data.page || error) return <NotFound />
 
     const page = data.page!
+    const title = page.header || page.imageHeader || slug
 
     return (
-        <div className={classes.root}>
+        <div>
             <Helmet>
-                <title>{page.header ? t(`${page.header} - Project Memory`) : t("Project Memory")}</title>
+                <title>{t(`${title} - Project Memory`)}</title>
             </Helmet>
-            <Typography variant="h4">{page.header}</Typography>
+            {page.header && <Typography variant="h4" className={classes.header}>{page.header}</Typography>}
             {page.mainImage && (
                 <div style={{
                     backgroundImage: `url(${page.mainImage.url})`
