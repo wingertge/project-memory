@@ -19,7 +19,7 @@ interface PropTypes {
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
-        marginTop: theme.spacing(-2)
+        paddingTop: theme.spacing(2)
     },
     mainImage: {
         width: "100%",
