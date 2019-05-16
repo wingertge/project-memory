@@ -1,0 +1,16 @@
+mutation ReplyToIssue($id: ID!, $content: String!, $repliesSelect: IssueReplySelectInput) {
+    replyToIssue(id: $id, content: $content) {
+        id
+        replies(select: $repliesSelect) {
+            id
+            content
+            by {
+                id
+                username
+                picture
+            }
+            postedAt
+        }
+        replyCount
+    }
+}

@@ -1,0 +1,9 @@
+mutation DeleteIssueReply($id: ID!, $repliesSelect: IssueReplySelectInput) {
+    deleteIssueReply(id: $id) {
+        id
+        replies(select: $repliesSelect) {
+            id
+        }
+        replyCount
+    }
+}

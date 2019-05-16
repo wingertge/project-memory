@@ -547,6 +547,14 @@ export type ColorInput = {
   rgba?: Maybe<RgbaInput>;
 };
 
+export type DateComparator = {
+  gt?: Maybe<Scalars["Date"]>;
+  lt?: Maybe<Scalars["Date"]>;
+  eq?: Maybe<Scalars["Date"]>;
+  gte?: Maybe<Scalars["Date"]>;
+  lte?: Maybe<Scalars["Date"]>;
+};
+
 export type Deck = {
   id: Scalars["ID"];
   name: Scalars["String"];
@@ -1258,6 +1266,68 @@ export type ImageTransformationInput = {
   resize?: Maybe<ImageResizeInput>;
 };
 
+export type Issue = {
+  id: Scalars["ID"];
+  title: Scalars["String"];
+  content: Scalars["String"];
+  replies: Array<IssueReply>;
+  replyCount: Scalars["Int"];
+  by: User;
+  postedAt: Scalars["Date"];
+  lastActivity: Scalars["Date"];
+};
+
+export type IssueRepliesArgs = {
+  select?: Maybe<IssueReplySelectInput>;
+};
+
+export type IssueFilterInput = {
+  title?: Maybe<Scalars["String"]>;
+  textSearch?: Maybe<Scalars["String"]>;
+  replyCount?: Maybe<NumberComparator>;
+  by?: Maybe<Scalars["ID"]>;
+  postedAt?: Maybe<DateComparator>;
+  lastActivity?: Maybe<DateComparator>;
+};
+
+export type IssueInput = {
+  title?: Maybe<Scalars["String"]>;
+  content?: Maybe<Scalars["String"]>;
+};
+
+export type IssueReply = {
+  id: Scalars["ID"];
+  content: Scalars["String"];
+  by: User;
+  postedAt: Scalars["Date"];
+};
+
+export type IssueReplyFilterInput = {
+  by?: Maybe<Scalars["ID"]>;
+  postedAt?: Maybe<DateComparator>;
+};
+
+export type IssueReplySelectInput = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueReplyFilterInput>;
+  sort?: Maybe<IssueReplySortInput>;
+};
+
+export type IssueReplySortBy = "postedAt";
+
+export type IssueReplySortInput = {
+  sortDirection?: Maybe<SortDirection>;
+  sortBy?: Maybe<IssueReplySortBy>;
+};
+
+export type IssueSortBy = "replyCount" | "postedAt" | "lastActivity";
+
+export type IssueSortingInput = {
+  sortDirection?: Maybe<SortDirection>;
+  sortBy?: Maybe<IssueSortBy>;
+};
+
 export type Language = {
   id: Scalars["ID"];
   name: Scalars["String"];
@@ -1447,6 +1517,12 @@ export type Mutation = {
   changeLikeStatus?: Maybe<Deck>;
   addTagToDeck?: Maybe<Deck>;
   removeTagFromDeck?: Maybe<Deck>;
+  createIssue?: Maybe<Issue>;
+  editIssue?: Maybe<Issue>;
+  deleteIssue?: Maybe<Issue>;
+  replyToIssue?: Maybe<Issue>;
+  editIssueReply?: Maybe<Issue>;
+  deleteIssueReply?: Maybe<Issue>;
   updateNow: Scalars["ID"];
 };
 
@@ -1652,12 +1728,47 @@ export type MutationRemoveTagFromDeckArgs = {
   tag: Scalars["String"];
 };
 
+export type MutationCreateIssueArgs = {
+  input: IssueInput;
+};
+
+export type MutationEditIssueArgs = {
+  id: Scalars["ID"];
+  input: IssueInput;
+};
+
+export type MutationDeleteIssueArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationReplyToIssueArgs = {
+  id: Scalars["ID"];
+  content: Scalars["String"];
+};
+
+export type MutationEditIssueReplyArgs = {
+  id: Scalars["ID"];
+  content: Scalars["String"];
+};
+
+export type MutationDeleteIssueReplyArgs = {
+  id: Scalars["ID"];
+};
+
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
 /** An object with an ID */
 export type Node = {
   /** The id of the object. */
   id: Scalars["ID"];
+};
+
+export type NumberComparator = {
+  gt?: Maybe<Scalars["Int"]>;
+  lt?: Maybe<Scalars["Int"]>;
+  eq?: Maybe<Scalars["Int"]>;
+  gte?: Maybe<Scalars["Int"]>;
+  lte?: Maybe<Scalars["Int"]>;
 };
 
 export type Page = Node & {
@@ -2308,6 +2419,9 @@ export type Query = {
   deck?: Maybe<Deck>;
   tags: Array<Scalars["String"]>;
   review?: Maybe<Review>;
+  issue?: Maybe<Issue>;
+  issues: Array<Issue>;
+  issuesCount: Scalars["Int"];
   currentUserID: Scalars["ID"];
   loginExpiresAt: Scalars["ID"];
   now: Scalars["ID"];
@@ -2443,6 +2557,21 @@ export type QueryReviewArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryIssueArgs = {
+  id?: Maybe<Scalars["ID"]>;
+};
+
+export type QueryIssuesArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueFilterInput>;
+  sort?: Maybe<IssueSortingInput>;
+};
+
+export type QueryIssuesCountArgs = {
+  filter?: Maybe<IssueFilterInput>;
+};
+
 export type Review = {
   id: Scalars["ID"];
   nextReviewAt?: Maybe<Scalars["Date"]>;
@@ -2570,6 +2699,11 @@ export type ImageFragment = { __typename?: "Asset" } & Pick<
   "id" | "url" | "width" | "height"
 >;
 
+export type ShallowIssueFragment = { __typename?: "Issue" } & Pick<
+  Issue,
+  "id" | "title" | "postedAt" | "lastActivity" | "replyCount"
+> & { by: { __typename?: "User" } & Pick<User, "id" | "username" | "picture"> };
+
 export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
   Language,
   | "id"
@@ -2622,6 +2756,14 @@ export type ChangePostLikeMutation = { __typename?: "Mutation" } & {
   changePostLikeStatus: Maybe<
     { __typename?: "Post" } & Pick<Post, "id" | "isLikedBy" | "likeCount">
   >;
+};
+
+export type CreateIssueMutationVariables = {
+  input: IssueInput;
+};
+
+export type CreateIssueMutation = { __typename?: "Mutation" } & {
+  createIssue: Maybe<{ __typename?: "Issue" } & Pick<Issue, "id">>;
 };
 
 export type AddCardMutationVariables = {
@@ -2725,12 +2867,44 @@ export type UpdateDeckMutation = { __typename?: "Mutation" } & {
   updateDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "name">>;
 };
 
+export type DeleteIssueMutationVariables = {
+  id: Scalars["ID"];
+};
+
+export type DeleteIssueMutation = { __typename?: "Mutation" } & {
+  deleteIssue: Maybe<{ __typename?: "Issue" } & Pick<Issue, "id">>;
+};
+
+export type DeleteIssueReplyMutationVariables = {
+  id: Scalars["ID"];
+  repliesSelect?: Maybe<IssueReplySelectInput>;
+};
+
+export type DeleteIssueReplyMutation = { __typename?: "Mutation" } & {
+  deleteIssueReply: Maybe<
+    { __typename?: "Issue" } & Pick<Issue, "id" | "replyCount"> & {
+        replies: Array<{ __typename?: "IssueReply" } & Pick<IssueReply, "id">>;
+      }
+  >;
+};
+
 export type DeletePostMutationVariables = {
   id: Scalars["ID"];
 };
 
 export type DeletePostMutation = { __typename?: "Mutation" } & {
   deletePost: Maybe<Array<{ __typename?: "Post" } & Pick<Post, "id">>>;
+};
+
+export type EditIssueMutationVariables = {
+  id: Scalars["ID"];
+  input: IssueInput;
+};
+
+export type EditIssueMutation = { __typename?: "Mutation" } & {
+  editIssue: Maybe<
+    { __typename?: "Issue" } & Pick<Issue, "id" | "title" | "content">
+  >;
 };
 
 export type RemoveTagMutationVariables = {
@@ -2740,6 +2914,30 @@ export type RemoveTagMutationVariables = {
 
 export type RemoveTagMutation = { __typename?: "Mutation" } & {
   removeTagFromDeck: Maybe<{ __typename?: "Deck" } & Pick<Deck, "id" | "tags">>;
+};
+
+export type ReplyToIssueMutationVariables = {
+  id: Scalars["ID"];
+  content: Scalars["String"];
+  repliesSelect?: Maybe<IssueReplySelectInput>;
+};
+
+export type ReplyToIssueMutation = { __typename?: "Mutation" } & {
+  replyToIssue: Maybe<
+    { __typename?: "Issue" } & Pick<Issue, "id" | "replyCount"> & {
+        replies: Array<
+          { __typename?: "IssueReply" } & Pick<
+            IssueReply,
+            "id" | "content" | "postedAt"
+          > & {
+              by: { __typename?: "User" } & Pick<
+                User,
+                "id" | "username" | "picture"
+              >;
+            }
+        >;
+      }
+  >;
 };
 
 export type UpdateNowMutationVariables = {};
@@ -3044,6 +3242,49 @@ export type GlobalTagsQueryVariables = {
 
 export type GlobalTagsQuery = { __typename?: "Query" } & Pick<Query, "tags">;
 
+export type IssueQueryVariables = {
+  id: Scalars["ID"];
+  repliesSelect?: Maybe<IssueReplySelectInput>;
+};
+
+export type IssueQuery = { __typename?: "Query" } & {
+  issue: Maybe<
+    { __typename?: "Issue" } & Pick<Issue, "content"> & {
+        replies: Array<
+          { __typename?: "IssueReply" } & Pick<
+            IssueReply,
+            "id" | "content" | "postedAt"
+          > & {
+              by: { __typename?: "User" } & Pick<
+                User,
+                "id" | "username" | "picture"
+              >;
+            }
+        >;
+      } & ShallowIssueFragment
+  >;
+};
+
+export type IssuesQueryVariables = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueFilterInput>;
+  sort?: Maybe<IssueSortingInput>;
+};
+
+export type IssuesQuery = { __typename?: "Query" } & {
+  issues: Array<{ __typename?: "Issue" } & ShallowIssueFragment>;
+};
+
+export type IssuesCountQueryVariables = {
+  filter?: Maybe<IssueFilterInput>;
+};
+
+export type IssuesCountQuery = { __typename?: "Query" } & Pick<
+  Query,
+  "issuesCount"
+>;
+
 export type LanguagesQueryVariables = {};
 
 export type LanguagesQuery = { __typename?: "Query" } & {
@@ -3254,6 +3495,20 @@ export const imageFragmentDoc = gql`
     height
   }
 `;
+export const shallowIssueFragmentDoc = gql`
+  fragment shallowIssue on Issue {
+    id
+    by {
+      id
+      username
+      picture
+    }
+    title
+    postedAt
+    lastActivity
+    replyCount
+  }
+`;
 export const languageFieldsFragmentDoc = gql`
   fragment languageFields on Language {
     id
@@ -3423,6 +3678,51 @@ export function useChangePostLikeMutation(
     ChangePostLikeMutation,
     ChangePostLikeMutationVariables
   >(ChangePostLikeDocument, baseOptions);
+}
+export const CreateIssueDocument = gql`
+  mutation CreateIssue($input: IssueInput!) {
+    createIssue(input: $input) {
+      id
+    }
+  }
+`;
+export type CreateIssueMutationFn = ReactApollo.MutationFn<
+  CreateIssueMutation,
+  CreateIssueMutationVariables
+>;
+export type CreateIssueProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<CreateIssueMutation, CreateIssueMutationVariables>
+> &
+  TChildProps;
+export function withCreateIssue<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    CreateIssueMutation,
+    CreateIssueMutationVariables,
+    CreateIssueProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    CreateIssueMutation,
+    CreateIssueMutationVariables,
+    CreateIssueProps<TChildProps>
+  >(CreateIssueDocument, {
+    alias: "withCreateIssue",
+    ...operationOptions
+  });
+}
+
+export function useCreateIssueMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    CreateIssueMutation,
+    CreateIssueMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    CreateIssueMutation,
+    CreateIssueMutationVariables
+  >(CreateIssueDocument, baseOptions);
 }
 export const AddCardDocument = gql`
   mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
@@ -3779,6 +4079,103 @@ export function useUpdateDeckMutation(
     UpdateDeckMutationVariables
   >(UpdateDeckDocument, baseOptions);
 }
+export const DeleteIssueDocument = gql`
+  mutation DeleteIssue($id: ID!) {
+    deleteIssue(id: $id) {
+      id
+    }
+  }
+`;
+export type DeleteIssueMutationFn = ReactApollo.MutationFn<
+  DeleteIssueMutation,
+  DeleteIssueMutationVariables
+>;
+export type DeleteIssueProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<DeleteIssueMutation, DeleteIssueMutationVariables>
+> &
+  TChildProps;
+export function withDeleteIssue<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    DeleteIssueMutation,
+    DeleteIssueMutationVariables,
+    DeleteIssueProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeleteIssueMutation,
+    DeleteIssueMutationVariables,
+    DeleteIssueProps<TChildProps>
+  >(DeleteIssueDocument, {
+    alias: "withDeleteIssue",
+    ...operationOptions
+  });
+}
+
+export function useDeleteIssueMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeleteIssueMutation,
+    DeleteIssueMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    DeleteIssueMutation,
+    DeleteIssueMutationVariables
+  >(DeleteIssueDocument, baseOptions);
+}
+export const DeleteIssueReplyDocument = gql`
+  mutation DeleteIssueReply($id: ID!, $repliesSelect: IssueReplySelectInput) {
+    deleteIssueReply(id: $id) {
+      id
+      replies(select: $repliesSelect) {
+        id
+      }
+      replyCount
+    }
+  }
+`;
+export type DeleteIssueReplyMutationFn = ReactApollo.MutationFn<
+  DeleteIssueReplyMutation,
+  DeleteIssueReplyMutationVariables
+>;
+export type DeleteIssueReplyProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    DeleteIssueReplyMutation,
+    DeleteIssueReplyMutationVariables
+  >
+> &
+  TChildProps;
+export function withDeleteIssueReply<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    DeleteIssueReplyMutation,
+    DeleteIssueReplyMutationVariables,
+    DeleteIssueReplyProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    DeleteIssueReplyMutation,
+    DeleteIssueReplyMutationVariables,
+    DeleteIssueReplyProps<TChildProps>
+  >(DeleteIssueReplyDocument, {
+    alias: "withDeleteIssueReply",
+    ...operationOptions
+  });
+}
+
+export function useDeleteIssueReplyMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeleteIssueReplyMutation,
+    DeleteIssueReplyMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    DeleteIssueReplyMutation,
+    DeleteIssueReplyMutationVariables
+  >(DeleteIssueReplyDocument, baseOptions);
+}
 export const DeletePostDocument = gql`
   mutation DeletePost($id: ID!) {
     deletePost(id: $id) {
@@ -3823,6 +4220,53 @@ export function useDeletePostMutation(
     DeletePostMutation,
     DeletePostMutationVariables
   >(DeletePostDocument, baseOptions);
+}
+export const EditIssueDocument = gql`
+  mutation EditIssue($id: ID!, $input: IssueInput!) {
+    editIssue(id: $id, input: $input) {
+      id
+      title
+      content
+    }
+  }
+`;
+export type EditIssueMutationFn = ReactApollo.MutationFn<
+  EditIssueMutation,
+  EditIssueMutationVariables
+>;
+export type EditIssueProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<EditIssueMutation, EditIssueMutationVariables>
+> &
+  TChildProps;
+export function withEditIssue<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    EditIssueMutation,
+    EditIssueMutationVariables,
+    EditIssueProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    EditIssueMutation,
+    EditIssueMutationVariables,
+    EditIssueProps<TChildProps>
+  >(EditIssueDocument, {
+    alias: "withEditIssue",
+    ...operationOptions
+  });
+}
+
+export function useEditIssueMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    EditIssueMutation,
+    EditIssueMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    EditIssueMutation,
+    EditIssueMutationVariables
+  >(EditIssueDocument, baseOptions);
 }
 export const RemoveTagDocument = gql`
   mutation RemoveTag($deckId: ID!, $tag: String!) {
@@ -3869,6 +4313,66 @@ export function useRemoveTagMutation(
     RemoveTagMutation,
     RemoveTagMutationVariables
   >(RemoveTagDocument, baseOptions);
+}
+export const ReplyToIssueDocument = gql`
+  mutation ReplyToIssue(
+    $id: ID!
+    $content: String!
+    $repliesSelect: IssueReplySelectInput
+  ) {
+    replyToIssue(id: $id, content: $content) {
+      id
+      replies(select: $repliesSelect) {
+        id
+        content
+        by {
+          id
+          username
+          picture
+        }
+        postedAt
+      }
+      replyCount
+    }
+  }
+`;
+export type ReplyToIssueMutationFn = ReactApollo.MutationFn<
+  ReplyToIssueMutation,
+  ReplyToIssueMutationVariables
+>;
+export type ReplyToIssueProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<ReplyToIssueMutation, ReplyToIssueMutationVariables>
+> &
+  TChildProps;
+export function withReplyToIssue<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ReplyToIssueMutation,
+    ReplyToIssueMutationVariables,
+    ReplyToIssueProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ReplyToIssueMutation,
+    ReplyToIssueMutationVariables,
+    ReplyToIssueProps<TChildProps>
+  >(ReplyToIssueDocument, {
+    alias: "withReplyToIssue",
+    ...operationOptions
+  });
+}
+
+export function useReplyToIssueMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ReplyToIssueMutation,
+    ReplyToIssueMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ReplyToIssueMutation,
+    ReplyToIssueMutationVariables
+  >(ReplyToIssueDocument, baseOptions);
 }
 export const UpdateNowDocument = gql`
   mutation UpdateNow {
@@ -4832,6 +5336,136 @@ export function useGlobalTagsQuery(
 ) {
   return ReactApolloHooks.useQuery<GlobalTagsQuery, GlobalTagsQueryVariables>(
     GlobalTagsDocument,
+    baseOptions
+  );
+}
+export const IssueDocument = gql`
+  query Issue($id: ID!, $repliesSelect: IssueReplySelectInput) {
+    issue(id: $id) {
+      ...shallowIssue
+      content
+      replies(select: $repliesSelect) {
+        id
+        content
+        by {
+          id
+          username
+          picture
+        }
+        postedAt
+      }
+    }
+  }
+  ${shallowIssueFragmentDoc}
+`;
+export type IssueProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<IssueQuery, IssueQueryVariables>
+> &
+  TChildProps;
+export function withIssue<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    IssueQuery,
+    IssueQueryVariables,
+    IssueProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    IssueQuery,
+    IssueQueryVariables,
+    IssueProps<TChildProps>
+  >(IssueDocument, {
+    alias: "withIssue",
+    ...operationOptions
+  });
+}
+
+export function useIssueQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<IssueQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<IssueQuery, IssueQueryVariables>(
+    IssueDocument,
+    baseOptions
+  );
+}
+export const IssuesDocument = gql`
+  query Issues(
+    $limit: Int
+    $offset: Int
+    $filter: IssueFilterInput
+    $sort: IssueSortingInput
+  ) {
+    issues(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
+      ...shallowIssue
+    }
+  }
+  ${shallowIssueFragmentDoc}
+`;
+export type IssuesProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<IssuesQuery, IssuesQueryVariables>
+> &
+  TChildProps;
+export function withIssues<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    IssuesQuery,
+    IssuesQueryVariables,
+    IssuesProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    IssuesQuery,
+    IssuesQueryVariables,
+    IssuesProps<TChildProps>
+  >(IssuesDocument, {
+    alias: "withIssues",
+    ...operationOptions
+  });
+}
+
+export function useIssuesQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<IssuesQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<IssuesQuery, IssuesQueryVariables>(
+    IssuesDocument,
+    baseOptions
+  );
+}
+export const IssuesCountDocument = gql`
+  query IssuesCount($filter: IssueFilterInput) {
+    issuesCount(filter: $filter)
+  }
+`;
+export type IssuesCountProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<IssuesCountQuery, IssuesCountQueryVariables>
+> &
+  TChildProps;
+export function withIssuesCount<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    IssuesCountQuery,
+    IssuesCountQueryVariables,
+    IssuesCountProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    IssuesCountQuery,
+    IssuesCountQueryVariables,
+    IssuesCountProps<TChildProps>
+  >(IssuesCountDocument, {
+    alias: "withIssuesCount",
+    ...operationOptions
+  });
+}
+
+export function useIssuesCountQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<IssuesCountQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<IssuesCountQuery, IssuesCountQueryVariables>(
+    IssuesCountDocument,
     baseOptions
   );
 }

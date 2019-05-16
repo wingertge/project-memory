@@ -1,0 +1,16 @@
+query Issue($id: ID!, $repliesSelect: IssueReplySelectInput) {
+    issue(id: $id) {
+        ...shallowIssue
+        content
+        replies(select: $repliesSelect) {
+            id
+            content
+            by {
+                id
+                username
+                picture
+            }
+            postedAt
+        }
+    }
+}

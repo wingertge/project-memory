@@ -91,6 +91,21 @@ const Helpdesk = Loadable({
     loading: Loading
 })
 
+const IssuesBoard = Loadable({
+    loader: () => import("./pages/IssuesBoard"),
+    loading: Loading
+})
+
+const NewIssue = Loadable({
+    loader: () => import("./pages/IssuesBoard/NewIssue"),
+    loading: Loading
+})
+
+const IssueThread = Loadable({
+    loader: () => import("./pages/IssuesBoard/IssueThread"),
+    loading: Loading
+})
+
 const Routes = () => (
     <Switch>
         <SwitchedRoute exact path="/" authenticatedComponent={Home} unauthenticatedComponent={Index} />
@@ -107,6 +122,9 @@ const Routes = () => (
             if(typeof window === "undefined") { return <Redirect to="/"/> }
             Auth.logout()
         }} />
+        <AuthenticatedRoute path="/help/board/new" component={NewIssue} />
+        <AuthenticatedRoute path="/help/board/:threadId" component={IssueThread} />
+        <AuthenticatedRoute path="/help/board" component={IssuesBoard} />
         <Route path="/help/:slug*" component={Helpdesk} />
         <AuthenticatedRoute path="/test" component={TestBed} />
         <AuthenticatedRoute path="/lessons" component={Lessons} />

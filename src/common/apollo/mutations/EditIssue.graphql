@@ -1,0 +1,7 @@
+mutation EditIssue($id: ID!, $input: IssueInput!) {
+    editIssue(id: $id, input: $input) {
+        id
+        title
+        content
+    }
+}

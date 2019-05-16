@@ -1,0 +1,5 @@
+query Issues($limit: Int, $offset: Int, $filter: IssueFilterInput, $sort: IssueSortingInput) {
+    issues(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
+        ...shallowIssue
+    }
+}

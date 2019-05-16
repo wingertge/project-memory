@@ -1,0 +1,12 @@
+fragment shallowIssue on Issue {
+    id
+    by {
+        id
+        username
+        picture
+    }
+    title
+    postedAt
+    lastActivity
+    replyCount
+}

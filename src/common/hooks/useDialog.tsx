@@ -24,13 +24,17 @@ export function useDialog<TModalProps = {}>(ModalComponent: ComponentType<TModal
     }
 }
 
-export function useConfirmDialog(confirmAction: () => void, title: string, text?: string): [() => void, () => JSX.Element] {
+export function useConfirmDialog(confirmAction: (...params: any) => void, title: string, text?: string): [(...params: any) => void, () => JSX.Element] {
     const {t} = useTranslation()
     const [dialogOpen, setDialogOpen] = useState<boolean>(false)
-    const openDialog = () => setDialogOpen(true)
+    const [params, setParams] = useState<any>(undefined)
+    const openDialog = (...extraParams: any) => {
+        setParams(extraParams)
+        setDialogOpen(true)
+    }
     const closeDialog = () => setDialogOpen(false)
     const onConfirm = () => {
-        confirmAction()
+        confirmAction(...params)
         closeDialog()
     }
 

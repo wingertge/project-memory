@@ -172,5 +172,16 @@
   "Bulleted List (Ctrl + U)": "Bulleted List (Ctrl + U)",
   "Numbered List (Ctrl + O)": "Numbered List (Ctrl + O)",
   "Question can't be empty": "Question can't be empty",
-  "Title can't be empty": "Title can't be empty"
+  "Title can't be empty": "Title can't be empty",
+  "Breadcrumb": "Breadcrumb",
+  "Board": "Board",
+  "Successfully deleted the issue": "Successfully deleted the issue",
+  "Delete this issue?": "Delete this issue?",
+  "Are you sure you want to delete this issue? This action is irreversible and will delete all replies as well.": "Are you sure you want to delete this issue? This action is irreversible and will delete all replies as well.",
+  "Successfully deleted the reply": "Successfully deleted the reply",
+  "Delete this reply?": "Delete this reply?",
+  "Are you sure you want to delete this reply?": "Are you sure you want to delete this reply?",
+  "Clear": "Clear",
+  "last active {{time}}": "last active {{time}}",
+  "Questions per page": "Questions per page"
 }

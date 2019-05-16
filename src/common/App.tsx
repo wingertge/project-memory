@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             a: {
                 color: theme.palette.text.secondary,
                 textDecoration: "none",
+                cursor: "pointer",
                 "&:visited": {
                     color: theme.palette.text.secondary,
                     textDecoration: "none"

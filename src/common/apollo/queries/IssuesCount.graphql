@@ -1,0 +1,3 @@
+query IssuesCount($filter: IssueFilterInput) {
+    issuesCount(filter: $filter)
+}
