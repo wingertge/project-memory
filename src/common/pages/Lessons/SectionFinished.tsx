@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const SectionFinished = ({lessonCount}: PropTypes) => {
+export const SectionFinished = ({lessonCount, onMoreLessonsClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {history} = useRouter()
@@ -37,8 +37,12 @@ export const SectionFinished = ({lessonCount}: PropTypes) => {
                 {t("You can do more lessons, or go back to the home page.")}
             </Typography>
             <Button onClick={() => history.push("/")} className={classes.all}>{t("Home")}</Button>
-            <Button disabled={lessonCount === 0} title={lessonCount === 0 ? t("No more lessons available") : undefined}
-                    className={classes.all}>{t("More lessons")}</Button>
+            <Button disabled={lessonCount === 0}
+                    title={lessonCount === 0 ? t("No more lessons available") : undefined}
+                    onClick={onMoreLessonsClick}
+                    className={classes.all}>
+                {t("More lessons")}
+            </Button>
         </div>
     )
 }
