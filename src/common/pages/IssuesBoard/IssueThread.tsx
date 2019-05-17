@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         flex: "1 1 100%",
         borderLeftWidth: 1,
         borderLeftStyle: "solid",
-        borderLeftColor: fade(theme.palette.text.primary, 0.12)
+        borderLeftColor: fade(theme.palette.text.primary, 0.12),
+        position: "relative"
     },
     contentText: {
         padding: theme.spacing(0, 2),
@@ -67,8 +68,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         justifyContent: "flex-end",
         width: "100%",
         position: "absolute",
-        bottom: theme.spacing(1),
-        right: theme.spacing(1)
+        bottom: 0,
+        right: 0
     },
     avatar: {
         width: 50,

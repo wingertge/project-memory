@@ -57,7 +57,7 @@ export const Feed = ({isOwn = false, userId, feed}: PropTypes) => {
             createPost: [{id: "asd", type: "post", by: user, createdAt: new Date().toISOString(), content: newPostContent.value, __typename: "Post", originalPost: null, likeCount: 0, isLikedBy: false}, ...feed.slice(0, 19)] as any
         },
         refetchQueries: [
-            {query: FeedDocument, variables: {userId, filter: {limit: 20}}}
+            {query: FeedDocument, variables: {userId, currentUserId: user.id, filter: {limit: 20}}}
         ]
     })
 

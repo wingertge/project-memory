@@ -49,7 +49,7 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
 
     return (
         <div className={classes.drawer}>
-            <Hidden smUp implementation="css">
+            <Hidden mdUp implementation="css">
                 <SwipeableDrawer
                     container={container}
                     variant="temporary"
@@ -66,7 +66,7 @@ export const ResponsiveDrawer = ({children, container, isOpen}: PropTypes) => {
                     {children}
                 </SwipeableDrawer>
             </Hidden>
-            <Hidden xsDown implementation="css">
+            <Hidden smDown implementation="css">
                 <Drawer classes={{
                     paper: classes.drawerPaper
                 }} variant="permanent" open>

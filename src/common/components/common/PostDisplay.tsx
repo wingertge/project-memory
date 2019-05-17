@@ -81,7 +81,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     const isLiked = post.isLikedBy
     const deletePost = useDeletePostMutation({
         variables: {id: post.id},
-        refetchQueries: ["UserFeed"]
+        refetchQueries: ["Feed"]
     })
     const changeLikeStatus = useChangePostLikeMutation()
     const toggleLike = () => {
