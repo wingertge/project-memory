@@ -28,7 +28,7 @@ export const UserFeed = ({isOwn, userId}: PropTypes) => {
     if(error) return <ApolloErrorBox error={error} />
     if(loading) return <TimedCircularProgress />
 
-    return <Feed userId={userId} feed={feed} isOwn={isOwn} />
+    return <Feed feed={feed} isOwn={isOwn} />
 }
 
 export default UserFeed

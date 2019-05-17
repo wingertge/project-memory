@@ -32,7 +32,7 @@ export const AggregatedFeed = () => {
             <Helmet>
                 <title>{t("Feed - Project Memory")}</title>
             </Helmet>
-            <Feed userId={userId} feed={feed} />
+            <Feed feed={feed} />
         </>
     )
 }

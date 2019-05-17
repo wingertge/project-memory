@@ -22,7 +22,7 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
     const helmet = ReactHelmet.renderStatic()
 
     return `<!doctype html>
-        <html lang="">
+        <html lang="${lang}">
         <head>
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
             <meta charSet='utf-8' />

@@ -2,14 +2,13 @@ import {Button, Divider, Grow, List, ListItem, TextField, Theme, Typography} fro
 import {makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {FeedDocument, Post, useAddPostMutation} from "../../../generated/graphql"
+import {Post, useAddPostMutation} from "../../../generated/graphql"
 import {useToast, useUser, useValidatedFormState} from "../../hooks"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import PostDisplay from "./PostDisplay"
 
 interface PropTypes {
     isOwn?: boolean
-    userId: string
     feed: Post[]
 }
 
@@ -35,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const Feed = ({isOwn = false, userId, feed}: PropTypes) => {
+export const Feed = ({isOwn = false, feed}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
@@ -56,9 +55,7 @@ export const Feed = ({isOwn = false, userId, feed}: PropTypes) => {
             __typename: "Mutation",
             createPost: [{id: "asd", type: "post", by: user, createdAt: new Date().toISOString(), content: newPostContent.value, __typename: "Post", originalPost: null, likeCount: 0, isLikedBy: false}, ...feed.slice(0, 19)] as any
         },
-        refetchQueries: [
-            {query: FeedDocument, variables: {userId, currentUserId: user.id, filter: {limit: 20}}}
-        ]
+        refetchQueries: ["Feed"]
     })
 
     const addPost = () => {

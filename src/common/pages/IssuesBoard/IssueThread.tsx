@@ -180,11 +180,11 @@ export const IssueThread = () => {
     if(loading || !user) return <TimedCircularProgress />
     if(error) return <ApolloErrorBox error={error} />
 
-    const SideBar = () => (
+    const SideBar = ({by, postedAt}) => (
         <div className={classes.sideBar}>
-            <Avatar src={issue.by.picture} className={classes.avatar} />
-            <Typography>{issue.by.username}</Typography>
-            <Typography variant="body2" color="textSecondary">{moment(issue.postedAt).fromNow()}</Typography>
+            <Avatar src={by.picture} className={classes.avatar} onClick={() => history.push(`/profile/${by.id}`)} style={{cursor: "pointer"}} />
+            <Typography onClick={() => history.push(`/profile/${by.id}`)} style={{cursor: "pointer"}}>{by.username}</Typography>
+            <Typography variant="body2" color="textSecondary">{moment(postedAt).fromNow()}</Typography>
         </div>
     )
 
@@ -206,7 +206,7 @@ export const IssueThread = () => {
             <DeleteReplyConfirmDialog />
             <Card className={classes.card}>
                 <div className={classes.cardContent}>
-                    <SideBar />
+                    <SideBar by={issue.by} postedAt={issue.postedAt} />
                     <div className={classes.content}>
                         <div className={classes.contentText}>
                             <Typography variant="h5">{issue.title}</Typography>
@@ -225,7 +225,7 @@ export const IssueThread = () => {
             {issue.replies.map(reply => (
                 <Card key={reply.id} className={classes.card}>
                     <div className={classes.cardContent}>
-                        <SideBar />
+                        <SideBar by={reply.by} postedAt={reply.postedAt} />
                         <div className={classes.content}>
                             <ReactMarkdown plugins={[breaks]} className={classes.contentText}>{reply.content}</ReactMarkdown>
                             <div className={classes.actions}>
