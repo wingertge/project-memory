@@ -207,7 +207,7 @@ export const DeckImport = () => {
                     <Mapping label="Translation" formField={translationField} />
                     <Grid item xs={12} container justify="center" alignItems="center">
                         <Grid item>
-                            <Button variant="contained" color="primary" disabled={!isDone || importing} onClick={doImport}>
+                            <Button variant="contained" color="primary" disabled={!isDone || importing || saving} onClick={doImport}>
                                 {importing ? t("Importing...") : saving ? t("Saving...") : t("Import")}
                             </Button>
                         </Grid>
