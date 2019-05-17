@@ -125,7 +125,7 @@ export const IssueThread = () => {
         }
     })
 
-    const deleteIssueMutate = useDeleteIssueMutation({
+    const [deleteIssueMutate] = useDeleteIssueMutation({
         variables: {id: threadId},
         refetchQueries: ["Issues"]
     })
@@ -138,7 +138,7 @@ export const IssueThread = () => {
 
     const issue = oc(data).issue() as Issue
 
-    const deleteReplyMutate = useDeleteIssueReplyMutation()
+    const [deleteReplyMutate] = useDeleteIssueReplyMutation()
     const deleteReply = (replyId: string) => {
         deleteReplyMutate({
             variables: {id: replyId, repliesSelect},
@@ -155,7 +155,7 @@ export const IssueThread = () => {
     }
     const requestReplyDelete = (replyId: string) => openDeleteReplyConfirm(replyId)
 
-    const replyToIssueMutate = useReplyToIssueMutation()
+    const [replyToIssueMutate] = useReplyToIssueMutation()
     const replyToIssue = () => {
         replyToIssueMutate({
             variables: {id: threadId, content: content.value, repliesSelect},

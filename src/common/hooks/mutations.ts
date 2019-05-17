@@ -9,7 +9,7 @@ export const useSubscriptionToggle = (id?: string) => {
     const userDecks = useShallowDecksQuery({variables: {id}})
     const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
 
-    const updateSubscriptionStatusMutate = useChangeSubscriptionStatusMutation()
+    const [updateSubscriptionStatusMutate] = useChangeSubscriptionStatusMutation()
     return (deck: Deck) => updateSubscriptionStatusMutate({
         variables: {
             userId: id as string,

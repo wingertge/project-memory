@@ -19,7 +19,7 @@ export const FinishedStep = () => {
     const {t} = useTranslation()
     const user = useUser()
     const {history} = useRouter()
-    const mutate = useUpdateProfileMutation({
+    const [mutate] = useUpdateProfileMutation({
         variables: {
             id: oc(user).id(""),
             profile: {

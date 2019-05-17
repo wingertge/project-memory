@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React from "react"
 import {
     Dialog,
     DialogTitle,
@@ -45,7 +45,7 @@ export const PasswordChangeDialog = (
 
     const {Toast, openToast} = useToast(passwordExists ? "Successfully changed password" : "Successfully added a password")
 
-    const mutate = useUpdateProfileMutation({
+    const [mutate, {loading: saving, error}] = useUpdateProfileMutation({
         variables: {
             id,
             profile: {
@@ -55,21 +55,15 @@ export const PasswordChangeDialog = (
         }
     })
 
-    const [mutationErrors, setMutationErrors] = useState<any>(undefined)
-    const [saving, setSaving] = useState<boolean>(false)
-
     const save = () => {
-        setSaving(true)
-        mutate().then(({errors}) => {
-            setSaving(false)
-            setMutationErrors(errors)
+        mutate().then(() => {
             openToast()
             close()
         })
     }
 
     const mutationData = {
-        error: (mutationErrors && mutationErrors.length > 0 && mutationErrors[0]) || undefined
+        error
     }
 
     return (

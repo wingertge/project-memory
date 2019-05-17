@@ -49,7 +49,7 @@ export const useUpdateNow = () => {
             {query: ReviewsCountDocument, variables: {userId, filter: {}}},
             "Reviews"
         ]
-    })
+    })[0]
 }
 
 export const usePrevious = <T>(value: T): T => {

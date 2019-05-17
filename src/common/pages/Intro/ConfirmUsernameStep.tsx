@@ -32,7 +32,7 @@ export const ConfirmUsernameStep = () => {
     const {t} = useTranslation()
     const user = useUser()
     const {username} = useValidatedFormState<Form>({username: oc(user).username("")}, {username: usernameValidator})
-    const save = useUpdateProfileMutation({
+    const [save] = useUpdateProfileMutation({
         variables: {
             id: user && user.id,
             profile: {

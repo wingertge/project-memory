@@ -72,7 +72,7 @@ export const UserSummary = ({user, isOwn}: PropTypes) => {
     const {t} = useTranslation()
     const currentUserId = useID()
 
-    const changeFollowingStatusMutate = useChangeFollowingStatusMutation()
+    const [changeFollowingStatusMutate] = useChangeFollowingStatusMutation()
 
     if(!user) return <TimedCircularProgress />
 

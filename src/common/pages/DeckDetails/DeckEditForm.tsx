@@ -1,6 +1,5 @@
 import {Button, TextField, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
-import {ApolloError} from "apollo-client"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
@@ -59,17 +58,13 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
     const page = parseInt(pageString, 10)
     const {name} = useValidatedFormState<Form>({name: deck.name}, deckPropsValidators)
     const {Toast, openToast} = useToast("Successfully saved deck")
-    const [mutationError, setMutationError] = useState<ApolloError | undefined>(undefined)
-    const updateDeck = useUpdateDeckMutation({variables: {id, deckInput: {name: name.value}}})
-    const save = () => updateDeck().then(({errors}) => {
-        setMutationError((errors && errors.length > 0 && errors[0] as any) || undefined)
-        openToast()
-    })
+    const [updateDeck, {error: mutationError}] = useUpdateDeckMutation({variables: {id, deckInput: {name: name.value}}})
+    const save = () => updateDeck().then(openToast)
     const tags = deck.tags
     const [tagError, setTagError] = useState<string | undefined>(undefined)
     const userId = useID()
 
-    const addTagMutate = useAddTagMutation()
+    const [addTagMutate] = useAddTagMutation()
     const addTag = (chip: string) => {
         if(chip.trim().length > 40) {
             setTagError("Tag can't be longer than 40 characters")
@@ -92,7 +87,7 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
         })
     }
 
-    const removeTagMutate = useRemoveTagMutation()
+    const [removeTagMutate] = useRemoveTagMutation()
     const removeTag = (chip: string) => {
         setTagError(undefined)
         removeTagMutate({
@@ -108,13 +103,9 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
         })
     }
 
-    const [deleting, setDeleting] = useState(false)
-    const deleteDeckMutate = useDeleteDeckMutation({variables: {id}, refetchQueries: [{query: ShallowDecksDocument, variables: {id: userId}}, "GlobalDecks", "LessonsCount", "ReviewsCount"]})
+    const [deleteDeckMutate, {loading: deleting}] = useDeleteDeckMutation({variables: {id}, refetchQueries: [{query: ShallowDecksDocument, variables: {id: userId}}, "GlobalDecks", "LessonsCount", "ReviewsCount"]})
     const deleteDeck = () => {
-        setDeleting(true)
-        deleteDeckMutate().then(() => {
-            history.push("/")
-        })
+        deleteDeckMutate().then(() => history.push("/"))
     }
     const [confirmDelete, ConfirmDeleteDialog] = useConfirmDialog(
         deleteDeck,

@@ -88,7 +88,7 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
     })
 
     const subscribedDecks = oc(data).user.subscribedDecks([]) as Deck[]
-    const toggleSubscription = useChangeSubscriptionStatusMutation({
+    const [toggleSubscription] = useChangeSubscriptionStatusMutation({
         variables: {
             deckId: id,
             userId,
@@ -103,7 +103,7 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
         }
     })
 
-    const toggleLike = useChangeLikeStatusMutation({
+    const [toggleLike] = useChangeLikeStatusMutation({
         variables: {
             userId,
             deckId: id,

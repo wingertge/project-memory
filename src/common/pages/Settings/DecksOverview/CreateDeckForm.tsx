@@ -8,8 +8,6 @@ import {
     TextField, Theme
 } from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
-import {GraphQLError} from "graphql"
-import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
@@ -63,11 +61,9 @@ export const CreateDeckForm = ({closeDialog}: PropTypes) => {
         language: userLanguages && userLanguages[0].id
     }, validators)
 
-    const [saving, setSaving] = useState<boolean>(false)
     const {Toast, openToast} = useToast("Successfully created deck")
-    const [mutationErrors, setMutationErrors] = useState<GraphQLError[] | undefined>([])
 
-    const mutation = useAddDeckMutation({
+    const [mutation, {error: mutationError, loading: saving}] = useAddDeckMutation({
         variables: {
             input: {
                 owner: id,
@@ -80,17 +76,14 @@ export const CreateDeckForm = ({closeDialog}: PropTypes) => {
         }
     })
     const save = () => {
-        setSaving(true)
-        mutation().then(result => {
-            setMutationErrors(result.errors as any)
+        mutation().then(() => {
             openToast()
-            setSaving(false)
             closeDialog()
         })
     }
 
     const mutationData = {
-        error: (mutationErrors && mutationErrors.length > 0 && mutationErrors[0]) as any || undefined
+        error: mutationError
     }
 
     if(error) return <ApolloErrorBox error={error} retry={save} />

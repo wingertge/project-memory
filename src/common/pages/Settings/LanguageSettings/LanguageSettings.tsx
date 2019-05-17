@@ -61,7 +61,7 @@ export const LanguageSettings = () => {
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
     const languages = oc(data).user.languages([]) as Language[]
 
-    const removeLanguageMutate = useRemoveLanguageFromUserMutation()
+    const [removeLanguageMutate] = useRemoveLanguageFromUserMutation()
     const removeLanguage = (language: Language) => removeLanguageMutate({
         variables: {userId: id, languageId: language.id},
         optimisticResponse: {
@@ -80,7 +80,7 @@ export const LanguageSettings = () => {
         }
     })
 
-    const addLanguageMutate = useAddLanguageToUserMutation()
+    const [addLanguageMutate] = useAddLanguageToUserMutation()
     const addLanguage = (language: Language) => {
         addLanguageMutate({
             variables: {userId: id, languageId: oc(language).id("")},
@@ -101,7 +101,7 @@ export const LanguageSettings = () => {
         })
     }
 
-    const updateProfileMutate = useUpdateProfileMutation()
+    const [updateProfileMutate] = useUpdateProfileMutation()
     const setNativeLanguage = (language: Language) => {
         updateProfileMutate({
             variables: {

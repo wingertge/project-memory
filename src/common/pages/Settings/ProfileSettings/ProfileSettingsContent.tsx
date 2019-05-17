@@ -1,6 +1,5 @@
 import {Button, Grid, Hidden, TextField, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
-import {ApolloError} from "apollo-client"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
@@ -86,15 +85,12 @@ export const ProfileSettingsContent = () => {
     }, validators)
 
     const [passwordChangeOpen, setPasswordChangeOpen] = useState(false)
-    const [saving, setSaving] = useState(false)
-    const [error, setError] = useState<ApolloError | undefined>(undefined)
 
     const {Toast, openToast} = useToast("Successfully updated profile")
 
-    const updateProfile = useUpdateProfileMutation()
+    const [updateProfile, {loading: saving, error}] = useUpdateProfileMutation()
 
     const submit = () => {
-        setSaving(true)
         updateProfile({
             variables: {
                 id: user.id,
@@ -104,11 +100,7 @@ export const ProfileSettingsContent = () => {
                     email: email.value
                 }
             }
-        }).then(({errors}) => {
-            setSaving(false)
-            setError((errors && errors.length > 0 && errors[0] as any) || undefined)
-            openToast()
-        })
+        }).then(openToast)
     }
 
     if(!user) return <TimedCircularProgress />

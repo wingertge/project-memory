@@ -28,7 +28,7 @@ export const NativeLanguageStep = () => {
     const {t} = useTranslation()
     const user = useUser()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
-    const updateProfile = useUpdateProfileMutation()
+    const [updateProfile] = useUpdateProfileMutation()
     const pickLanguage = (lang: Language) => {
         setLanguage(lang)
         setTimeout(() => {

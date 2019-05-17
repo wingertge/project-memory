@@ -22,7 +22,7 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
     let [finishedReviews, setFinishedReviews] = useState<Review[]>([])
     let [remainingReviews, setRemainingReviews] = useState(reviews)
     let [currentReview, setCurrentReview] = useState(randomElement(remainingReviews))
-    const submitReviewMutate = useSubmitReviewMutation()
+    const [submitReviewMutate] = useSubmitReviewMutation()
     const userId = useID()
 
     const submitReview = (testedField: ReviewFields, correct: boolean) => {

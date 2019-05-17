@@ -42,7 +42,7 @@ export const Feed = ({isOwn = false, userId, feed}: PropTypes) => {
 
     const {newPostContent, valid} = useValidatedFormState<Form>({newPostContent: ""}, {newPostContent: [{fun: shorterThan(4001), message: "Posts can't be longer than 4000 characters"}]})
 
-    const addPostMutate = useAddPostMutation({
+    const [addPostMutate] = useAddPostMutation({
         variables: {
             input: {
                 type: "post",
@@ -66,7 +66,7 @@ export const Feed = ({isOwn = false, userId, feed}: PropTypes) => {
         newPostContent.set("")
     }
 
-    const repostMutate = useAddPostMutation()
+    const [repostMutate] = useAddPostMutation()
 
     const repost = (post: Post) => {
         repostMutate({

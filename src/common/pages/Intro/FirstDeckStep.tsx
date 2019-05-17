@@ -6,7 +6,6 @@ import {
     Typography
 } from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
-import {useState} from "react"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
@@ -59,10 +58,9 @@ export const FirstDeckStep = () => {
     const languages = oc(data).user.languages([]) as Language[]
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
     const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
-    const [saving, setSaving] = useState(false)
 
-    const updateProfile = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
-    const addDeckMutation = useAddDeckMutation({
+    const [updateProfile, {loading: updateProfileSaving}] = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
+    const [addDeckMutation, {loading: addDeckSaving}] = useAddDeckMutation({
         variables: {
             input: {
                 name: name.value,
@@ -75,8 +73,7 @@ export const FirstDeckStep = () => {
         }
     })
     const addDeck = () => {
-        setSaving(true)
-        addDeckMutation().then(() => updateProfile().then(() => setSaving(false)))
+        addDeckMutation().then(() => updateProfile())
     }
 
     const globalDecks = useGlobalDecksQuery({
@@ -92,6 +89,8 @@ export const FirstDeckStep = () => {
         }
     })
     const decks = oc(globalDecks.data).decks([]) as Deck[]
+
+    const saving = updateProfileSaving || addDeckSaving
 
     if(error || globalDecks.error) return <ApolloErrorBox error={error || globalDecks.error} />
     if(loading || globalDecks.loading) return null

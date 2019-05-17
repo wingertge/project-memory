@@ -9,14 +9,9 @@ const ProfilePictureUploadDialog = ({closeDialog}) => {
     const {t} = useTranslation()
     const userId = useID()
     const [file, setFile] = useState<File | undefined>(undefined)
-    const [saving, setSaving] = useState(false)
-    const uploadPicture = useUploadProfilePictureMutation({context: {hasUpload: true}})
+    const [uploadPicture, {loading: saving}] = useUploadProfilePictureMutation({context: {hasUpload: true}})
     const onSave = () => {
-        setSaving(true)
-        uploadPicture({variables: {userId, file}}).then(() => {
-            setSaving(false)
-            closeDialog()
-        })
+        uploadPicture({variables: {userId, file}}).then(closeDialog)
     }
 
     return (

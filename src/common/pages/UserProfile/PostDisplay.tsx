@@ -79,11 +79,11 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     const {history} = useRouter()
     const userId = useID()
     const isLiked = post.isLikedBy
-    const deletePost = useDeletePostMutation({
+    const [deletePost] = useDeletePostMutation({
         variables: {id: post.id},
         refetchQueries: ["UserFeed"]
     })
-    const changeLikeStatus = useChangePostLikeMutation()
+    const [changeLikeStatus] = useChangePostLikeMutation()
     const toggleLike = () => {
         changeLikeStatus({
             variables: {id: post.id, userId, value: !isLiked},

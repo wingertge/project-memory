@@ -7,10 +7,7 @@ import {
     TextField, Theme
 } from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
-import {ApolloError} from "apollo-client"
-import {useState} from "react"
 import * as React from "react"
-import {FetchResult} from "react-apollo"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {
@@ -84,13 +81,9 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
     const meaningRef: any = React.createRef()
     const pronunciationRef: any = React.createRef()
     const translationRef: any = React.createRef()
-    const [saving, setSaving] = useState(false)
-    const [error, setError] = useState<ApolloError | undefined>(undefined)
     const userId = useID()
 
-    const onSaved = ({errors}: FetchResult<any>) => {
-        setSaving(false)
-        setError((errors && errors.length > 0 && errors[0] as any) || undefined)
+    const onSaved = () => {
         openToast()
         if(card) {
             closeDialog()
@@ -102,7 +95,7 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
         }
     }
 
-    const addCardMutate = useAddCardMutation({
+    const [addCardMutate, {loading: addCardSaving}] = useAddCardMutation({
         variables: {
             card: {
                 meaning: meaning.value,
@@ -123,11 +116,10 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
     })
 
     const addCard = () => {
-        setSaving(true)
         addCardMutate().then(onSaved)
     }
 
-    const editCardMutate = useUpdateCardMutation({
+    const [editCardMutate, {loading: editCardSaving, error}] = useUpdateCardMutation({
         variables: {
             id: oc(card).id()!,
             card: {
@@ -149,7 +141,6 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
     })
 
     const editCard = () => {
-        setSaving(true)
         editCardMutate().then(onSaved)
     }
 
@@ -164,6 +155,8 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
             refToFocus ? (document.querySelector(refToFocus)! as any).focus() : submit()
         }
     }
+
+    const saving = editCardSaving || addCardSaving
 
     return (
         <>

@@ -1,4 +1,3 @@
-import {ApolloError} from "apollo-client"
 import {useEffect, useState} from "react"
 import * as React from "react"
 import Helmet from "react-helmet"
@@ -38,13 +37,10 @@ export const Reviews = () => {
     const [completedReviews, setCompletedReviews] = useState<ReviewMap>([])
     const [isDone, setDone] = useState(false)
     const [currentReview, setCurrentReview] = useState<Review | undefined>(randomElement(reviews))
-    const [mutationError, setMutationError] = useState<ApolloError | undefined>(undefined)
-    const [saving, setSaving] = useState(false)
     const updateNow = useUpdateNow()
-    const submitReviewMutate = useSubmitReviewMutation()
+    const [submitReviewMutate, {loading: saving, error: mutationError}] = useSubmitReviewMutation()
 
     const submitReview = (testedField: ReviewFields, correct: boolean) => {
-        setSaving(true)
         submitReviewMutate({
             variables: {reviewId: currentReview!.id, field: testedField, correct},
             optimisticResponse: () => {
@@ -75,9 +71,6 @@ export const Reviews = () => {
                 setCurrentReview(randomElement(newReviews))
                 return response as any
             }
-        }).then(({errors}) => {
-            setSaving(false)
-            setMutationError((errors && errors.length > 0 && errors[0] as any) || undefined)
         })
     }
 

@@ -86,7 +86,7 @@ const CardTable = (
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, cardCount - page * rowsPerPage)
     const hasPronunciation = deck.language.hasPronunciation
 
-    const deleteCards = useDeleteCardsMutation({
+    const [deleteCards] = useDeleteCardsMutation({
         variables: {
             deckId: id,
             cardIds: selected,

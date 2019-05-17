@@ -15,7 +15,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {Review, useLessonsQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
-import {useID} from "../../hooks"
+import {useID, useUpdateNow} from "../../hooks"
 import LessonDisplay from "./LessonDisplay"
 import LessonQuiz from "./LessonQuiz"
 import SectionFinished from "./SectionFinished"
@@ -80,7 +80,10 @@ export const Lessons = () => {
         setDone(false)
     }
 
+    const setNow = useUpdateNow()
+
     const onQuizFinished = async () => {
+        setNow()
         await refetch()
         setDone(true)
     }

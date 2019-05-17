@@ -27,8 +27,8 @@ export const LearningLanguageStep = () => {
     const {t} = useTranslation()
     const id = useID()
     const [language, setLanguage] = useState<Language | undefined>(undefined)
-    const addLanguage = useAddLanguageToUserMutation()
-    const updateProfile = useUpdateProfileMutation({
+    const [addLanguage] = useAddLanguageToUserMutation()
+    const [updateProfile] = useUpdateProfileMutation({
         variables: {
             id,
             profile: {

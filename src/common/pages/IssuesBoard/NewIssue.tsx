@@ -60,7 +60,7 @@ export const NewIssue = () => {
     const {text, title, valid} = useValidatedFormState<Form>({text: "", title: ""}, validators, {enableInitialValidation: false})
     const saveRef = useRef<() => void>()
 
-    const createIssueMutate = useCreateIssueMutation({variables: {input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
+    const [createIssueMutate] = useCreateIssueMutation({variables: {input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
     const createIssue = () => {
         createIssueMutate().then(() => {
             openToast()
