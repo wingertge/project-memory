@@ -112,7 +112,7 @@ export const ReviewDisplay = ({review, submitDisabled, onExit, exitDisabled, onS
 }
 
 const selectTestableField = (review: Review) => {
-    let testableFields: ReviewFields[] = review.card.pronunciation ? ["meaning", "pronunciation", "translation"] : ["meaning", "translation"]
+    let testableFields: ReviewFields[] = review.card.pronunciation && review.card.pronunciation.length > 0 ? ["meaning", "pronunciation", "translation"] : ["meaning", "translation"]
     testableFields = testableFields.filter(field => !review.reviewedFields!.includes(field))
     return testableFields[Math.floor(Math.random() * testableFields.length)]
 }
