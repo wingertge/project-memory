@@ -16,3 +16,4 @@ public/static
 schema.graphql
 graphql-schema.json
 app.yaml
+package-lock.json
