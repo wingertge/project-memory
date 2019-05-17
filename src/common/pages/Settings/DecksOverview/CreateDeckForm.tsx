@@ -11,6 +11,7 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
+import useRouter from "use-react-router"
 import {Language, useAddDeckMutation, useUserLanguagesQuery} from "../../../../generated/graphql"
 import {useID, ValidatorMap} from "../../../hooks"
 import {useToast} from "../../../hooks"
@@ -52,6 +53,7 @@ export const CreateDeckForm = ({closeDialog}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const id = useID()
+    const {history} = useRouter()
     const {data, error, loading} = useUserLanguagesQuery({variables: {userId: id}})
     const userLanguages = oc(data).user.languages([]) as Language[]
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
@@ -86,6 +88,8 @@ export const CreateDeckForm = ({closeDialog}: PropTypes) => {
         error: mutationError
     }
 
+    const selectedLanguage = userLanguages.find(userLang => userLang.id === language.value)
+
     if(error) return <ApolloErrorBox error={error} retry={save} />
     if(loading) return <CircularProgress />
 
@@ -118,6 +122,9 @@ export const CreateDeckForm = ({closeDialog}: PropTypes) => {
                 </Button>
                 <Button onClick={save} color="primary" disabled={saving || !valid}>
                     {t("Save")}
+                </Button>
+                <Button onClick={() => history.push(`/settings/import-deck/language/${oc(selectedLanguage).languageCode("")}/name/${name.value}`)} color="primary" disabled={saving || !valid}>
+                    {t("Import Anki Deck")}
                 </Button>
             </DialogActions>
         </>

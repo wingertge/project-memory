@@ -213,5 +213,7 @@
   "Sort": "Sort",
   "Meaning": "Meaning",
   "Pronunciation": "Pronunciation",
-  "Translation": "Translation"
+  "Translation": "Translation",
+  "Drag 'n' drop a file here, or click to select files": "Drag 'n' drop a file here, or click to select files",
+  "Drop your Anki collection (.apkg) here": "Drop your Anki collection (.apkg) here"
 }

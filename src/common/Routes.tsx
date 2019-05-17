@@ -106,6 +106,11 @@ const IssueThread = Loadable({
     loading: Loading
 })
 
+const DeckImport = Loadable({
+    loader: () => import("./pages/DeckImport"),
+    loading: Loading
+})
+
 const Routes = () => (
     <Switch>
         <SwitchedRoute exact path="/" authenticatedComponent={Home} unauthenticatedComponent={Index} />
@@ -113,6 +118,7 @@ const Routes = () => (
         <AuthenticatedRoute path="/intro" component={Intro} />
         <Route path="/callback" component={Callback} />
         <Route path="/page/:slug*" component={CMSPage} />
+        <AuthenticatedRoute path="/settings/import-deck/language/:languageCode/name/:name" component={DeckImport} />
         <AuthenticatedRoute path="/settings" component={Settings} />
         <AuthenticatedRoute path="/profile/search/:query*" component={UserSearch} />
         <AuthenticatedRoute path="/profile/:id([a-zA-Z0-9]+)?" component={UserProfile} />

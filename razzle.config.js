@@ -37,11 +37,13 @@ module.exports = {
             }
         }
     }],
-    modify: (config, {target, dev}, webpack) => {
+    modify: (config, {target}) => {
         if(target === "web") {
-            const newConfig = {
+            return {
                 ...config,
-                mode: "development",
+                node: {
+                    fs: 'empty'
+                },
                 plugins: [
                     new ReactLoadablePlugin({
                         filename: "./build/react-loadable.json"
@@ -61,11 +63,8 @@ module.exports = {
                     ]
                 }
             }
-            //return razzleHeroku(newConfig, {target, dev}, webpack)
-            return newConfig
         }
 
-        //return razzleHeroku(config, {target, dev}, webpack)
         return config
     }
 }

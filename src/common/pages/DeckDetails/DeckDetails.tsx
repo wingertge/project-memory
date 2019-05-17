@@ -1,3 +1,4 @@
+import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
 import Helmet from "react-helmet"
@@ -7,6 +8,7 @@ import useRouter from "use-react-router/use-react-router"
 import {Deck, useDeckDetailsQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {useID, ValidatorMap} from "../../hooks"
+import {Theme} from "../../theme"
 import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
 import CardTable from "./CardTable"
 import {DeckEditForm} from "./DeckEditForm"
@@ -27,6 +29,12 @@ export interface Form {
     name: string
 }
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    root: {
+        paddingTop: theme.spacing(2)
+    }
+}))
+
 export const deckPropsValidators: ValidatorMap<Form> = {
     name: [
         {fun: notEmpty, message: "Name can't be empty"},
@@ -36,6 +44,7 @@ export const deckPropsValidators: ValidatorMap<Form> = {
 }
 
 export const DeckDetails = () => {
+    const classes = useStyles()
     const {t} = useTranslation()
     const {match: {params: {id}}} = useRouter<RouteTypes>()
     const userId = useID()
@@ -58,7 +67,7 @@ export const DeckDetails = () => {
             <Helmet>
                 <title>{t("Deck {{deckName}} - Project Memory", {deckName: deck.name})}</title>
             </Helmet>
-            <div>
+            <div className={classes.root}>
                 {!isOwn && <DeckProperties deck={deck} />}
                 {isOwn && <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} />}
                 <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} deck={deck} own={isOwn} />

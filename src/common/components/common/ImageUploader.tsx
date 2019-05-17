@@ -205,8 +205,8 @@ export const ImageUploader = ({
         <div style={style} className={classes.root}>
             <div style={fileContainerStyle} className={classes.fileContainer}>
                 <div {...getRootProps()} className={classes.dropZone}>
-                    {withIcon && pictures.length === 0 && <CloudUpload/>}
-                    {withLabel && pictures.length === 0 && (
+                    {withIcon && (pictures.length === 0 || !withPreview) && <CloudUpload/>}
+                    {withLabel && (pictures.length === 0 || !withPreview) && (
                         <Typography style={labelStyles}>
                             {isDragActive ? t("Drop the file here...") : t("Drag 'n' drop a file here, or click to select files")}
                         </Typography>

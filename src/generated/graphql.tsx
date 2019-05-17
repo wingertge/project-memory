@@ -17,7 +17,6 @@ export type Scalars = {
    * Long can represent values between -(2^63) and 2^63 - 1.
    */
   Long: any;
-  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
   /** Custom scalar representing the hex color code value */
   HEX: any;
@@ -3285,6 +3284,14 @@ export type IssuesCountQuery = { __typename?: "Query" } & Pick<
   "issuesCount"
 >;
 
+export type LanguageQueryVariables = {
+  languageCode: Scalars["String"];
+};
+
+export type LanguageQuery = { __typename?: "Query" } & {
+  language: Maybe<{ __typename?: "Language" } & LanguageFieldsFragment>;
+};
+
 export type LanguagesQueryVariables = {};
 
 export type LanguagesQuery = { __typename?: "Query" } & {
@@ -5466,6 +5473,45 @@ export function useIssuesCountQuery(
 ) {
   return ReactApolloHooks.useQuery<IssuesCountQuery, IssuesCountQueryVariables>(
     IssuesCountDocument,
+    baseOptions
+  );
+}
+export const LanguageDocument = gql`
+  query Language($languageCode: String!) {
+    language(languageCode: $languageCode) {
+      ...languageFields
+    }
+  }
+  ${languageFieldsFragmentDoc}
+`;
+export type LanguageProps<TChildProps = {}> = Partial<
+  ReactApollo.DataProps<LanguageQuery, LanguageQueryVariables>
+> &
+  TChildProps;
+export function withLanguage<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    LanguageQuery,
+    LanguageQueryVariables,
+    LanguageProps<TChildProps>
+  >
+) {
+  return ReactApollo.withQuery<
+    TProps,
+    LanguageQuery,
+    LanguageQueryVariables,
+    LanguageProps<TChildProps>
+  >(LanguageDocument, {
+    alias: "withLanguage",
+    ...operationOptions
+  });
+}
+
+export function useLanguageQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<LanguageQueryVariables>
+) {
+  return ReactApolloHooks.useQuery<LanguageQuery, LanguageQueryVariables>(
+    LanguageDocument,
     baseOptions
   );
 }
