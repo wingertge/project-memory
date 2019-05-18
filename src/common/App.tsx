@@ -60,12 +60,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
                 right: 0
             },
             a: {
-                color: theme.palette.text.secondary,
+                color: theme.palette.primary.main,
                 textDecoration: "none",
                 cursor: "pointer",
-                "&:visited": {
-                    color: theme.palette.text.secondary,
-                    textDecoration: "none"
+                "&:hover": {
+                    textDecoration: "underline"
                 }
             }
         }
