@@ -36,10 +36,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         marginTop: theme.spacing(3),
     },
     table: {
-        minWidth: 1020,
+        width: "100%"
     },
     tableWrapper: {
         overflowX: "auto",
+        width: "100%"
     },
     actions: {
         width: 1,
