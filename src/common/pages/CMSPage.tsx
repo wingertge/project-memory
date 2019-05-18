@@ -1,4 +1,4 @@
-import {Button, Grid, Theme, Typography} from "@material-ui/core"
+import {Grid, Link, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
 import * as React from "react"
@@ -115,7 +115,7 @@ export const CMSPage = ({slug}: PropTypes) => {
                             <RichText
                                 raw={page.intro!.raw}
                                 linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
-                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                                externalLinkComponent={({href, children}) => <Link href={href}>{children}</Link>}
                             />
                         </Grid>
                     )}
@@ -124,7 +124,7 @@ export const CMSPage = ({slug}: PropTypes) => {
                             <RichText
                                 raw={page.main!.raw}
                                 linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
-                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                                externalLinkComponent={({href, children}) => <Link href={href}>{children}</Link>}
                             />
                         </Grid>
                     )}
@@ -133,7 +133,7 @@ export const CMSPage = ({slug}: PropTypes) => {
                             <RichText
                                 raw={raw}
                                 linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
-                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                                externalLinkComponent={({href, children}) => <Link href={href}>{children}</Link>}
                             />
                         </Grid>
                     ))}
@@ -142,7 +142,7 @@ export const CMSPage = ({slug}: PropTypes) => {
                             <RichText
                                 raw={page.outro!.raw}
                                 linkComponent={({to, children}) => <LinkButton to={to} variant="contained" color="primary">{children}</LinkButton>}
-                                externalLinkComponent={({href, children}) => <Button href={href} variant="contained" color="primary">{children}</Button>}
+                                externalLinkComponent={({href, children}) => <Link href={href}>{children}</Link>}
                             />
                         </Grid>
                     )}

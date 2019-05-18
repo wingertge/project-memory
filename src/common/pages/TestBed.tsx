@@ -1,13 +1,4 @@
-import {Dialog} from "@material-ui/core"
 import React from "react"
-import ReportDialog from "../components/common/ReportDialog"
 
-const TestBed = () => {
-    return (
-        <Dialog open>
-            <ReportDialog postId="" closeDialog={() => {}} />
-        </Dialog>
-    )
-}
-
+const TestBed = () => null
 export default TestBed
