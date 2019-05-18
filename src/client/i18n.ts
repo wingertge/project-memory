@@ -25,9 +25,9 @@ i18n
             }],*/
         },
         keySeparator: false,
-        debug: true,
+        debug: false,
         ...baseOptions,
-        saveMissing: true
+        saveMissing: false
     })
 
 i18n.on("languageChanged", lang => moment.locale(lang))
