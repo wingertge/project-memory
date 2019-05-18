@@ -21,7 +21,8 @@ import UpcomingReviews from "./UpcomingReviews"
 
 const useStyles = makeStyles((theme: Theme) => ({
     lessonsBox: {
-        margin: theme.spacing(2)
+        margin: theme.spacing(2),
+        marginTop: 0
     },
     deckDiscoveryBox: {
         display: "flex",
