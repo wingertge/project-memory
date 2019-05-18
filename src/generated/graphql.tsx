@@ -1509,6 +1509,7 @@ export type Mutation = {
   editPost?: Maybe<Post>;
   deletePost?: Maybe<Array<Post>>;
   changePostLikeStatus?: Maybe<Post>;
+  addReportToPost?: Maybe<Post>;
   addDeck?: Maybe<User>;
   updateDeck?: Maybe<Deck>;
   deleteDeck: User;
@@ -1690,6 +1691,13 @@ export type MutationChangePostLikeStatusArgs = {
   id: Scalars["ID"];
   userID: Scalars["ID"];
   value: Scalars["Boolean"];
+};
+
+export type MutationAddReportToPostArgs = {
+  id: Scalars["ID"];
+  reportedBy: Scalars["ID"];
+  reason: ReportReason;
+  message?: Maybe<Scalars["String"]>;
 };
 
 export type MutationAddDeckArgs = {
@@ -2371,9 +2379,14 @@ export type Post = {
   originalPost?: Maybe<Post>;
   likeCount: Scalars["Int"];
   isLikedBy: Scalars["Boolean"];
+  isReportedBy: Scalars["Boolean"];
 };
 
 export type PostIsLikedByArgs = {
+  userID: Scalars["ID"];
+};
+
+export type PostIsReportedByArgs = {
   userID: Scalars["ID"];
 };
 
@@ -2570,6 +2583,12 @@ export type QueryIssuesArgs = {
 export type QueryIssuesCountArgs = {
   filter?: Maybe<IssueFilterInput>;
 };
+
+export type ReportReason =
+  | "inappropriate"
+  | "copyright"
+  | "spam"
+  | "hatespeech";
 
 export type Review = {
   id: Scalars["ID"];
@@ -2939,6 +2958,19 @@ export type ReplyToIssueMutation = { __typename?: "Mutation" } & {
   >;
 };
 
+export type ReportPostMutationVariables = {
+  postId: Scalars["ID"];
+  userId: Scalars["ID"];
+  reason: ReportReason;
+  message?: Maybe<Scalars["String"]>;
+};
+
+export type ReportPostMutation = { __typename?: "Mutation" } & {
+  addReportToPost: Maybe<
+    { __typename?: "Post" } & Pick<Post, "id" | "isReportedBy">
+  >;
+};
+
 export type UpdateNowMutationVariables = {};
 
 export type UpdateNowMutation = { __typename?: "Mutation" } & Pick<
@@ -3080,7 +3112,10 @@ export type AggregatedFeedQuery = { __typename?: "Query" } & {
         subscriptionFeed: Maybe<
           Array<
             Maybe<
-              { __typename?: "Post" } & Pick<Post, "isLikedBy"> & {
+              { __typename?: "Post" } & Pick<
+                Post,
+                "isLikedBy" | "isReportedBy"
+              > & {
                   originalPost: Maybe<
                     { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
                       ShallowPostFieldsFragment
@@ -3199,7 +3234,10 @@ export type FeedQuery = { __typename?: "Query" } & {
         feed: Maybe<
           Array<
             Maybe<
-              { __typename?: "Post" } & Pick<Post, "isLikedBy"> & {
+              { __typename?: "Post" } & Pick<
+                Post,
+                "isLikedBy" | "isReportedBy"
+              > & {
                   originalPost: Maybe<
                     { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
                       ShallowPostFieldsFragment
@@ -4381,6 +4419,62 @@ export function useReplyToIssueMutation(
     ReplyToIssueMutationVariables
   >(ReplyToIssueDocument, baseOptions);
 }
+export const ReportPostDocument = gql`
+  mutation ReportPost(
+    $postId: ID!
+    $userId: ID!
+    $reason: ReportReason!
+    $message: String
+  ) {
+    addReportToPost(
+      id: $postId
+      reportedBy: $userId
+      reason: $reason
+      message: $message
+    ) {
+      id
+      isReportedBy(userID: $userId)
+    }
+  }
+`;
+export type ReportPostMutationFn = ReactApollo.MutationFn<
+  ReportPostMutation,
+  ReportPostMutationVariables
+>;
+export type ReportPostProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<ReportPostMutation, ReportPostMutationVariables>
+> &
+  TChildProps;
+export function withReportPost<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ReportPostMutation,
+    ReportPostMutationVariables,
+    ReportPostProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ReportPostMutation,
+    ReportPostMutationVariables,
+    ReportPostProps<TChildProps>
+  >(ReportPostDocument, {
+    alias: "withReportPost",
+    ...operationOptions
+  });
+}
+
+export function useReportPostMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ReportPostMutation,
+    ReportPostMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ReportPostMutation,
+    ReportPostMutationVariables
+  >(ReportPostDocument, baseOptions);
+}
 export const UpdateNowDocument = gql`
   mutation UpdateNow {
     updateNow @client
@@ -4857,6 +4951,7 @@ export const AggregatedFeedDocument = gql`
       subscriptionFeed(filter: $filter) {
         ...shallowPostFields
         isLikedBy(userID: $userId)
+        isReportedBy(userID: $userId)
         originalPost {
           ...shallowPostFields
           isLikedBy(userID: $userId)
@@ -5220,6 +5315,7 @@ export const FeedDocument = gql`
       feed(filter: $filter) {
         ...shallowPostFields
         isLikedBy(userID: $currentUserId)
+        isReportedBy(userID: $currentUserId)
         originalPost {
           ...shallowPostFields
           isLikedBy(userID: $currentUserId)

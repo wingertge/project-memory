@@ -1,4 +1,4 @@
-import {Button, Divider, Grow, List, ListItem, TextField, Theme, Typography} from "@material-ui/core"
+import {Button, Collapse, Divider, Grow, List, ListItem, TextField, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
@@ -106,10 +106,12 @@ export const Feed = ({isOwn = false, feed}: PropTypes) => {
                 <List>
                     {feed.map((post, i) => (
                         <ListItem key={post.id} disableGutters>
-                            <div style={{width: "100%"}}>
-                                <PostDisplay post={post} isOwn={isOwn} onRepostClick={repost} />
-                                {i < feed.length - 1 && <Divider />}
-                            </div>
+                            <Collapse in={!post.isReportedBy} unmountOnExit style={{width: "100%"}}>
+                                <div style={{width: "100%"}}>
+                                    <PostDisplay post={post} isOwn={isOwn} onRepostClick={repost} />
+                                    {i < feed.length - 1 && <Divider />}
+                                </div>
+                            </Collapse>
                         </ListItem>
                     ))}
                 </List>

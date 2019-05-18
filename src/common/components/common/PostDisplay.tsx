@@ -15,7 +15,8 @@ import useRouter from "use-react-router/use-react-router"
 import {Post, useChangePostLikeMutation, useDeletePostMutation} from "../../../generated/graphql"
 import ReactMarkdown from "react-markdown"
 import breaks from "remark-breaks"
-import {useID} from "../../hooks"
+import {useDialog, useID} from "../../hooks"
+import ReportDialog from "./ReportDialog"
 
 interface PropTypes {
     post: Post
@@ -98,9 +99,11 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
             }
         })
     }
+    const {Dialog, openDialog} = useDialog(ReportDialog)
 
     return (
         <div className={classes.post}>
+            <Dialog />
             <div className={classes.header} onClick={() => {if(!isOwn) history.push(`/profile/${post.by.id}`)}} style={{cursor: isOwn ? "default" : "pointer"}}>
                 <Avatar src={post.by.picture} className={classes.avatar} />
                 <Typography style={{fontWeight: "bold"}}>{post.by.username}</Typography>
@@ -131,7 +134,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                         </IconButton>
                         <Typography className={classes.likeCount}>{post.likeCount}</Typography>
                         <div style={{flex: "1 1 100%"}} />
-                        <IconButton title={t("Report")} className={classes.actionButton}>
+                        <IconButton title={t("Report")} onClick={() => openDialog({postId: post.id})} className={classes.actionButton}>
                             <ReportProblem className={classes.actionIcon} />
                         </IconButton>
                     </div>

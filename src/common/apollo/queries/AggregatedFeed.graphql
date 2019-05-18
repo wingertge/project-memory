@@ -2,7 +2,7 @@ query AggregatedFeed($userId: ID!, $filter: PostFilterInput) {
     user(id: $userId) {
         id
         subscriptionFeed(filter: $filter) {
-            ...shallowPostFields, isLikedBy(userID: $userId)
+            ...shallowPostFields, isLikedBy(userID: $userId), isReportedBy(userID: $userId)
             originalPost {...shallowPostFields, isLikedBy(userID: $userId)}
         }
     }

@@ -1,0 +1,6 @@
+mutation ReportPost($postId: ID!, $userId: ID!, $reason: ReportReason!, $message: String) {
+    addReportToPost(id: $postId, reportedBy: $userId, reason: $reason, message: $message) {
+        id
+        isReportedBy(userID: $userId)
+    }
+}

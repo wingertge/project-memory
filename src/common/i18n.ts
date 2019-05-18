@@ -1,7 +1,7 @@
 export const baseOptions = {
     fallbackLng: "en",
 
-    ns: ["translations"],
+    ns: ["translations", "cms"],
     defaultNS: "translations",
     saveMissing: true,
 

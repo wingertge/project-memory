@@ -80,7 +80,7 @@ const NotFound = Loadable({
 })
 
 export const CMSPage = ({slug}: PropTypes) => {
-    const {t} = useTranslation()
+    const {t} = useTranslation("cms")
     const classes = useStyles()
     const {match: {params: {slug: routeSlug}}} = useRouter<{slug: string}>()
     slug = slug || routeSlug

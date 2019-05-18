@@ -64,7 +64,7 @@ interface RendererPropTypes extends Node {
 const log = debug("app:RichText")
 
 const HeadingOne = ({nodes}: RendererPropTypes) => {
-    const {t} = useTranslation()
+    const {t} = useTranslation("cms")
 
     return nodes!.some(({leaves}) => leaves!.some(({text}) => text !== "")) && nodes!.map(({leaves}) => (
         <div key={v4()}>
@@ -76,7 +76,7 @@ const HeadingOne = ({nodes}: RendererPropTypes) => {
 }
 
 const HeadingTwo = ({nodes}: RendererPropTypes) => {
-    const {t} = useTranslation()
+    const {t} = useTranslation("cms")
 
     return nodes!.some(({leaves}) => leaves!.some(({text}) => text !== "")) && nodes!.map(({leaves}) => (
         <div key={v4()}>
@@ -137,7 +137,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const Text = ({leaves}: RendererPropTypes) => {
     const classes = useStyles()
-    const {t} = useTranslation()
+    const {t} = useTranslation("cms")
 
     return (
         <>
