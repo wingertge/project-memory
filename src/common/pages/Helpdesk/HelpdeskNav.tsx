@@ -12,7 +12,7 @@ interface PropTypes {
 }
 
 export const HelpdeskNav = ({drawerOpen}: PropTypes) => {
-    const {t} = useTranslation()
+    const {t} = useTranslation("help")
     const {history} = useRouter()
     const {data, loading, error} = useHelpPageListQuery()
 

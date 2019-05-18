@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export const HelpdeskArticle = ({slug, setDrawerOpen, drawerOpen}: PropTypes) => {
     const classes = useStyles()
-    const {t} = useTranslation()
+    const {t} = useTranslation("help")
     const {data, loading, error} = useHelpPageQuery({variables: {slug}})
 
     if(loading) return null
