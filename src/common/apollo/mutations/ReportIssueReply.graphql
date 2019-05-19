@@ -1,0 +1,6 @@
+mutation ReportIssueReply($id: ID!, $reason: ReportReason!, $message: String, $userId: ID!) {
+    reportIssueReply(id: $id, reason: $reason, message: $message) {
+        id
+        isReportedBy(id: $userId)
+    }
+}

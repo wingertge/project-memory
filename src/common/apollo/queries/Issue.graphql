@@ -1,4 +1,4 @@
-query Issue($id: ID!, $limit: Int, $offset: Int, $filter: IssueReplyFilterInput, $sort: IssueReplySortInput) {
+query Issue($id: ID!, $limit: Int, $offset: Int, $filter: IssueReplyFilterInput, $sort: IssueReplySortInput, $userId: ID!) {
     issue(id: $id) {
         ...shallowIssue
         content
@@ -12,6 +12,7 @@ query Issue($id: ID!, $limit: Int, $offset: Int, $filter: IssueReplyFilterInput,
             }
             postedAt
             editedOn
+            isReportedBy(id: $userId)
         }
     }
 }

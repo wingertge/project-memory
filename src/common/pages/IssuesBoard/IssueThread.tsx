@@ -133,6 +133,7 @@ export const IssueThread = () => {
     const {data, loading, error} = useIssueQuery({
         variables: {
             id: threadId,
+            userId: id,
             ...repliesSelect
         }
     })
@@ -281,6 +282,7 @@ export const IssueThread = () => {
                             <Typography variant="h5">{issue.title}</Typography>
                             <ReactMarkdown plugins={[breaks]}>{issue.content}</ReactMarkdown>
                         </div>
+                        <div style={{height: 32}} />
                         <div className={classes.actions}>
                             {issue.editedOn && (
                                 <Typography variant="body2" color="textSecondary" style={{whiteSpace: "nowrap"}}>

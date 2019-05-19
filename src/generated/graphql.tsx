@@ -1299,6 +1299,7 @@ export type Issue = {
   postedAt: Scalars["Date"];
   lastActivity: Scalars["Date"];
   editedOn?: Maybe<Scalars["Date"]>;
+  isReportedBy: Scalars["Boolean"];
 };
 
 export type IssueRepliesArgs = {
@@ -1306,6 +1307,10 @@ export type IssueRepliesArgs = {
   offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<IssueReplyFilterInput>;
   sort?: Maybe<IssueReplySortInput>;
+};
+
+export type IssueIsReportedByArgs = {
+  id: Scalars["ID"];
 };
 
 export type IssueFilterInput = {
@@ -1328,6 +1333,11 @@ export type IssueReply = {
   by: User;
   postedAt: Scalars["Date"];
   editedOn?: Maybe<Scalars["Date"]>;
+  isReportedBy: Scalars["Boolean"];
+};
+
+export type IssueReplyIsReportedByArgs = {
+  id: Scalars["ID"];
 };
 
 export type IssueReplyFilterInput = {
@@ -1543,8 +1553,10 @@ export type Mutation = {
   editIssue?: Maybe<Issue>;
   deleteIssue?: Maybe<Issue>;
   replyToIssue?: Maybe<Issue>;
-  editIssueReply?: Maybe<Issue>;
+  editIssueReply?: Maybe<IssueReply>;
   deleteIssueReply?: Maybe<Issue>;
+  reportIssue?: Maybe<Issue>;
+  reportIssueReply?: Maybe<IssueReply>;
   updateNow: Scalars["ID"];
 };
 
@@ -1788,6 +1800,18 @@ export type MutationEditIssueReplyArgs = {
 
 export type MutationDeleteIssueReplyArgs = {
   id: Scalars["ID"];
+};
+
+export type MutationReportIssueArgs = {
+  id: Scalars["ID"];
+  reason: ReportReason;
+  message?: Maybe<Scalars["String"]>;
+};
+
+export type MutationReportIssueReplyArgs = {
+  id: Scalars["ID"];
+  reason: ReportReason;
+  message?: Maybe<Scalars["String"]>;
 };
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
@@ -3001,7 +3025,7 @@ export type EditIssueReplyMutationVariables = {
 
 export type EditIssueReplyMutation = { __typename?: "Mutation" } & {
   editIssueReply: Maybe<
-    { __typename?: "Issue" } & Pick<Issue, "id" | "content">
+    { __typename?: "IssueReply" } & Pick<IssueReply, "id" | "content">
   >;
 };
 
@@ -3038,6 +3062,32 @@ export type ReplyToIssueMutation = { __typename?: "Mutation" } & {
             }
         >;
       }
+  >;
+};
+
+export type ReportIssueMutationVariables = {
+  id: Scalars["ID"];
+  reason: ReportReason;
+  message?: Maybe<Scalars["String"]>;
+  userId: Scalars["ID"];
+};
+
+export type ReportIssueMutation = { __typename?: "Mutation" } & {
+  reportIssue: Maybe<
+    { __typename?: "Issue" } & Pick<Issue, "id" | "isReportedBy">
+  >;
+};
+
+export type ReportIssueReplyMutationVariables = {
+  id: Scalars["ID"];
+  reason: ReportReason;
+  message?: Maybe<Scalars["String"]>;
+  userId: Scalars["ID"];
+};
+
+export type ReportIssueReplyMutation = { __typename?: "Mutation" } & {
+  reportIssueReply: Maybe<
+    { __typename?: "IssueReply" } & Pick<IssueReply, "id" | "isReportedBy">
   >;
 };
 
@@ -3374,6 +3424,7 @@ export type IssueQueryVariables = {
   offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<IssueReplyFilterInput>;
   sort?: Maybe<IssueReplySortInput>;
+  userId: Scalars["ID"];
 };
 
 export type IssueQuery = { __typename?: "Query" } & {
@@ -3382,7 +3433,7 @@ export type IssueQuery = { __typename?: "Query" } & {
         replies: Array<
           { __typename?: "IssueReply" } & Pick<
             IssueReply,
-            "id" | "content" | "postedAt" | "editedOn"
+            "id" | "content" | "postedAt" | "editedOn" | "isReportedBy"
           > & {
               by: { __typename?: "User" } & Pick<
                 User,
@@ -4547,6 +4598,111 @@ export function useReplyToIssueMutation(
     ReplyToIssueMutationVariables
   >(ReplyToIssueDocument, baseOptions);
 }
+export const ReportIssueDocument = gql`
+  mutation ReportIssue(
+    $id: ID!
+    $reason: ReportReason!
+    $message: String
+    $userId: ID!
+  ) {
+    reportIssue(id: $id, reason: $reason, message: $message) {
+      id
+      isReportedBy(id: $userId)
+    }
+  }
+`;
+export type ReportIssueMutationFn = ReactApollo.MutationFn<
+  ReportIssueMutation,
+  ReportIssueMutationVariables
+>;
+export type ReportIssueProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<ReportIssueMutation, ReportIssueMutationVariables>
+> &
+  TChildProps;
+export function withReportIssue<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ReportIssueMutation,
+    ReportIssueMutationVariables,
+    ReportIssueProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ReportIssueMutation,
+    ReportIssueMutationVariables,
+    ReportIssueProps<TChildProps>
+  >(ReportIssueDocument, {
+    alias: "withReportIssue",
+    ...operationOptions
+  });
+}
+
+export function useReportIssueMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ReportIssueMutation,
+    ReportIssueMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ReportIssueMutation,
+    ReportIssueMutationVariables
+  >(ReportIssueDocument, baseOptions);
+}
+export const ReportIssueReplyDocument = gql`
+  mutation ReportIssueReply(
+    $id: ID!
+    $reason: ReportReason!
+    $message: String
+    $userId: ID!
+  ) {
+    reportIssueReply(id: $id, reason: $reason, message: $message) {
+      id
+      isReportedBy(id: $userId)
+    }
+  }
+`;
+export type ReportIssueReplyMutationFn = ReactApollo.MutationFn<
+  ReportIssueReplyMutation,
+  ReportIssueReplyMutationVariables
+>;
+export type ReportIssueReplyProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    ReportIssueReplyMutation,
+    ReportIssueReplyMutationVariables
+  >
+> &
+  TChildProps;
+export function withReportIssueReply<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    ReportIssueReplyMutation,
+    ReportIssueReplyMutationVariables,
+    ReportIssueReplyProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    ReportIssueReplyMutation,
+    ReportIssueReplyMutationVariables,
+    ReportIssueReplyProps<TChildProps>
+  >(ReportIssueReplyDocument, {
+    alias: "withReportIssueReply",
+    ...operationOptions
+  });
+}
+
+export function useReportIssueReplyMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ReportIssueReplyMutation,
+    ReportIssueReplyMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    ReportIssueReplyMutation,
+    ReportIssueReplyMutationVariables
+  >(ReportIssueReplyDocument, baseOptions);
+}
 export const ReportPostDocument = gql`
   mutation ReportPost(
     $postId: ID!
@@ -5648,6 +5804,7 @@ export const IssueDocument = gql`
     $offset: Int
     $filter: IssueReplyFilterInput
     $sort: IssueReplySortInput
+    $userId: ID!
   ) {
     issue(id: $id) {
       ...shallowIssue
@@ -5662,6 +5819,7 @@ export const IssueDocument = gql`
         }
         postedAt
         editedOn
+        isReportedBy(id: $userId)
       }
     }
   }
