@@ -1,10 +1,13 @@
 import {Button, Card, TextField, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
-import {useRef} from "react"
+import {useEffect} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import useRouter from "use-react-router"
-import {useCreateIssueMutation} from "../../../generated/graphql"
+import {useCreateIssueMutation, useEditIssueMutation, useIssueQuery} from "../../../generated/graphql"
+import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
+import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import LinkButton from "../../components/common/LinkButton"
 import RichTextEditor from "../../components/common/RichTextEditor"
 import {useToast, useValidatedFormState} from "../../hooks"
@@ -53,22 +56,52 @@ const validators = {
     ]
 }
 
-export const NewIssue = () => {
-    const {t} = useTranslation()
-    const classes = useStyles()
-    const {history} = useRouter()
-    const {text, title, valid} = useValidatedFormState<Form>({text: "", title: ""}, validators, {enableInitialValidation: false})
-    const saveRef = useRef<() => void>()
+interface RouteTypes {
+    issueId: string
+}
 
-    const [createIssueMutate] = useCreateIssueMutation({variables: {input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
+export const EditIssue = () => {
+    const classes = useStyles()
+    const {t} = useTranslation()
+    const {history, match: {params: {issueId}}} = useRouter<RouteTypes>()
+    const {data, loading, error} = useIssueQuery({skip: !issueId, variables: {id: issueId}})
+    const issue = oc(data).issue()
+    const issueTitle = oc(issue).title("")
+    const issueContent = oc(issue).content("")
+
+    const {text, title, valid} = useValidatedFormState<Form>({text: issueContent, title: issueTitle}, validators, {enableInitialValidation: false})
+
+    const [createIssueMutate, {loading: savingCreate}] = useCreateIssueMutation({variables: {input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
+    const [updateIssueMutate, {loading: savingEdit}] = useEditIssueMutation({variables: {id: issueId, input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
     const createIssue = () => {
         createIssueMutate().then(() => {
             openToast()
             history.push("/help/board")
         })
     }
+    const updateIssue = () => {
+        updateIssueMutate().then(() => {
+            openToast()
+            history.push(`/help/board/${issueId}`)
+        })
+    }
+    const save = () => {
+        if(issue) updateIssue()
+        else createIssue()
+    }
+
+    useEffect(() => {
+        if(issue) {
+            title.set(issue.title)
+            text.set(issue.content)
+        }
+    }, [issue])
 
     const {Toast, openToast} = useToast("Issue created successfully")
+    const saving = savingCreate || savingEdit
+
+    if(loading) return <TimedCircularProgress />
+    if(error) return <ApolloErrorBox error={error} />
 
     return (
         <div className={classes.root}>
@@ -93,14 +126,13 @@ export const NewIssue = () => {
                     rows={10} rowsMax={20}
                     error={!!text.error}
                     helperText={text.error}
-                    saveRef={saveRef}
                     className={classes.textField}
                 />
                 <div className={classes.actions}>
                     <Typography>{`${text.value.length}/5000`}</Typography>
                     <LinkButton to="/help/board" variant="outlined">{t("Cancel")}</LinkButton>
-                    <Button variant="contained" color="primary" disabled={!valid || isEmpty(text.value) || isEmpty(title.value)} onClick={createIssue}>
-                        {t("Save")}
+                    <Button variant="contained" color="primary" disabled={saving || !valid || isEmpty(text.value) || isEmpty(title.value)} onClick={save}>
+                        {issue ? t("Save") : t("Post")}
                     </Button>
                 </div>
             </Card>
@@ -108,4 +140,4 @@ export const NewIssue = () => {
     )
 }
 
-export default NewIssue
+export default EditIssue

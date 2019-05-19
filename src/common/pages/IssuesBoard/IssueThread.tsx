@@ -1,8 +1,8 @@
 import {Avatar, Breadcrumbs, Button, Card, IconButton, TablePagination, Typography} from "@material-ui/core"
 import {fade} from "@material-ui/core/styles"
-import {DeleteOutlined} from "@material-ui/icons"
+import {DeleteOutlined, Edit} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
-import {useRef, useState} from "react"
+import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import ReactMarkdown from "react-markdown"
@@ -12,9 +12,9 @@ import moment from "moment"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router"
 import {
-    Issue,
+    Issue, IssueReply,
     useDeleteIssueMutation,
-    useDeleteIssueReplyMutation,
+    useDeleteIssueReplyMutation, useEditIssueReplyMutation,
     useIssueQuery,
     useReplyToIssueMutation
 } from "../../../generated/graphql"
@@ -69,7 +69,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         width: "100%",
         position: "absolute",
         bottom: 0,
-        right: 0
+        right: 0,
+        alignItems: "center",
+        paddingLeft: theme.spacing(2)
     },
     avatar: {
         width: 50,
@@ -81,6 +83,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     replyActions: {
         display: "flex",
         justifyContent: "flex-end"
+    },
+    editActions: {
+        display: "flex",
+        justifyContent: "flex-end",
+        "& > *": {
+            marginLeft: theme.spacing(1)
+        }
+    },
+    replyEditor: {
+        width: "100%",
+        paddingLeft: theme.spacing(1)
     }
 }))
 
@@ -104,7 +117,6 @@ export const IssueThread = () => {
     const {t} = useTranslation()
     const {match: {params: {threadId}}, history} = useRouter<RouteProps>()
     const {content, valid} = useValidatedFormState<Form>({content: ""}, validators, {enableInitialValidation: false})
-    const inputRef = useRef<() => void>()
 
     const id = useID()
     const user = useUser()
@@ -164,7 +176,7 @@ export const IssueThread = () => {
                 replyToIssue: {
                     __typename: "Issue",
                     id: threadId,
-                    replies: issue.replies.length > 10 ? issue.replies : [...issue.replies, {__typename: "IssueReply", id: "asd", content: content.value, by: {...user}, postedAt: new Date()}],
+                    replies: issue.replies.length > 10 ? issue.replies : [...issue.replies, {__typename: "IssueReply", id: "asd", content: content.value, by: {...user}, postedAt: new Date(), editedOn: null}],
                     replyCount: issue.replyCount + 1
                 }
             },
@@ -187,6 +199,63 @@ export const IssueThread = () => {
             <Typography variant="body2" color="textSecondary">{moment(postedAt).fromNow()}</Typography>
         </div>
     )
+
+    const ReplyDisplay = ({reply}: {reply: IssueReply}) => {
+        const [editing, setEditing] = useState(false)
+        const {content, valid} = useValidatedFormState({content: reply.content}, validators)
+        const [editReplyMutate, {loading: saving}] = useEditIssueReplyMutation({variables: {id: reply.id, content: content.value}})
+
+        return (
+            <Card className={classes.card}>
+                <div className={classes.cardContent}>
+                    <SideBar by={reply.by} postedAt={reply.postedAt} />
+                    <div className={classes.content}>
+                        {!editing && <ReactMarkdown plugins={[breaks]} className={classes.contentText}>{reply.content}</ReactMarkdown>}
+                        {editing && (
+                            <div className={classes.replyEditor}>
+                                <RichTextEditor
+                                    label={t("Edit reply")}
+                                    value={content.value}
+                                    onChange={content.set}
+                                    rowsMax={10}
+                                    error={!!content.error}
+                                    helperText={content.error}
+                                    autoFocus
+                                />
+                                <div className={classes.editActions}>
+                                    <Button variant="outlined" onClick={() => setEditing(false)}>{t("Cancel")}</Button>
+                                    <Button variant="contained" color="primary" disabled={!valid || content.value === reply.content || saving} onClick={() => editReplyMutate()}>
+                                        {t("Save")}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                        <div style={{height: 32}} />
+                        {!editing && (
+                            <div className={classes.actions}>
+                                {reply.editedOn && (
+                                    <Typography variant="body2" color="textSecondary" style={{whiteSpace: "nowrap"}}>
+                                        {t("edited {{time}}", {time: moment(reply.editedOn).fromNow()})}
+                                    </Typography>
+                                )}
+                                <div style={{flex: "1 1 100%"}} />
+                                {reply.by.id === id && (
+                                    <>
+                                        <IconButton onClick={() => setEditing(true)} className={classes.iconButton}>
+                                            <Edit />
+                                        </IconButton>
+                                        <IconButton onClick={() => requestReplyDelete(reply.id)} className={classes.iconButton}>
+                                            <DeleteOutlined color="error" />
+                                        </IconButton>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </Card>
+        )
+    }
 
     return (
         <div className={classes.root}>
@@ -213,32 +282,27 @@ export const IssueThread = () => {
                             <ReactMarkdown plugins={[breaks]}>{issue.content}</ReactMarkdown>
                         </div>
                         <div className={classes.actions}>
+                            {issue.editedOn && (
+                                <Typography variant="body2" color="textSecondary" style={{whiteSpace: "nowrap"}}>
+                                    {t("edited {{time}}", {time: moment(issue.editedOn).fromNow()})}
+                                </Typography>
+                            )}
+                            <div style={{flex: "1 1 100%"}} />
                             {issue.by.id === id && (
-                                <IconButton onClick={openDeleteIssueConfirm} className={classes.iconButton}>
-                                    <DeleteOutlined color="error" />
-                                </IconButton>
+                                <>
+                                    <IconButton onClick={() => history.push(`/help/board/edit/${issue.id}`)} className={classes.iconButton}>
+                                        <Edit />
+                                    </IconButton>
+                                    <IconButton onClick={openDeleteIssueConfirm} className={classes.iconButton}>
+                                        <DeleteOutlined color="error" />
+                                    </IconButton>
+                                </>
                             )}
                         </div>
                     </div>
                 </div>
             </Card>
-            {issue.replies.map(reply => (
-                <Card key={reply.id} className={classes.card}>
-                    <div className={classes.cardContent}>
-                        <SideBar by={reply.by} postedAt={reply.postedAt} />
-                        <div className={classes.content}>
-                            <ReactMarkdown plugins={[breaks]} className={classes.contentText}>{reply.content}</ReactMarkdown>
-                            <div className={classes.actions}>
-                                {reply.by.id === id && (
-                                    <IconButton onClick={() => requestReplyDelete(reply.id)} className={classes.iconButton}>
-                                        <DeleteOutlined color="error" />
-                                    </IconButton>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </Card>
-            ))}
+            {issue.replies.map(reply => <ReplyDisplay key={reply.id} reply={reply} />)}
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
@@ -252,7 +316,7 @@ export const IssueThread = () => {
                 onChangeRowsPerPage={e => setRowsPerPage(parseInt(e.target.value, 10))}
             />
             <div>
-                <RichTextEditor saveRef={inputRef} value={content.value} onChange={content.set} rows={5} rowsMax={10} />
+                <RichTextEditor value={content.value} onChange={content.set} rows={5} rowsMax={10} />
                 <div className={classes.replyActions}>
                     <Button variant="outlined" onClick={() => content.set("")} className={classes.button}>
                         {t("Clear")}

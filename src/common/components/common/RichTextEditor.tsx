@@ -9,7 +9,7 @@ import {
 } from "@material-ui/icons"
 import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab"
 import {makeStyles, useTheme} from "@material-ui/styles"
-import {MutableRefObject, useEffect, useRef, useState} from "react"
+import {useEffect, useRef, useState} from "react"
 import React, {KeyboardEvent} from "react"
 import {useTranslation} from "react-i18next"
 import ReactMarkdown from "react-markdown"
@@ -19,7 +19,6 @@ import breaks from "remark-breaks"
 
 interface PropTypes {
     variant?: "outlined" | "filled" | "standard"
-    saveRef: MutableRefObject<(() => void) | undefined>
     rows?: number
     rowsMax?: number
     value: string
@@ -28,6 +27,7 @@ interface PropTypes {
     className?: string
     error?: boolean
     helperText?: string
+    autoFocus?: boolean
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const RichTextEditor = ({variant = "outlined", saveRef, rows = 10, rowsMax = 20, value, onChange, label, className, error, helperText}: PropTypes) => {
+export const RichTextEditor = ({variant = "outlined", rows = 10, rowsMax = 20, value, onChange, label, className, error, helperText, autoFocus}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const theme = useTheme<Theme>()
@@ -111,16 +111,6 @@ export const RichTextEditor = ({variant = "outlined", saveRef, rows = 10, rowsMa
             if(listStyle === "header") onChange(val => val + "\n### ")
         }
     }, [textDecorations, textContainer, listStyle])
-
-    const onSave = () => {
-        setTextDecorations([])
-        setTextContainer(undefined)
-        setListStyle(undefined)
-    }
-
-    useEffect(() => {
-        saveRef.current = onSave
-    }, [onSave])
 
     const onKeyPress = (e: KeyboardEvent) => {
         if(e.key === "Enter") onEnter(e)
@@ -237,7 +227,9 @@ export const RichTextEditor = ({variant = "outlined", saveRef, rows = 10, rowsMa
                     onChange={e => onChange(e.target.value)}
                     error={error}
                     helperText={helperText}
-                    style={{display: tab === 0 ? "inline-flex" : "none"}} />
+                    style={{display: tab === 0 ? "inline-flex" : "none"}}
+                    autoFocus={autoFocus}
+                />
                 {tab === 1 && (
                     <ReactMarkdown className={classes.content} plugins={[breaks]}>{value}</ReactMarkdown>
                 )}

@@ -96,8 +96,8 @@ const IssuesBoard = Loadable({
     loading: Loading
 })
 
-const NewIssue = Loadable({
-    loader: () => import("./pages/IssuesBoard/NewIssue"),
+const EditIssue = Loadable({
+    loader: () => import("./pages/IssuesBoard/EditIssue"),
     loading: Loading
 })
 
@@ -128,7 +128,8 @@ const Routes = () => (
             if(typeof window === "undefined") { return <Redirect to="/"/> }
             Auth.logout()
         }} />
-        <AuthenticatedRoute path="/help/board/new" component={NewIssue} />
+        <AuthenticatedRoute path="/help/board/new" component={EditIssue} />
+        <AuthenticatedRoute path="/help/board/edit/:issueId" component={EditIssue} />
         <AuthenticatedRoute path="/help/board/:threadId" component={IssueThread} />
         <AuthenticatedRoute path="/help/board" component={IssuesBoard} />
         <Route path="/help/:slug*" component={Helpdesk} />

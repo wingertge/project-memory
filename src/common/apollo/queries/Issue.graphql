@@ -11,6 +11,7 @@ query Issue($id: ID!, $limit: Int, $offset: Int, $filter: IssueReplyFilterInput,
                 picture
             }
             postedAt
+            editedOn
         }
     }
 }

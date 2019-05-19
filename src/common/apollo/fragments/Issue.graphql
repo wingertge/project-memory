@@ -9,4 +9,5 @@ fragment shallowIssue on Issue {
     postedAt
     lastActivity
     replyCount
+    editedOn
 }

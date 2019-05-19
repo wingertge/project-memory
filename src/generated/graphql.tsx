@@ -1298,6 +1298,7 @@ export type Issue = {
   by: User;
   postedAt: Scalars["Date"];
   lastActivity: Scalars["Date"];
+  editedOn?: Maybe<Scalars["Date"]>;
 };
 
 export type IssueRepliesArgs = {
@@ -1326,6 +1327,7 @@ export type IssueReply = {
   content: Scalars["String"];
   by: User;
   postedAt: Scalars["Date"];
+  editedOn?: Maybe<Scalars["Date"]>;
 };
 
 export type IssueReplyFilterInput = {
@@ -2774,7 +2776,7 @@ export type ImageFragment = { __typename?: "Asset" } & Pick<
 
 export type ShallowIssueFragment = { __typename?: "Issue" } & Pick<
   Issue,
-  "id" | "title" | "postedAt" | "lastActivity" | "replyCount"
+  "id" | "title" | "postedAt" | "lastActivity" | "replyCount" | "editedOn"
 > & { by: { __typename?: "User" } & Pick<User, "id" | "username" | "picture"> };
 
 export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
@@ -2992,6 +2994,17 @@ export type EditIssueMutation = { __typename?: "Mutation" } & {
   >;
 };
 
+export type EditIssueReplyMutationVariables = {
+  id: Scalars["ID"];
+  content: Scalars["String"];
+};
+
+export type EditIssueReplyMutation = { __typename?: "Mutation" } & {
+  editIssueReply: Maybe<
+    { __typename?: "Issue" } & Pick<Issue, "id" | "content">
+  >;
+};
+
 export type RemoveTagMutationVariables = {
   deckId: Scalars["ID"];
   tag: Scalars["String"];
@@ -3016,7 +3029,7 @@ export type ReplyToIssueMutation = { __typename?: "Mutation" } & {
         replies: Array<
           { __typename?: "IssueReply" } & Pick<
             IssueReply,
-            "id" | "content" | "postedAt"
+            "id" | "content" | "postedAt" | "editedOn"
           > & {
               by: { __typename?: "User" } & Pick<
                 User,
@@ -3369,7 +3382,7 @@ export type IssueQuery = { __typename?: "Query" } & {
         replies: Array<
           { __typename?: "IssueReply" } & Pick<
             IssueReply,
-            "id" | "content" | "postedAt"
+            "id" | "content" | "postedAt" | "editedOn"
           > & {
               by: { __typename?: "User" } & Pick<
                 User,
@@ -3585,6 +3598,7 @@ export const shallowIssueFragmentDoc = gql`
     postedAt
     lastActivity
     replyCount
+    editedOn
   }
 `;
 export const languageFieldsFragmentDoc = gql`
@@ -4374,6 +4388,55 @@ export function useEditIssueMutation(
     EditIssueMutationVariables
   >(EditIssueDocument, baseOptions);
 }
+export const EditIssueReplyDocument = gql`
+  mutation EditIssueReply($id: ID!, $content: String!) {
+    editIssueReply(id: $id, content: $content) {
+      id
+      content
+    }
+  }
+`;
+export type EditIssueReplyMutationFn = ReactApollo.MutationFn<
+  EditIssueReplyMutation,
+  EditIssueReplyMutationVariables
+>;
+export type EditIssueReplyProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<
+    EditIssueReplyMutation,
+    EditIssueReplyMutationVariables
+  >
+> &
+  TChildProps;
+export function withEditIssueReply<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    EditIssueReplyMutation,
+    EditIssueReplyMutationVariables,
+    EditIssueReplyProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    EditIssueReplyMutation,
+    EditIssueReplyMutationVariables,
+    EditIssueReplyProps<TChildProps>
+  >(EditIssueReplyDocument, {
+    alias: "withEditIssueReply",
+    ...operationOptions
+  });
+}
+
+export function useEditIssueReplyMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    EditIssueReplyMutation,
+    EditIssueReplyMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    EditIssueReplyMutation,
+    EditIssueReplyMutationVariables
+  >(EditIssueReplyDocument, baseOptions);
+}
 export const RemoveTagDocument = gql`
   mutation RemoveTag($deckId: ID!, $tag: String!) {
     removeTagFromDeck(id: $deckId, tag: $tag) {
@@ -4440,6 +4503,7 @@ export const ReplyToIssueDocument = gql`
           picture
         }
         postedAt
+        editedOn
       }
       replyCount
     }
@@ -5597,6 +5661,7 @@ export const IssueDocument = gql`
           picture
         }
         postedAt
+        editedOn
       }
     }
   }

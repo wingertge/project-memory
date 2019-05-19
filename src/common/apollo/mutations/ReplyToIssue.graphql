@@ -10,6 +10,7 @@ mutation ReplyToIssue($id: ID!, $content: String!, $limit: Int, $offset: Int, $f
                 picture
             }
             postedAt
+            editedOn
         }
         replyCount
     }

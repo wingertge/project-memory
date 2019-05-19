@@ -1,0 +1,6 @@
+mutation EditIssueReply($id: ID!, $content: String!) {
+    editIssueReply(id: $id, content: $content) {
+        id
+        content
+    }
+}
