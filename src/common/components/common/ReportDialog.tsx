@@ -12,14 +12,15 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import React from "react"
 import {useTranslation} from "react-i18next"
 import ReactMarkdown from "react-markdown"
-import {ReportReason, useReportPostMutation} from "../../../generated/graphql"
-import {useID, useValidatedFormState} from "../../hooks"
+import {ReportReason} from "../../../generated/graphql"
+import {useValidatedFormState} from "../../hooks"
 import {Theme} from "../../theme"
 import {shorterThan} from "../../util/validationUtils"
 
 interface PropTypes {
     closeDialog: () => void
-    postId: string
+    submitReport: (reason: ReportReason, message: string) => Promise<any>
+    saving?: boolean
 }
 
 interface Form {
@@ -47,21 +48,12 @@ const messages = {
     hatespeech: "Hate Speech is difficult to define, so please use common sense here. Saying you don't like something isn't hatespeech, but calling for the death of all who support it is."
 }
 
-export const ReportDialog = ({postId, closeDialog}: PropTypes) => {
+export const ReportDialog = ({closeDialog, submitReport, saving}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const userId = useID()
     const {reason, message, valid} = useValidatedFormState<Form>({reason: "", message: ""}, {message: [{fun: shorterThan(5001), message: "Message can't be longer than 5000 characters"}]})
 
-    const [reportMutate, {loading: saving}] = useReportPostMutation({
-        variables: {
-            postId,
-            userId,
-            reason: reason.value as ReportReason,
-            message: message.value
-        }
-    })
-    const submitReport = () => reportMutate().then(closeDialog)
+    const save = () => submitReport(reason.value as any, message.value).then(closeDialog)
 
     return (
         <>
@@ -94,7 +86,7 @@ export const ReportDialog = ({postId, closeDialog}: PropTypes) => {
             </DialogContent>
             <DialogActions className={classes.actions}>
                 <Button variant="outlined" onClick={closeDialog}>{t("Cancel")}</Button>
-                <Button variant="contained" color="primary" disabled={reason.value === "" || saving || !valid} onClick={submitReport}>
+                <Button variant="contained" color="primary" disabled={reason.value === "" || saving || !valid} onClick={save}>
                     {t("Submit")}
                 </Button>
             </DialogActions>

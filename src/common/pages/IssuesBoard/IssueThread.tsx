@@ -1,6 +1,6 @@
-import {Avatar, Breadcrumbs, Button, Card, IconButton, TablePagination, Typography} from "@material-ui/core"
+import {Avatar, Breadcrumbs, Button, Card, Collapse, IconButton, TablePagination, Typography} from "@material-ui/core"
 import {fade} from "@material-ui/core/styles"
-import {DeleteOutlined, Edit} from "@material-ui/icons"
+import {DeleteOutlined, Edit, ReportProblem} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {useState} from "react"
 import * as React from "react"
@@ -12,16 +12,17 @@ import moment from "moment"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router"
 import {
-    Issue, IssueReply,
+    Issue, IssueReply, ReportReason,
     useDeleteIssueMutation,
     useDeleteIssueReplyMutation, useEditIssueReplyMutation,
     useIssueQuery,
-    useReplyToIssueMutation
+    useReplyToIssueMutation, useReportIssueMutation, useReportIssueReplyMutation
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
+import ReportDialog from "../../components/common/ReportDialog"
 import RichTextEditor from "../../components/common/RichTextEditor"
-import {useConfirmDialog, useID, useToast, useUser, useValidatedFormState} from "../../hooks"
+import {useConfirmDialog, useDialog, useID, useToast, useUser, useValidatedFormState} from "../../hooks"
 import {Theme} from "../../theme"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 
@@ -186,9 +187,21 @@ export const IssueThread = () => {
         content.set("")
     }
 
+    const [reportIssueMutate, {loading: issueReportSaving}] = useReportIssueMutation()
+    const reportIssue = (reason: ReportReason, message: string) => reportIssueMutate({
+        variables: {
+            id: issue.id,
+            userId: id,
+            reason,
+            message
+        },
+        refetchQueries: ["Issues"]
+    }).then(() => history.push("/help/board"))
+
     const {Toast: DeleteIssueToast, openToast: openDeleteIssueToast} = useToast("Successfully deleted the issue")
     const [openDeleteIssueConfirm, DeleteIssueConfirmDialog] = useConfirmDialog(deleteIssue, "Delete this issue?", "Are you sure you want to delete this issue? This action is irreversible and will delete all replies as well.")
     const [openDeleteReplyConfirm, DeleteReplyConfirmDialog] = useConfirmDialog(deleteReply, "Delete this reply?", "Are you sure you want to delete this reply?")
+    const {Dialog, openDialog} = useDialog(ReportDialog)
 
     if(loading || !user) return <TimedCircularProgress />
     if(error) return <ApolloErrorBox error={error} />
@@ -205,6 +218,17 @@ export const IssueThread = () => {
         const [editing, setEditing] = useState(false)
         const {content, valid} = useValidatedFormState({content: reply.content}, validators)
         const [editReplyMutate, {loading: saving}] = useEditIssueReplyMutation({variables: {id: reply.id, content: content.value}})
+
+        const [reportIssueReplyMutate, {loading: issueReplyReportSaving}] = useReportIssueReplyMutation()
+        const reportIssueReply = (reason: ReportReason, message: string) => reportIssueReplyMutate({
+            variables: {
+                id: issue.id,
+                userId: id,
+                reason,
+                message
+            },
+            refetchQueries: ["Issues"]
+        })
 
         return (
             <Card className={classes.card}>
@@ -250,6 +274,11 @@ export const IssueThread = () => {
                                         </IconButton>
                                     </>
                                 )}
+                                {reply.by.id !== id && (
+                                    <IconButton onClick={() => openDialog({submitReport: reportIssueReply, saving: issueReplyReportSaving})} className={classes.iconButton}>
+                                        <ReportProblem />
+                                    </IconButton>
+                                )}
                             </div>
                         )}
                     </div>
@@ -260,6 +289,7 @@ export const IssueThread = () => {
 
     return (
         <div className={classes.root}>
+            <Dialog />
             <Breadcrumbs aria-label={t("Breadcrumb")}>
                 <Link to="/help">
                     {t("Help")}
@@ -300,11 +330,20 @@ export const IssueThread = () => {
                                     </IconButton>
                                 </>
                             )}
+                            {issue.by.id !== id && (
+                                <IconButton onClick={() => openDialog({submitReport: reportIssue, saving: issueReportSaving})} className={classes.iconButton}>
+                                    <ReportProblem />
+                                </IconButton>
+                            )}
                         </div>
                     </div>
                 </div>
             </Card>
-            {issue.replies.map(reply => <ReplyDisplay key={reply.id} reply={reply} />)}
+            {issue.replies.map(reply => (
+                <Collapse key={reply.id} in={!reply.isReportedBy}>
+                    <ReplyDisplay reply={reply} />
+                </Collapse>
+            ))}
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"

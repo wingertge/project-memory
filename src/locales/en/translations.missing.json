@@ -93,5 +93,6 @@
   "New Question": "New Question",
   "Title": "Title",
   "Leave your question": "Leave your question",
-  "Issue created successfully": "Issue created successfully"
+  "Issue created successfully": "Issue created successfully",
+  "edited {{time}}": "edited {{time}}"
 }

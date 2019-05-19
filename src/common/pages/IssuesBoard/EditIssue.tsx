@@ -10,7 +10,7 @@ import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import LinkButton from "../../components/common/LinkButton"
 import RichTextEditor from "../../components/common/RichTextEditor"
-import {useToast, useValidatedFormState} from "../../hooks"
+import {useID, useToast, useValidatedFormState} from "../../hooks"
 import {Theme} from "../../theme"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import isEmpty from "validator/lib/isEmpty"
@@ -64,7 +64,8 @@ export const EditIssue = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {history, match: {params: {issueId}}} = useRouter<RouteTypes>()
-    const {data, loading, error} = useIssueQuery({skip: !issueId, variables: {id: issueId}})
+    const userId = useID()
+    const {data, loading, error} = useIssueQuery({skip: !issueId, variables: {id: issueId, userId}})
     const issue = oc(data).issue()
     const issueTitle = oc(issue).title("")
     const issueContent = oc(issue).content("")

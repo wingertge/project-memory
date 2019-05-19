@@ -13,7 +13,13 @@ import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
-import {Post, useChangePostLikeMutation, useDeletePostMutation, useUpdatePostMutation} from "../../../generated/graphql"
+import {
+    Post, ReportReason,
+    useChangePostLikeMutation,
+    useDeletePostMutation,
+    useReportPostMutation,
+    useUpdatePostMutation
+} from "../../../generated/graphql"
 import ReactMarkdown from "react-markdown"
 import breaks from "remark-breaks"
 import {useDialog, useID, useValidatedFormState} from "../../hooks"
@@ -133,6 +139,15 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
             if(valid) updatePost()
         }
     }
+    const [reportMutate, {loading: saving}] = useReportPostMutation()
+    const submitReport = (reason: ReportReason, message: string) => reportMutate({
+        variables: {
+            postId: post.id,
+            userId,
+            reason,
+            message
+        }
+    })
 
     return (
         <div className={classes.post}>
@@ -199,7 +214,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                         </IconButton>
                         <Typography className={classes.likeCount}>{post.likeCount}</Typography>
                         <div style={{flex: "1 1 100%"}} />
-                        <IconButton title={t("Report")} onClick={() => openDialog({postId: post.id})} className={classes.actionButton}>
+                        <IconButton title={t("Report")} onClick={() => openDialog({submitReport, saving})} className={classes.actionButton}>
                             <ReportProblem className={classes.actionIcon} />
                         </IconButton>
                     </div>
