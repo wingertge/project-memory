@@ -1,7 +1,6 @@
 /* tslint:disable:no-console no-var-requires */
 // tslint:disable-next-line:no-reference
 ///<reference path="./typings/index.d.ts"/>
-console.log("Port before dotenv: " + process.env.PORT)
 
 import express from "express"
 import Loadable from "react-loadable"
@@ -24,7 +23,6 @@ if (module.hot) {
 }
 
 const port = proc.env.PORT || 3000
-console.log(proc.env.PORT)
 
 // noinspection TypeScriptValidateJSTypes
 const listen = Loadable.preloadAll().then(() => {

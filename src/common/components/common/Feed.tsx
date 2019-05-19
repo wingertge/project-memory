@@ -6,10 +6,13 @@ import {Post, useAddPostMutation} from "../../../generated/graphql"
 import {useToast, useUser, useValidatedFormState} from "../../hooks"
 import {notEmpty, shorterThan} from "../../util/validationUtils"
 import PostDisplay from "./PostDisplay"
+import ReactVisibilitySensor from "react-visibility-sensor"
 
 interface PropTypes {
     isOwn?: boolean
     feed: Post[]
+    onFetchMore: () => void
+    fetching?: boolean
 }
 
 interface Form {
@@ -34,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const Feed = ({isOwn = false, feed}: PropTypes) => {
+export const Feed = ({isOwn = false, feed, onFetchMore, fetching}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
@@ -47,13 +50,11 @@ export const Feed = ({isOwn = false, feed}: PropTypes) => {
                 type: "post",
                 content: newPostContent.value.trim()
             },
-            filter: {
-                limit: 20
-            }
+            limit: 10
         },
         optimisticResponse: {
             __typename: "Mutation",
-            createPost: [{id: "asd", type: "post", by: user, createdAt: new Date().toISOString(), content: newPostContent.value, __typename: "Post", originalPost: null, likeCount: 0, isLikedBy: false}, ...feed.slice(0, 19)] as any
+            createPost: [{id: "asd", type: "post", by: user, createdAt: new Date().toISOString(), content: newPostContent.value, __typename: "Post", originalPost: null, likeCount: 0, isLikedBy: false}, ...feed.slice(0, 9)] as any
         },
         refetchQueries: ["Feed"]
     })
@@ -85,6 +86,11 @@ export const Feed = ({isOwn = false, feed}: PropTypes) => {
     }
     const {Toast, openToast} = useToast("Reposted")
 
+    const fetchMoreVisible = (visible: boolean) => {
+        if(!visible) return
+        onFetchMore()
+    }
+
     return (
         <>
             <Toast />
@@ -115,6 +121,9 @@ export const Feed = ({isOwn = false, feed}: PropTypes) => {
                         </ListItem>
                     ))}
                 </List>
+                <ReactVisibilitySensor onChange={fetchMoreVisible}>
+                    <Button onClick={onFetchMore} disabled={fetching}>{fetching ? t("Fetching...") : t("▾ Show more ▾")}</Button>
+                </ReactVisibilitySensor>
             </div>
         </>
     )

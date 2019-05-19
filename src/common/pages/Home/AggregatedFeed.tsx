@@ -1,6 +1,7 @@
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
+import {oc} from "ts-optchain"
 import {Post, useAggregatedFeedQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import Feed from "../../components/common/Feed"
@@ -11,16 +12,34 @@ export const AggregatedFeed = () => {
     const {t} = useTranslation()
     const userId = useID()
 
-    const {data, loading, error} = useAggregatedFeedQuery({
+    const {data, loading, error, fetchMore} = useAggregatedFeedQuery({
         variables: {
             userId,
-            filter: {
-                limit: 20,
+            limit: 10,
+            sort: {
                 sortBy: "createdAt",
                 sortDirection: "desc"
             }
         }
     })
+
+    const onFetchMore = () => {
+        fetchMore({
+            variables: {
+                offset: oc(data).user.subscriptionFeed.length(0)
+            },
+            updateQuery: (prev, {fetchMoreResult}) => {
+                if(!fetchMoreResult || !fetchMoreResult.user || !fetchMoreResult.user.subscriptionFeed) return prev
+                return {
+                    ...prev,
+                    user: {
+                        ...prev.user!,
+                        subscriptionFeed: [...prev!.user!.subscriptionFeed!, ...fetchMoreResult.user.subscriptionFeed]
+                    }
+                }
+            }
+        })
+    }
 
     if(loading) return <TimedCircularProgress />
     if(error) return <ApolloErrorBox error={error} />
@@ -32,7 +51,7 @@ export const AggregatedFeed = () => {
             <Helmet>
                 <title>{t("Feed - Project Memory")}</title>
             </Helmet>
-            <Feed feed={feed} />
+            <Feed feed={feed} fetching={loading} onFetchMore={onFetchMore} />
         </>
     )
 }

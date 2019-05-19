@@ -9,4 +9,5 @@ fragment shallowPostFields on Post {
     }
     content
     likeCount
+    editedOn
 }

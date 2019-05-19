@@ -1674,7 +1674,10 @@ export type MutationSubmitReviewArgs = {
 
 export type MutationCreatePostArgs = {
   input: PostInput;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type MutationEditPostArgs = {
@@ -1684,7 +1687,10 @@ export type MutationEditPostArgs = {
 
 export type MutationDeletePostArgs = {
   id: Scalars["ID"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type MutationChangePostLikeStatusArgs = {
@@ -2380,6 +2386,7 @@ export type Post = {
   likeCount: Scalars["Int"];
   isLikedBy: Scalars["Boolean"];
   isReportedBy: Scalars["Boolean"];
+  editedOn?: Maybe<Scalars["Date"]>;
 };
 
 export type PostIsLikedByArgs = {
@@ -2391,17 +2398,18 @@ export type PostIsReportedByArgs = {
 };
 
 export type PostFilterInput = {
-  limit?: Maybe<Scalars["Int"]>;
-  offset?: Maybe<Scalars["Int"]>;
   type?: Maybe<PostType>;
-  sortBy?: Maybe<PostSortOption>;
-  sortDirection?: Maybe<SortDirection>;
 };
 
 export type PostInput = {
   type?: Maybe<PostType>;
   content?: Maybe<Scalars["String"]>;
   originalPost?: Maybe<Scalars["ID"]>;
+};
+
+export type PostSortInput = {
+  sortBy?: Maybe<PostSortOption>;
+  sortDirection?: Maybe<SortDirection>;
 };
 
 export type PostSortOption = "likes" | "reposts" | "createdAt";
@@ -2670,8 +2678,8 @@ export type User = {
   badges: Array<Maybe<Scalars["String"]>>;
   isFollowedBy: Scalars["Boolean"];
   introStep?: Maybe<Scalars["Int"]>;
-  feed?: Maybe<Array<Maybe<Post>>>;
-  subscriptionFeed?: Maybe<Array<Maybe<Post>>>;
+  feed: Array<Post>;
+  subscriptionFeed: Array<Post>;
 };
 
 export type UserReviewQueueArgs = {
@@ -2691,11 +2699,17 @@ export type UserIsFollowedByArgs = {
 };
 
 export type UserFeedArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type UserSubscriptionFeedArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type UserFilterInput = {
@@ -2735,12 +2749,15 @@ export type LanguageFieldsFragment = { __typename?: "Language" } & Pick<
 
 export type ShallowPostFieldsFragment = { __typename?: "Post" } & Pick<
   Post,
-  "id" | "createdAt" | "type" | "content" | "likeCount"
+  "id" | "createdAt" | "type" | "content" | "likeCount" | "editedOn"
 > & { by: { __typename?: "User" } & Pick<User, "id" | "username" | "picture"> };
 
 export type AddPostMutationVariables = {
   input: PostInput;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type AddPostMutation = { __typename?: "Mutation" } & {
@@ -2978,6 +2995,17 @@ export type UpdateNowMutation = { __typename?: "Mutation" } & Pick<
   "updateNow"
 >;
 
+export type UpdatePostMutationVariables = {
+  id: Scalars["ID"];
+  content?: Maybe<Scalars["String"]>;
+};
+
+export type UpdatePostMutation = { __typename?: "Mutation" } & {
+  editPost: Maybe<
+    { __typename?: "Post" } & Pick<Post, "id" | "content" | "editedOn">
+  >;
+};
+
 export type UploadProfilePictureMutationVariables = {
   userId: Scalars["ID"];
   file: Scalars["Upload"];
@@ -3103,26 +3131,22 @@ export type UpdateProfileMutation = { __typename?: "Mutation" } & {
 
 export type AggregatedFeedQueryVariables = {
   userId: Scalars["ID"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type AggregatedFeedQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        subscriptionFeed: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Post" } & Pick<
-                Post,
-                "isLikedBy" | "isReportedBy"
-              > & {
-                  originalPost: Maybe<
-                    { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
-                      ShallowPostFieldsFragment
-                  >;
-                } & ShallowPostFieldsFragment
-            >
-          >
+        subscriptionFeed: Array<
+          { __typename?: "Post" } & Pick<Post, "isLikedBy" | "isReportedBy"> & {
+              originalPost: Maybe<
+                { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
+                  ShallowPostFieldsFragment
+              >;
+            } & ShallowPostFieldsFragment
         >;
       }
   >;
@@ -3225,26 +3249,22 @@ export type PageQuery = { __typename?: "Query" } & {
 export type FeedQueryVariables = {
   userId: Scalars["ID"];
   currentUserId: Scalars["ID"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<PostFilterInput>;
+  sort?: Maybe<PostSortInput>;
 };
 
 export type FeedQuery = { __typename?: "Query" } & {
   user: Maybe<
     { __typename?: "User" } & Pick<User, "id"> & {
-        feed: Maybe<
-          Array<
-            Maybe<
-              { __typename?: "Post" } & Pick<
-                Post,
-                "isLikedBy" | "isReportedBy"
-              > & {
-                  originalPost: Maybe<
-                    { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
-                      ShallowPostFieldsFragment
-                  >;
-                } & ShallowPostFieldsFragment
-            >
-          >
+        feed: Array<
+          { __typename?: "Post" } & Pick<Post, "isLikedBy" | "isReportedBy"> & {
+              originalPost: Maybe<
+                { __typename?: "Post" } & Pick<Post, "isLikedBy"> &
+                  ShallowPostFieldsFragment
+              >;
+            } & ShallowPostFieldsFragment
         >;
       }
   >;
@@ -3577,11 +3597,24 @@ export const shallowPostFieldsFragmentDoc = gql`
     }
     content
     likeCount
+    editedOn
   }
 `;
 export const AddPostDocument = gql`
-  mutation AddPost($input: PostInput!, $filter: PostFilterInput) {
-    createPost(input: $input, filter: $filter) {
+  mutation AddPost(
+    $input: PostInput!
+    $limit: Int
+    $offset: Int
+    $filter: PostFilterInput
+    $sort: PostSortInput
+  ) {
+    createPost(
+      input: $input
+      limit: $limit
+      offset: $offset
+      filter: $filter
+      sort: $sort
+    ) {
       ...shallowPostFields
       originalPost {
         ...shallowPostFields
@@ -4518,6 +4551,53 @@ export function useUpdateNowMutation(
     UpdateNowMutationVariables
   >(UpdateNowDocument, baseOptions);
 }
+export const UpdatePostDocument = gql`
+  mutation UpdatePost($id: ID!, $content: String) {
+    editPost(id: $id, input: { content: $content }) {
+      id
+      content
+      editedOn
+    }
+  }
+`;
+export type UpdatePostMutationFn = ReactApollo.MutationFn<
+  UpdatePostMutation,
+  UpdatePostMutationVariables
+>;
+export type UpdatePostProps<TChildProps = {}> = Partial<
+  ReactApollo.MutateProps<UpdatePostMutation, UpdatePostMutationVariables>
+> &
+  TChildProps;
+export function withUpdatePost<TProps, TChildProps = {}>(
+  operationOptions?: ReactApollo.OperationOption<
+    TProps,
+    UpdatePostMutation,
+    UpdatePostMutationVariables,
+    UpdatePostProps<TChildProps>
+  >
+) {
+  return ReactApollo.withMutation<
+    TProps,
+    UpdatePostMutation,
+    UpdatePostMutationVariables,
+    UpdatePostProps<TChildProps>
+  >(UpdatePostDocument, {
+    alias: "withUpdatePost",
+    ...operationOptions
+  });
+}
+
+export function useUpdatePostMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdatePostMutation,
+    UpdatePostMutationVariables
+  >
+) {
+  return ReactApolloHooks.useMutation<
+    UpdatePostMutation,
+    UpdatePostMutationVariables
+  >(UpdatePostDocument, baseOptions);
+}
 export const UploadProfilePictureDocument = gql`
   mutation UploadProfilePicture($userId: ID!, $file: Upload!) {
     uploadProfilePicture(userId: $userId, file: $file) {
@@ -4945,10 +5025,21 @@ export function useUpdateProfileMutation(
   >(UpdateProfileDocument, baseOptions);
 }
 export const AggregatedFeedDocument = gql`
-  query AggregatedFeed($userId: ID!, $filter: PostFilterInput) {
+  query AggregatedFeed(
+    $userId: ID!
+    $limit: Int
+    $offset: Int
+    $filter: PostFilterInput
+    $sort: PostSortInput
+  ) {
     user(id: $userId) {
       id
-      subscriptionFeed(filter: $filter) {
+      subscriptionFeed(
+        limit: $limit
+        offset: $offset
+        filter: $filter
+        sort: $sort
+      ) {
         ...shallowPostFields
         isLikedBy(userID: $userId)
         isReportedBy(userID: $userId)
@@ -5309,10 +5400,17 @@ export function usePageQuery(
   );
 }
 export const FeedDocument = gql`
-  query Feed($userId: ID!, $currentUserId: ID!, $filter: PostFilterInput) {
+  query Feed(
+    $userId: ID!
+    $currentUserId: ID!
+    $limit: Int
+    $offset: Int
+    $filter: PostFilterInput
+    $sort: PostSortInput
+  ) {
     user(id: $userId) {
       id
-      feed(filter: $filter) {
+      feed(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         ...shallowPostFields
         isLikedBy(userID: $currentUserId)
         isReportedBy(userID: $currentUserId)

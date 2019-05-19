@@ -76,6 +76,7 @@
     "react-markdown": "^4.0.8",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
+    "react-visibility-sensor": "^5.0.2",
     "remark-breaks": "^1.0.2",
     "reselect": "^4.0.0",
     "serialize-javascript": "^1.7.0",
@@ -115,6 +116,7 @@
     "@types/react-loadable": "^5.5.1",
     "@types/react-router": "^5.0.0",
     "@types/react-router-dom": "^4.3.3",
+    "@types/react-visibility-sensor": "^5.0.1",
     "@types/sql.js": "^0.0.29",
     "@types/uuid": "^3.4.4",
     "@types/validator": "^10.11.0",
@@ -131,8 +133,8 @@
     "jest-enzyme": "^7.0.2",
     "jest-haste-map": "^24.8.0",
     "jest-resolve": "^24.8.0",
-    "razzle": "3.0.0-alpha.2",
-    "razzle-plugin-typescript": "3.0.0-alpha.2",
+    "razzle": "^3.0.0",
+    "razzle-plugin-typescript": "^3.0.0",
     "react-docgen-typescript-loader": "^3.1.0",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.2",
@@ -140,7 +142,8 @@
     "tslint": "^5.16.0",
     "tslint-react": "^4.0.0",
     "typescript": "^3.4.5",
-    "webpack": "^4.31.0"
+    "webpack": "^4.31.0",
+    "webpack-dev-server": "^3.4.1"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "jest-enzyme",

@@ -1,22 +1,25 @@
 import {
-    Avatar,
+    Avatar, Button,
     Card,
     CardContent,
     IconButton,
-    makeStyles,
+    makeStyles, TextField,
     Theme,
     Typography
 } from "@material-ui/core"
-import {Delete, Repeat, ReportProblem, ThumbUp, ThumbUpOutlined} from "@material-ui/icons"
+import {Delete, Edit, Repeat, ReportProblem, ThumbUp, ThumbUpOutlined} from "@material-ui/icons"
 import clsx from "clsx"
+import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
-import {Post, useChangePostLikeMutation, useDeletePostMutation} from "../../../generated/graphql"
+import {Post, useChangePostLikeMutation, useDeletePostMutation, useUpdatePostMutation} from "../../../generated/graphql"
 import ReactMarkdown from "react-markdown"
 import breaks from "remark-breaks"
-import {useDialog, useID} from "../../hooks"
+import {useDialog, useID, useValidatedFormState} from "../../hooks"
+import {shorterThan} from "../../util/validationUtils"
 import ReportDialog from "./ReportDialog"
+import moment from "moment"
 
 interface PropTypes {
     post: Post
@@ -71,6 +74,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     likeCount: {
         marginLeft: theme.spacing(0.5)
+    },
+    editActions: {
+        display: "flex",
+        justifyContent: "flex-end"
+    },
+    button: {
+        margin: theme.spacing(1, 0, 0, 1)
     }
 }))
 
@@ -100,6 +110,29 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
         })
     }
     const {Dialog, openDialog} = useDialog(ReportDialog)
+    const [editing, setEditing] = useState(false)
+    const {content, valid} = useValidatedFormState({content: post.content || ""}, {content: [{fun: shorterThan(4001), message: "Posts can't be longer than 4000 characters"}]})
+    const [updatePostMutate] = useUpdatePostMutation({
+        variables: {id: post.id, content: content.value},
+        optimisticResponse: {
+            __typename: "Mutation",
+            editPost: {
+                __typename: "Post",
+                id: post.id,
+                content: content.value
+            }
+        }
+    })
+    const updatePost = () => {
+        updatePostMutate()
+        setEditing(false)
+    }
+    const keyHandler = event => {
+        if(event.key === "Enter" && event.shiftKey) {
+            event.preventDefault()
+            if(valid) updatePost()
+        }
+    }
 
     return (
         <div className={classes.post}>
@@ -108,9 +141,40 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                 <Avatar src={post.by.picture} className={classes.avatar} />
                 <Typography style={{fontWeight: "bold"}}>{post.by.username}</Typography>
                 {post.type === "repost" && <Repeat className={classes.repostIcon} />}
+                <div style={{flex: "1 1 100%"}} />
+                <Typography variant="body2" color="textSecondary" style={{whiteSpace: "nowrap"}}>
+                    {t("posted {{time}}", {time: moment(post.createdAt).fromNow()})}
+                </Typography>
             </div>
             <div>
-                {post.content && <ReactMarkdown plugins={[breaks]} className={clsx(classes.content, {[classes.gutterBottom]: post.type === "repost"})}>{post.content}</ReactMarkdown>}
+                {post.content && (
+                    <>
+                        {!editing && <ReactMarkdown plugins={[breaks]} className={clsx(classes.content, {[classes.gutterBottom]: post.type === "repost"})}>{post.content}</ReactMarkdown>}
+                        {editing && (
+                            <div>
+                                <TextField
+                                    label={t("Edit Post")}
+                                    value={content.value}
+                                    onChange={content.onChange}
+                                    multiline
+                                    variant="outlined"
+                                    fullWidth
+                                    rowsMax={12}
+                                    error={!!content.error}
+                                    helperText={content.error}
+                                    autoFocus
+                                    onKeyPress={keyHandler}
+                                />
+                                <div className={classes.editActions}>
+                                    <Button variant="outlined" onClick={() => setEditing(false)} className={classes.button}>{t("Cancel")}</Button>
+                                    <Button variant="contained" color="primary" disabled={!valid || content.value === post.content} onClick={updatePost} className={classes.button}>
+                                        {t("Save")}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
                 {post.type === "repost" && (
                     <Card>
                         <CardContent>
@@ -124,6 +188,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                 )}
                 {!isOwn && (
                     <div className={classes.actions}>
+                        {post.editedOn && <Typography variant="body2" color="textSecondary" style={{whiteSpace: "nowrap"}}>{t("edited {{date}}", {date: moment(post.editedOn).fromNow()})}</Typography>}
                         {post.type !== "repost" && (
                             <IconButton title={t("Repost")} className={classes.actionButton} onClick={() => onRepostClick(post)}>
                                 <Repeat className={classes.actionIcon} />
@@ -139,9 +204,15 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                         </IconButton>
                     </div>
                 )}
-                {isOwn && (
+                {isOwn && !editing && (
                     <div className={classes.actions}>
+                        {post.editedOn && <Typography variant="body2" color="textSecondary" style={{whiteSpace: "nowrap"}}>{t("edited {{date}}", {date: moment(post.editedOn).fromNow()})}</Typography>}
                         <div style={{flex: "1 1 100%"}} />
+                        {post.type === "post" && (
+                            <IconButton title={t("Edit")} onClick={() => setEditing(true)} className={classes.actionButton}>
+                                <Edit className={classes.actionIcon} />
+                            </IconButton>
+                        )}
                         <IconButton title={t("Delete")} onClick={() => deletePost()} className={classes.actionButton}>
                             <Delete className={classes.actionIcon} />
                         </IconButton>

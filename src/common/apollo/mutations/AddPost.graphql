@@ -1,5 +1,5 @@
-mutation AddPost($input: PostInput!, $filter: PostFilterInput) {
-    createPost(input: $input, filter: $filter) {
+mutation AddPost($input: PostInput!, $limit: Int, $offset: Int, $filter: PostFilterInput, $sort: PostSortInput) {
+    createPost(input: $input, limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         ...shallowPostFields
         originalPost {
             ...shallowPostFields

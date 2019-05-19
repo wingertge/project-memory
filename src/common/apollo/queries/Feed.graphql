@@ -1,7 +1,7 @@
-query Feed($userId: ID! $currentUserId: ID!, $filter: PostFilterInput) {
+query Feed($userId: ID! $currentUserId: ID!, $limit: Int, $offset: Int, $filter: PostFilterInput, $sort: PostSortInput) {
     user(id: $userId) {
         id
-        feed(filter: $filter) {
+        feed(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
             ...shallowPostFields, isLikedBy(userID: $currentUserId), isReportedBy(userID: $currentUserId)
             originalPost {...shallowPostFields, isLikedBy(userID: $currentUserId)}
         }
