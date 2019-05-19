@@ -93,7 +93,7 @@ const StageCountDisplay = ({stage}: PropTypes) => {
         variables: {
             userId: id,
             filter: {
-                boxes: stages[stage]
+                box: {in: stages[stage]}
             }
         }
     })

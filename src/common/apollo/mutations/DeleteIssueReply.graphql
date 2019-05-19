@@ -1,7 +1,7 @@
-mutation DeleteIssueReply($id: ID!, $repliesSelect: IssueReplySelectInput) {
+mutation DeleteIssueReply($id: ID!, $limit: Int, $offset: Int, $filter: IssueReplyFilterInput, $sort: IssueReplySortInput) {
     deleteIssueReply(id: $id) {
         id
-        replies(select: $repliesSelect) {
+        replies(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
             id
         }
         replyCount

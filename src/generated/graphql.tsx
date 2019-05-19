@@ -516,10 +516,6 @@ export type Card = {
 };
 
 export type CardFilterInput = {
-  limit?: Maybe<Scalars["Int"]>;
-  offset?: Maybe<Scalars["Int"]>;
-  sortDirection?: Maybe<SortDirection>;
-  sortBy?: Maybe<CardSortingOptions>;
   search?: Maybe<Scalars["String"]>;
 };
 
@@ -532,6 +528,11 @@ export type CardInput = {
 };
 
 export type CardSortingOptions = "meaning" | "pronunciation" | "translation";
+
+export type CardSortInput = {
+  sortBy?: Maybe<CardSortingOptions>;
+  sortDirection?: Maybe<SortDirection>;
+};
 
 /** Representing a color value comprising of HEX, RGBA and css color values */
 export type Color = {
@@ -550,8 +551,12 @@ export type DateComparator = {
   gt?: Maybe<Scalars["Date"]>;
   lt?: Maybe<Scalars["Date"]>;
   eq?: Maybe<Scalars["Date"]>;
+  ne?: Maybe<Scalars["Date"]>;
   gte?: Maybe<Scalars["Date"]>;
   lte?: Maybe<Scalars["Date"]>;
+  in?: Maybe<Array<Scalars["Date"]>>;
+  nin?: Maybe<Array<Scalars["Date"]>>;
+  all?: Maybe<Array<Scalars["Date"]>>;
 };
 
 export type Deck = {
@@ -570,11 +575,17 @@ export type Deck = {
 };
 
 export type DeckCardsArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<CardFilterInput>;
+  sort?: Maybe<CardSortInput>;
 };
 
 export type DeckSubscribersArgs = {
-  filter?: Maybe<SubscriberFilterInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<UserFilterInput>;
+  sort?: Maybe<UserSortInput>;
 };
 
 export type DeckIsLikedByArgs = {
@@ -582,17 +593,13 @@ export type DeckIsLikedByArgs = {
 };
 
 export type DeckFilterInput = {
-  limit?: Maybe<Scalars["Int"]>;
-  offset?: Maybe<Scalars["Int"]>;
-  sortBy?: Maybe<DeckSortBy>;
-  sortDirection?: Maybe<SortDirection>;
   search?: Maybe<Scalars["String"]>;
-  owner?: Maybe<Scalars["ID"]>;
-  languages?: Maybe<Array<Scalars["ID"]>>;
-  nativeLanguage?: Maybe<Scalars["ID"]>;
-  tags?: Maybe<Array<Scalars["String"]>>;
-  excludeOwnedBy?: Maybe<Array<Scalars["ID"]>>;
-  excludeSubscribedBy?: Maybe<Array<Scalars["ID"]>>;
+  owner?: Maybe<IdComparator>;
+  language?: Maybe<IdComparator>;
+  nativeLanguage?: Maybe<IdComparator>;
+  tags?: Maybe<StringComparator>;
+  subscribers?: Maybe<IdComparator>;
+  id?: Maybe<IdComparator>;
 };
 
 export type DeckInput = {
@@ -603,7 +610,16 @@ export type DeckInput = {
   cards?: Maybe<Array<Maybe<CardInput>>>;
 };
 
-export type DeckSortBy = "name" | "cardCount" | "rating" | "subscriberCount";
+export type DeckSortInput = {
+  sortBy?: Maybe<DeckSortOptions>;
+  sortDirection?: Maybe<SortDirection>;
+};
+
+export type DeckSortOptions =
+  | "name"
+  | "cardCount"
+  | "rating"
+  | "subscriberCount";
 
 export type DisplayType = "Public" | "Unlisted" | "Private";
 
@@ -1226,6 +1242,14 @@ export type HelpPageWhereUniqueInput = {
   slug?: Maybe<Scalars["String"]>;
 };
 
+export type IdComparator = {
+  eq?: Maybe<Scalars["ID"]>;
+  ne?: Maybe<Scalars["ID"]>;
+  in?: Maybe<Array<Scalars["ID"]>>;
+  nin?: Maybe<Array<Scalars["ID"]>>;
+  all?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type Identity = {
   userId: Scalars["ID"];
   provider: Scalars["String"];
@@ -1277,7 +1301,10 @@ export type Issue = {
 };
 
 export type IssueRepliesArgs = {
-  select?: Maybe<IssueReplySelectInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueReplyFilterInput>;
+  sort?: Maybe<IssueReplySortInput>;
 };
 
 export type IssueFilterInput = {
@@ -1304,13 +1331,6 @@ export type IssueReply = {
 export type IssueReplyFilterInput = {
   by?: Maybe<Scalars["ID"]>;
   postedAt?: Maybe<DateComparator>;
-};
-
-export type IssueReplySelectInput = {
-  limit?: Maybe<Scalars["Int"]>;
-  offset?: Maybe<Scalars["Int"]>;
-  filter?: Maybe<IssueReplyFilterInput>;
-  sort?: Maybe<IssueReplySortInput>;
 };
 
 export type IssueReplySortBy = "postedAt";
@@ -1780,8 +1800,12 @@ export type NumberComparator = {
   gt?: Maybe<Scalars["Int"]>;
   lt?: Maybe<Scalars["Int"]>;
   eq?: Maybe<Scalars["Int"]>;
+  ne?: Maybe<Scalars["Int"]>;
   gte?: Maybe<Scalars["Int"]>;
   lte?: Maybe<Scalars["Int"]>;
+  in?: Maybe<Array<Scalars["Int"]>>;
+  nin?: Maybe<Array<Scalars["Int"]>>;
+  all?: Maybe<Array<Scalars["Int"]>>;
 };
 
 export type Page = Node & {
@@ -2548,7 +2572,10 @@ export type QueryNodeArgs = {
 };
 
 export type QueryUsersArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<UserFilterInput>;
+  sort?: Maybe<UserSortInput>;
 };
 
 export type QueryUserArgs = {
@@ -2560,7 +2587,10 @@ export type QueryLanguageArgs = {
 };
 
 export type QueryDecksArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<DeckFilterInput>;
+  sort?: Maybe<DeckSortInput>;
 };
 
 export type QueryDeckArgs = {
@@ -2611,13 +2641,14 @@ export type Review = {
 export type ReviewFields = "meaning" | "pronunciation" | "translation";
 
 export type ReviewFilterInput = {
-  limit?: Maybe<Scalars["Int"]>;
-  offset?: Maybe<Scalars["Int"]>;
-  deck?: Maybe<Scalars["ID"]>;
-  toBeReviewedBy?: Maybe<Scalars["Date"]>;
+  deck?: Maybe<IdComparator>;
+  nextReviewAt?: Maybe<DateComparator>;
+  box?: Maybe<NumberComparator>;
+};
+
+export type ReviewSortInput = {
   sortBy?: Maybe<ReviewSortOptions>;
   sortDirection?: Maybe<SortDirection>;
-  boxes?: Maybe<Array<Maybe<Scalars["Int"]>>>;
 };
 
 export type ReviewSortOptions = "nextReviewAt" | "box";
@@ -2650,8 +2681,12 @@ export type SortDirection = "asc" | "desc";
 
 export type Status = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-export type SubscriberFilterInput = {
-  limit?: Maybe<Scalars["Int"]>;
+export type StringComparator = {
+  eq?: Maybe<Scalars["String"]>;
+  ne?: Maybe<Scalars["String"]>;
+  in?: Maybe<Array<Scalars["String"]>>;
+  nin?: Maybe<Array<Scalars["String"]>>;
+  all?: Maybe<Array<Scalars["String"]>>;
 };
 
 export type User = {
@@ -2670,9 +2705,6 @@ export type User = {
   subscribedDecks: Array<Deck>;
   reviewQueue: Array<Review>;
   reviewsCount: Scalars["Int"];
-  nextReview?: Maybe<Review>;
-  lessonQueue: Array<Review>;
-  lessonsCount: Scalars["Int"];
   totalRating: Scalars["Int"];
   totalSubscribers: Scalars["Int"];
   badges: Array<Maybe<Scalars["String"]>>;
@@ -2683,14 +2715,13 @@ export type User = {
 };
 
 export type UserReviewQueueArgs = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<ReviewFilterInput>;
+  sort?: Maybe<ReviewSortInput>;
 };
 
 export type UserReviewsCountArgs = {
-  filter?: Maybe<ReviewFilterInput>;
-};
-
-export type UserLessonQueueArgs = {
   filter?: Maybe<ReviewFilterInput>;
 };
 
@@ -2713,7 +2744,6 @@ export type UserSubscriptionFeedArgs = {
 };
 
 export type UserFilterInput = {
-  limit?: Maybe<Scalars["Int"]>;
   search?: Maybe<Scalars["String"]>;
 };
 
@@ -2726,6 +2756,17 @@ export type UserInput = {
   introStep?: Maybe<Scalars["Int"]>;
   nativeLanguage?: Maybe<Scalars["ID"]>;
 };
+
+export type UserSortInput = {
+  sortBy?: Maybe<UserSortOptions>;
+  sortDirection?: Maybe<SortDirection>;
+};
+
+export type UserSortOptions =
+  | "username"
+  | "totalLikes"
+  | "totalFavorites"
+  | "followerCount";
 export type ImageFragment = { __typename?: "Asset" } & Pick<
   Asset,
   "id" | "url" | "width" | "height"
@@ -2803,7 +2844,10 @@ export type CreateIssueMutation = { __typename?: "Mutation" } & {
 
 export type AddCardMutationVariables = {
   card: CardInput;
-  cardFilter?: Maybe<CardFilterInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<CardFilterInput>;
+  sort?: Maybe<CardSortInput>;
 };
 
 export type AddCardMutation = { __typename?: "Mutation" } & {
@@ -2840,7 +2884,10 @@ export type AddDeckMutation = { __typename?: "Mutation" } & {
 export type DeleteCardsMutationVariables = {
   deckId: Scalars["ID"];
   cardIds: Array<Maybe<Scalars["ID"]>>;
-  cardFilter?: Maybe<CardFilterInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<CardFilterInput>;
+  sort?: Maybe<CardSortInput>;
 };
 
 export type DeleteCardsMutation = { __typename?: "Mutation" } & {
@@ -2912,7 +2959,10 @@ export type DeleteIssueMutation = { __typename?: "Mutation" } & {
 
 export type DeleteIssueReplyMutationVariables = {
   id: Scalars["ID"];
-  repliesSelect?: Maybe<IssueReplySelectInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueReplyFilterInput>;
+  sort?: Maybe<IssueReplySortInput>;
 };
 
 export type DeleteIssueReplyMutation = { __typename?: "Mutation" } & {
@@ -2954,7 +3004,10 @@ export type RemoveTagMutation = { __typename?: "Mutation" } & {
 export type ReplyToIssueMutationVariables = {
   id: Scalars["ID"];
   content: Scalars["String"];
-  repliesSelect?: Maybe<IssueReplySelectInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueReplyFilterInput>;
+  sort?: Maybe<IssueReplySortInput>;
 };
 
 export type ReplyToIssueMutation = { __typename?: "Mutation" } & {
@@ -3271,7 +3324,10 @@ export type FeedQuery = { __typename?: "Query" } & {
 };
 
 export type GlobalDecksQueryVariables = {
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<DeckFilterInput>;
+  sort?: Maybe<DeckSortInput>;
   userId: Scalars["ID"];
 };
 
@@ -3301,7 +3357,10 @@ export type GlobalTagsQuery = { __typename?: "Query" } & Pick<Query, "tags">;
 
 export type IssueQueryVariables = {
   id: Scalars["ID"];
-  repliesSelect?: Maybe<IssueReplySelectInput>;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<IssueReplyFilterInput>;
+  sort?: Maybe<IssueReplySortInput>;
 };
 
 export type IssueQuery = { __typename?: "Query" } & {
@@ -3358,56 +3417,12 @@ export type LanguagesQuery = { __typename?: "Query" } & {
   >;
 };
 
-export type LessonsQueryVariables = {
-  userId: Scalars["ID"];
-  filter?: Maybe<ReviewFilterInput>;
-};
-
-export type LessonsQuery = { __typename?: "Query" } & {
-  user: Maybe<
-    { __typename?: "User" } & Pick<User, "id"> & {
-        lessonQueue: Array<
-          { __typename?: "Review" } & Pick<Review, "id" | "reviewedFields"> & {
-              card: { __typename?: "Card" } & Pick<
-                Card,
-                "id" | "meaning" | "pronunciation" | "translation"
-              > & {
-                  deck: Maybe<
-                    { __typename?: "Deck" } & {
-                      language: {
-                        __typename?: "Language";
-                      } & LanguageFieldsFragment;
-                    }
-                  >;
-                };
-            }
-        >;
-      }
-  >;
-};
-
-export type NextReviewQueryVariables = {
-  userId: Scalars["ID"];
-};
-
-export type NextReviewQuery = { __typename?: "Query" } & {
-  user: Maybe<
-    { __typename?: "User" } & Pick<User, "id"> & {
-        nextReview: Maybe<
-          { __typename?: "Review" } & Pick<Review, "id" | "reviewedFields"> & {
-              card: { __typename?: "Card" } & Pick<
-                Card,
-                "id" | "meaning" | "pronunciation" | "translation"
-              >;
-            }
-        >;
-      }
-  >;
-};
-
 export type ReviewsQueryVariables = {
   userId: Scalars["ID"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<ReviewFilterInput>;
+  sort?: Maybe<ReviewSortInput>;
 };
 
 export type ReviewsQuery = { __typename?: "Query" } & {
@@ -3446,7 +3461,10 @@ export type TagSearchQuery = { __typename?: "Query" } & Pick<Query, "tags">;
 
 export type CardsQueryVariables = {
   deckID: Scalars["ID"];
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
   filter?: Maybe<CardFilterInput>;
+  sort?: Maybe<CardSortInput>;
 };
 
 export type CardsQuery = { __typename?: "Query" } & {
@@ -3474,14 +3492,6 @@ export type DeckDetailsQuery = { __typename?: "Query" } & {
         owner: { __typename?: "User" } & Pick<User, "id" | "username">;
       }
   >;
-};
-
-export type LessonsCountQueryVariables = {
-  userId: Scalars["ID"];
-};
-
-export type LessonsCountQuery = { __typename?: "Query" } & {
-  user: Maybe<{ __typename?: "User" } & Pick<User, "id" | "lessonsCount">>;
 };
 
 export type ReviewsCountQueryVariables = {
@@ -3532,7 +3542,10 @@ export type UserLanguagesQuery = { __typename?: "Query" } & {
 };
 
 export type UsersQueryVariables = {
-  filter: UserFilterInput;
+  limit?: Maybe<Scalars["Int"]>;
+  offset?: Maybe<Scalars["Int"]>;
+  filter?: Maybe<UserFilterInput>;
+  sort?: Maybe<UserSortInput>;
 };
 
 export type UsersQuery = { __typename?: "Query" } & {
@@ -3803,10 +3816,16 @@ export function useCreateIssueMutation(
   >(CreateIssueDocument, baseOptions);
 }
 export const AddCardDocument = gql`
-  mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
+  mutation AddCard(
+    $card: CardInput!
+    $limit: Int
+    $offset: Int
+    $filter: CardFilterInput
+    $sort: CardSortInput
+  ) {
     createCard(input: $card) {
       id
-      cards(filter: $cardFilter) {
+      cards(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         meaning
         pronunciation
@@ -3913,11 +3932,14 @@ export const DeleteCardsDocument = gql`
   mutation DeleteCards(
     $deckId: ID!
     $cardIds: [ID]!
-    $cardFilter: CardFilterInput
+    $limit: Int
+    $offset: Int
+    $filter: CardFilterInput
+    $sort: CardSortInput
   ) {
     deleteCards(deck: $deckId, ids: $cardIds) {
       id
-      cards(filter: $cardFilter) {
+      cards(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         meaning
         pronunciation
@@ -4203,10 +4225,16 @@ export function useDeleteIssueMutation(
   >(DeleteIssueDocument, baseOptions);
 }
 export const DeleteIssueReplyDocument = gql`
-  mutation DeleteIssueReply($id: ID!, $repliesSelect: IssueReplySelectInput) {
+  mutation DeleteIssueReply(
+    $id: ID!
+    $limit: Int
+    $offset: Int
+    $filter: IssueReplyFilterInput
+    $sort: IssueReplySortInput
+  ) {
     deleteIssueReply(id: $id) {
       id
-      replies(select: $repliesSelect) {
+      replies(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
       }
       replyCount
@@ -4396,11 +4424,14 @@ export const ReplyToIssueDocument = gql`
   mutation ReplyToIssue(
     $id: ID!
     $content: String!
-    $repliesSelect: IssueReplySelectInput
+    $limit: Int
+    $offset: Int
+    $filter: IssueReplyFilterInput
+    $sort: IssueReplySortInput
   ) {
     replyToIssue(id: $id, content: $content) {
       id
-      replies(select: $repliesSelect) {
+      replies(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         content
         by {
@@ -5455,8 +5486,14 @@ export function useFeedQuery(
   );
 }
 export const GlobalDecksDocument = gql`
-  query GlobalDecks($filter: DeckFilterInput, $userId: ID!) {
-    decks(filter: $filter) {
+  query GlobalDecks(
+    $limit: Int
+    $offset: Int
+    $filter: DeckFilterInput
+    $sort: DeckSortInput
+    $userId: ID!
+  ) {
+    decks(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
       id
       name
       cardCount
@@ -5541,11 +5578,17 @@ export function useGlobalTagsQuery(
   );
 }
 export const IssueDocument = gql`
-  query Issue($id: ID!, $repliesSelect: IssueReplySelectInput) {
+  query Issue(
+    $id: ID!
+    $limit: Int
+    $offset: Int
+    $filter: IssueReplyFilterInput
+    $sort: IssueReplySortInput
+  ) {
     issue(id: $id) {
       ...shallowIssue
       content
-      replies(select: $repliesSelect) {
+      replies(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         content
         by {
@@ -5748,113 +5791,22 @@ export function useLanguagesQuery(
     baseOptions
   );
 }
-export const LessonsDocument = gql`
-  query Lessons($userId: ID!, $filter: ReviewFilterInput) {
-    user(id: $userId) {
-      id
-      lessonQueue(filter: $filter) {
-        id
-        card {
-          id
-          meaning
-          pronunciation
-          translation
-          deck {
-            language {
-              ...languageFields
-            }
-          }
-        }
-        reviewedFields
-      }
-    }
-  }
-  ${languageFieldsFragmentDoc}
-`;
-export type LessonsProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<LessonsQuery, LessonsQueryVariables>
-> &
-  TChildProps;
-export function withLessons<TProps, TChildProps = {}>(
-  operationOptions?: ReactApollo.OperationOption<
-    TProps,
-    LessonsQuery,
-    LessonsQueryVariables,
-    LessonsProps<TChildProps>
-  >
-) {
-  return ReactApollo.withQuery<
-    TProps,
-    LessonsQuery,
-    LessonsQueryVariables,
-    LessonsProps<TChildProps>
-  >(LessonsDocument, {
-    alias: "withLessons",
-    ...operationOptions
-  });
-}
-
-export function useLessonsQuery(
-  baseOptions?: ReactApolloHooks.QueryHookOptions<LessonsQueryVariables>
-) {
-  return ReactApolloHooks.useQuery<LessonsQuery, LessonsQueryVariables>(
-    LessonsDocument,
-    baseOptions
-  );
-}
-export const NextReviewDocument = gql`
-  query NextReview($userId: ID!) {
-    user(id: $userId) {
-      id
-      nextReview {
-        id
-        card {
-          id
-          meaning
-          pronunciation
-          translation
-        }
-        reviewedFields
-      }
-    }
-  }
-`;
-export type NextReviewProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<NextReviewQuery, NextReviewQueryVariables>
-> &
-  TChildProps;
-export function withNextReview<TProps, TChildProps = {}>(
-  operationOptions?: ReactApollo.OperationOption<
-    TProps,
-    NextReviewQuery,
-    NextReviewQueryVariables,
-    NextReviewProps<TChildProps>
-  >
-) {
-  return ReactApollo.withQuery<
-    TProps,
-    NextReviewQuery,
-    NextReviewQueryVariables,
-    NextReviewProps<TChildProps>
-  >(NextReviewDocument, {
-    alias: "withNextReview",
-    ...operationOptions
-  });
-}
-
-export function useNextReviewQuery(
-  baseOptions?: ReactApolloHooks.QueryHookOptions<NextReviewQueryVariables>
-) {
-  return ReactApolloHooks.useQuery<NextReviewQuery, NextReviewQueryVariables>(
-    NextReviewDocument,
-    baseOptions
-  );
-}
 export const ReviewsDocument = gql`
-  query Reviews($userId: ID!, $filter: ReviewFilterInput) {
+  query Reviews(
+    $userId: ID!
+    $limit: Int
+    $offset: Int
+    $filter: ReviewFilterInput
+    $sort: ReviewSortInput
+  ) {
     user(id: $userId) {
       id
-      reviewQueue(filter: $filter) {
+      reviewQueue(
+        limit: $limit
+        offset: $offset
+        filter: $filter
+        sort: $sort
+      ) {
         id
         box
         correct
@@ -5944,11 +5896,17 @@ export function useTagSearchQuery(
   );
 }
 export const CardsDocument = gql`
-  query Cards($deckID: ID!, $filter: CardFilterInput) {
+  query Cards(
+    $deckID: ID!
+    $limit: Int
+    $offset: Int
+    $filter: CardFilterInput
+    $sort: CardSortInput
+  ) {
     deck(id: $deckID) {
       id
       cardCount
-      cards(filter: $filter) {
+      cards(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         meaning
         pronunciation
@@ -6038,45 +5996,6 @@ export function useDeckDetailsQuery(
     DeckDetailsDocument,
     baseOptions
   );
-}
-export const LessonsCountDocument = gql`
-  query LessonsCount($userId: ID!) {
-    user(id: $userId) {
-      id
-      lessonsCount
-    }
-  }
-`;
-export type LessonsCountProps<TChildProps = {}> = Partial<
-  ReactApollo.DataProps<LessonsCountQuery, LessonsCountQueryVariables>
-> &
-  TChildProps;
-export function withLessonsCount<TProps, TChildProps = {}>(
-  operationOptions?: ReactApollo.OperationOption<
-    TProps,
-    LessonsCountQuery,
-    LessonsCountQueryVariables,
-    LessonsCountProps<TChildProps>
-  >
-) {
-  return ReactApollo.withQuery<
-    TProps,
-    LessonsCountQuery,
-    LessonsCountQueryVariables,
-    LessonsCountProps<TChildProps>
-  >(LessonsCountDocument, {
-    alias: "withLessonsCount",
-    ...operationOptions
-  });
-}
-
-export function useLessonsCountQuery(
-  baseOptions?: ReactApolloHooks.QueryHookOptions<LessonsCountQueryVariables>
-) {
-  return ReactApolloHooks.useQuery<
-    LessonsCountQuery,
-    LessonsCountQueryVariables
-  >(LessonsCountDocument, baseOptions);
 }
 export const ReviewsCountDocument = gql`
   query ReviewsCount($userId: ID!, $filter: ReviewFilterInput!) {
@@ -6222,8 +6141,13 @@ export function useUserLanguagesQuery(
   >(UserLanguagesDocument, baseOptions);
 }
 export const UsersDocument = gql`
-  query Users($filter: UserFilterInput!) {
-    users(filter: $filter) {
+  query Users(
+    $limit: Int
+    $offset: Int
+    $filter: UserFilterInput
+    $sort: UserSortInput
+  ) {
+    users(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
       id
       picture
       username

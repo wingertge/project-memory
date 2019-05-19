@@ -1,6 +1,0 @@
-query LessonsCount($userId: ID!) {
-    user(id: $userId) {
-        id
-        lessonsCount
-    }
-}

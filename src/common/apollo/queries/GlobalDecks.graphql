@@ -1,5 +1,5 @@
-query GlobalDecks($filter: DeckFilterInput, $userId: ID!) {
-    decks(filter: $filter) {
+query GlobalDecks($limit: Int, $offset: Int, $filter: DeckFilterInput, $sort: DeckSortInput, $userId: ID!) {
+    decks(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         name
         cardCount

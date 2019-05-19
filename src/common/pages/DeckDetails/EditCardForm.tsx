@@ -12,8 +12,7 @@ import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {
     Card,
-    Language,
-    LessonsCountDocument,
+    Language, ReviewsCountDocument,
     useAddCardMutation,
     useUpdateCardMutation
 } from "../../../generated/graphql"
@@ -103,15 +102,15 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
                 translation: translation.value,
                 deck: deckId
             },
-            cardFilter: {
-                limit: rowsPerPage,
-                offset: page * rowsPerPage,
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            sort: {
                 sortBy,
                 sortDirection
             }
         },
         refetchQueries: [
-            {query: LessonsCountDocument, variables: {userId}}
+            {query: ReviewsCountDocument, variables: {userId, filter: {box: {eq: 0}}}}
         ]
     })
 

@@ -61,5 +61,8 @@
   "Add": "Add",
   "Email is required": "Email is required",
   "Name can't be empty": "Name can't be empty",
-  "Username can't be empty": "Username can't be empty"
+  "Username can't be empty": "Username can't be empty",
+  "Reviews": "Reviews",
+  "available now": "available now",
+  "now": "now"
 }

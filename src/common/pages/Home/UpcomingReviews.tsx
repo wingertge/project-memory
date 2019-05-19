@@ -46,10 +46,13 @@ export const UpcomingReviews = () => {
     const {data: nextReviewData, loading: nextReviewLoading, error: nextReviewError} = useReviewsQuery({
         variables: {
             userId: id,
-            filter: {
+            limit: 1,
+            sort: {
                 sortBy: "nextReviewAt",
-                sortDirection: "asc",
-                limit: 1
+                sortDirection: "asc"
+            },
+            filter: {
+                box: {gt: 0}
             }
         }
     })
@@ -57,7 +60,8 @@ export const UpcomingReviews = () => {
         variables: {
             userId: id,
             filter: {
-                toBeReviewedBy: new Date(now.getTime() + 60 * 60 * 1000)
+                nextReviewAt: {lte: new Date(now.getTime() + 60 * 60 * 1000)},
+                box: {gt: 0}
             }
         }
     })
@@ -65,7 +69,8 @@ export const UpcomingReviews = () => {
         variables: {
             userId: id,
             filter: {
-                toBeReviewedBy: new Date(now.getTime() + 24 * 60 * 60 * 1000)
+                nextReviewAt: {lte: new Date(now.getTime() + 24 * 60 * 60 * 1000)},
+                box: {gt: 0}
             }
         }
     })

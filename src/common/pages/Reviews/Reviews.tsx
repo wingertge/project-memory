@@ -27,9 +27,10 @@ export const Reviews = () => {
     const {data, loading, error} = useReviewsQuery({
         variables: {
             userId: id,
+            limit: 100,
             filter: {
-                limit: 100,
-                toBeReviewedBy: now
+                nextReviewAt: {lte: now},
+                box: {gt: 0}
             }
         }
     })

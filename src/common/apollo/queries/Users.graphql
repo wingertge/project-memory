@@ -1,5 +1,5 @@
-query Users($filter: UserFilterInput!) {
-    users(filter: $filter) {
+query Users($limit: Int, $offset: Int, $filter: UserFilterInput, $sort: UserSortInput) {
+    users(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
         id
         picture
         username

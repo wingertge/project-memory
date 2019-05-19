@@ -1,7 +1,7 @@
-mutation AddCard($card: CardInput!, $cardFilter: CardFilterInput) {
+mutation AddCard($card: CardInput!, $limit: Int, $offset: Int, $filter: CardFilterInput, $sort: CardSortInput) {
     createCard(input: $card) {
         id
-        cards(filter: $cardFilter) {
+        cards(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
             id
             meaning
             pronunciation

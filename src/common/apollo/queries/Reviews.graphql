@@ -1,7 +1,7 @@
-query Reviews($userId: ID!, $filter: ReviewFilterInput) {
+query Reviews($userId: ID!, $limit: Int, $offset: Int, $filter: ReviewFilterInput, $sort: ReviewSortInput) {
     user(id: $userId) {
         id
-        reviewQueue(filter: $filter) {
+        reviewQueue(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
             id
             box
             correct

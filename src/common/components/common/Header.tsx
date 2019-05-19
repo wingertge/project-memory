@@ -61,7 +61,7 @@ export const Header = () => {
         skip: !user,
         variables: {
             userId: user && user.id,
-            filter: {toBeReviewedBy: now}
+            filter: {nextReviewAt: {lte: now}, box: {gt: 0}}
         }
     })
 

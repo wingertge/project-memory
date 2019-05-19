@@ -78,12 +78,14 @@ export const FirstDeckStep = () => {
 
     const globalDecks = useGlobalDecksQuery({
         variables: {
+            limit: 20,
             filter: {
+                language: {in: languages.map(lang => lang.id)},
+                nativeLanguage: {eq: oc(nativeLanguage).id()}
+            },
+            sort: {
                 sortBy: "rating",
-                sortDirection: "desc",
-                limit: 20,
-                languages: languages.map(lang => lang.id),
-                nativeLanguage: oc(nativeLanguage).id()
+                sortDirection: "desc"
             },
             userId: id
         }

@@ -66,7 +66,7 @@ export const ReviewsFinished = ({reviews, onReviewMore = () => {}}: PropTypes) =
     const {data, loading, error} = useReviewsCountQuery({
         variables: {
             userId,
-            filter: {toBeReviewedBy: now}
+            filter: {nextReviewAt: {lte: now}, box: {gt: 0}}
         }
     })
 

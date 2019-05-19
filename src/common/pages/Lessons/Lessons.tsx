@@ -13,7 +13,7 @@ import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import {Review, useLessonsQuery} from "../../../generated/graphql"
+import {Review, useReviewsQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {useID, useUpdateNow} from "../../hooks"
 import LessonDisplay from "./LessonDisplay"
@@ -56,15 +56,16 @@ export const Lessons = () => {
     const id = useID()
     const [lessonIndex, setLessonIndex] = useState(0)
     const [isDone, setDone] = useState(false)
-    const {data, loading, error, refetch} = useLessonsQuery({
+    const {data, loading, error, refetch} = useReviewsQuery({
         variables: {
             userId: id,
+            limit: 5,
             filter: {
-                limit: 5
+                box: {eq: 0}
             }
         }
     })
-    const lessons = oc(data).user.lessonQueue([]) as Review[]
+    const lessons = oc(data).user.reviewQueue([]) as Review[]
 
     const onKeyPress = event => {
         if(event.keyCode === 13 && lessonIndex < lessons.length) {

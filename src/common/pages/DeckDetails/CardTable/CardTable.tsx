@@ -72,12 +72,14 @@ const CardTable = (
     const {data} = useCardsQuery({
         variables: {
             deckID: id,
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
             filter: {
-                limit: rowsPerPage,
-                offset: page * rowsPerPage,
-                sortBy,
-                sortDirection,
                 search: search.value.trim().length > 0 ? search.value : undefined
+            },
+            sort: {
+                sortBy,
+                sortDirection
             }
         }
     })
@@ -91,9 +93,9 @@ const CardTable = (
         variables: {
             deckId: id,
             cardIds: selected,
-            cardFilter: {
-                limit: rowsPerPage,
-                offset: page * rowsPerPage,
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            sort: {
                 sortBy,
                 sortDirection
             }

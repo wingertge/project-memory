@@ -6,10 +6,9 @@ import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {
-    Deck,
-    DeckSortBy, SortDirection,
+    Deck, DeckSortOptions,
+    SortDirection,
     useGlobalDecksQuery,
-    useShallowDecksQuery,
     useUserLanguagesQuery
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 interface Form {
-    sortBy: DeckSortBy
+    sortBy: DeckSortOptions
     sortDirection: SortDirection
 }
 
@@ -70,24 +69,25 @@ export const DeckDiscovery = () => {
     const {search} = useFormState<{search: string}>({search: ""})
 
     const userLangs = useUserLanguagesQuery({variables: {userId: id}})
-    const userDecks = useShallowDecksQuery({variables: {id}})
-    const ownedDecks = oc(userDecks.data).user.ownedDecks([]) as Deck[]
-    const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
     const nativeLanguage = oc(userLangs.data).user.nativeLanguage()
     const userLanguages = oc(userLangs.data).user.languages()
     const {data, loading, error} = useGlobalDecksQuery({
-        skip: !nativeLanguage || !userLanguages || userDecks.loading,
+        skip: !nativeLanguage || !userLanguages,
         variables: {
             userId: id,
+            limit: 51,
+            offset: page * 50,
             filter: {
-                limit: 51 + ownedDecks.length + subscribedDecks.length,
-                nativeLanguage: oc(userLangs.data).user.nativeLanguage.id(),
-                offset: page * 50,
-                tags: tags.length > 0 ? tags : undefined,
+                nativeLanguage: {eq: oc(userLangs.data).user.nativeLanguage.id()},
+                tags: tags.length > 0 ? {all: tags} : undefined,
                 search: search.value.length > 0 ? search.value : undefined,
+                language: {in: oc(userLangs.data).user.languages([]).map(lang => lang.id)},
+                owner: {ne: id},
+                subscribers: {ne: id}
+            },
+            sort: {
                 sortBy: sortBy.value,
-                sortDirection: sortDirection.value,
-                languages: oc(userLangs.data).user.languages([]).map(lang => lang.id)
+                sortDirection: sortDirection.value
             }
         }
     })
@@ -95,15 +95,13 @@ export const DeckDiscovery = () => {
 
     useEffect(() => {
         if(!loading) {
-            let newDecks = queryDecks.filter(deck => !ownedDecks.some(ownedDeck => ownedDeck.id === deck.id) && !subscribedDecks.some(subscribedDeck => subscribedDeck.id === deck.id))
-            setHasMore(newDecks.length > 50)
-            newDecks = newDecks.slice(0, 50)
-            setDecks(newDecks)
+            setHasMore(queryDecks.length > 50)
+            setDecks(queryDecks.slice(0, 50))
         }
     }, [queryDecks])
 
-    if(error || userLangs.error || userDecks.error) return <ApolloErrorBox error={error || userLangs.error || userDecks.error} />
-    if(userLangs.loading || userDecks.loading) return <TimedCircularProgress />
+    if(error || userLangs.error) return <ApolloErrorBox error={error || userLangs.error} />
+    if(userLangs.loading) return <TimedCircularProgress />
 
     return (
         <div>

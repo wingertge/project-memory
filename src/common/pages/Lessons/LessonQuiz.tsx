@@ -4,9 +4,8 @@ import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {
-    LessonsCountDocument,
     Review,
-    ReviewFields,
+    ReviewFields, ReviewsCountDocument,
     useSubmitReviewMutation
 } from "../../../generated/graphql"
 import {useID} from "../../hooks"
@@ -46,7 +45,7 @@ export const LessonQuiz = ({reviews, onQuizFinished}: PropTypes) => {
                     const id = review.id
                     submitReviewMutate({
                         variables: {reviewId: id, field: field!, correct: true},
-                        refetchQueries: [{query: LessonsCountDocument, variables: {userId}}]
+                        refetchQueries: [{query: ReviewsCountDocument, variables: {userId, filter: {box: {eq: 0}}}}]
                     }).then(onQuizFinished)
                 })
             })

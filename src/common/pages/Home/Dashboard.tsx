@@ -8,8 +8,7 @@ import useRouter from "use-react-router"
 import {
     Deck,
     Language,
-    useGlobalDecksQuery,
-    useLessonsCountQuery,
+    useGlobalDecksQuery, useReviewsCountQuery,
     useUserLanguagesQuery
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
@@ -51,14 +50,17 @@ export const Dashboard = () => {
     const {t} = useTranslation()
     const {history} = useRouter()
     const user = useUser()
-    const {data, loading, error} = useLessonsCountQuery({
+    const {data, loading, error} = useReviewsCountQuery({
         skip: !user,
         variables: {
-            userId: oc(user).id()!
+            userId: oc(user).id()!,
+            filter: {
+                box: {eq: 0}
+            }
         }
     })
 
-    const lessonsCount = oc(data).user.lessonsCount(0)
+    const lessonsCount = oc(data).user.reviewsCount(0)
     const openLessons = () => history.push("/lessons")
 
     const userLangs = useUserLanguagesQuery({
@@ -73,14 +75,16 @@ export const Dashboard = () => {
     const globalDecks = useGlobalDecksQuery({
         skip: !user,
         variables: {
+            limit: 10,
             filter: {
+                language: {in: languages.map(lang => lang.id)},
+                nativeLanguage: {eq: oc(nativeLanguage).id()},
+                owner: {ne: oc(user).id("")},
+                subscribers: {ne: oc(user).id("")}
+            },
+            sort: {
                 sortBy: "rating",
-                sortDirection: "desc",
-                limit: 20,
-                languages: languages.map(lang => lang.id),
-                nativeLanguage: oc(nativeLanguage).id(),
-                excludeOwnedBy: [oc(user).id("")],
-                excludeSubscribedBy: [oc(user).id("")]
+                sortDirection: "desc"
             },
             userId: oc(user).id("")
         }

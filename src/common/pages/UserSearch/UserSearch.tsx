@@ -47,7 +47,7 @@ export const UserSearch = () => {
     const {t} = useTranslation()
     const {match: {params}, history} = useRouter<RouteParams>()
     const {query, valid} = useValidatedFormState<RouteParams>({query: params.query || ""}, validators)
-    const {data, error, loading} = useUsersQuery({skip: !valid, variables: {filter: {limit: 20, search: query.value}}})
+    const {data, error, loading} = useUsersQuery({skip: !valid, variables: {limit: 20, filter: {search: query.value}}})
     const users = oc(data).users([]) as User[]
 
     if(error) return <ApolloErrorBox error={error} />

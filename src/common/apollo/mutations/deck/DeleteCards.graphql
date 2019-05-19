@@ -1,7 +1,7 @@
-mutation DeleteCards($deckId: ID!, $cardIds: [ID]!, $cardFilter: CardFilterInput) {
+mutation DeleteCards($deckId: ID!, $cardIds: [ID]!, $limit: Int, $offset: Int, $filter: CardFilterInput, $sort: CardSortInput) {
     deleteCards(deck: $deckId, ids: $cardIds) {
         id
-        cards(filter: $cardFilter) {
+        cards(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
             id
             meaning
             pronunciation

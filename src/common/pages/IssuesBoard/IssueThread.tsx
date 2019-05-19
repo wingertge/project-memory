@@ -121,7 +121,7 @@ export const IssueThread = () => {
     const {data, loading, error} = useIssueQuery({
         variables: {
             id: threadId,
-            repliesSelect
+            ...repliesSelect
         }
     })
 
@@ -141,7 +141,7 @@ export const IssueThread = () => {
     const [deleteReplyMutate] = useDeleteIssueReplyMutation()
     const deleteReply = (replyId: string) => {
         deleteReplyMutate({
-            variables: {id: replyId, repliesSelect},
+            variables: {id: replyId, ...repliesSelect},
             optimisticResponse: {
                 __typename: "Mutation",
                 deleteIssueReply: {
@@ -158,7 +158,7 @@ export const IssueThread = () => {
     const [replyToIssueMutate] = useReplyToIssueMutation()
     const replyToIssue = () => {
         replyToIssueMutate({
-            variables: {id: threadId, content: content.value, repliesSelect},
+            variables: {id: threadId, content: content.value, ...repliesSelect},
             optimisticResponse: {
                 __typename: "Mutation",
                 replyToIssue: {

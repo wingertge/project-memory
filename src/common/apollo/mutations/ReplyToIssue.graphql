@@ -1,7 +1,7 @@
-mutation ReplyToIssue($id: ID!, $content: String!, $repliesSelect: IssueReplySelectInput) {
+mutation ReplyToIssue($id: ID!, $content: String!, $limit: Int, $offset: Int, $filter: IssueReplyFilterInput, $sort: IssueReplySortInput) {
     replyToIssue(id: $id, content: $content) {
         id
-        replies(select: $repliesSelect) {
+        replies(limit: $limit, offset: $offset, filter: $filter, sort: $sort) {
             id
             content
             by {
