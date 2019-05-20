@@ -5,7 +5,7 @@ import ChipInput, {Props as ChipInputProps} from "material-ui-chip-input"
 import {useEffect, useState} from "react"
 import * as React from "react"
 import Autosuggest from "react-autosuggest"
-import {useTranslation} from "react-i18next"
+import {useTranslation, UseTranslationResponse} from "react-i18next"
 import {oc} from "ts-optchain"
 import {useGlobalTagsQuery} from "../../../generated/graphql"
 import match from "autosuggest-highlight/match"
@@ -41,10 +41,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-const renderInput = ({value, chips, onChange, ...other}: ChipInputProps & {chips: string[]}) => {
-    const {t} = useTranslation()
-    return <ChipInput clearInputValueOnChange blurBehavior="add" onUpdateInput={onChange} value={chips} helperText={t("Press Enter to add a tag")} {...other} />
-}
+const renderInput = ({value, chips, onChange, t, ...other}: ChipInputProps & UseTranslationResponse & {chips: string[]}) =>
+    <ChipInput clearInputValueOnChange blurBehavior="add" onUpdateInput={onChange} value={chips} helperText={t("Press Enter to add a tag")} {...other} />
 const renderSuggestion = (suggestion, {query, isHighlighted}) => {
     const matches = match(suggestion, query)
     const parts = parse(suggestion, matches)
@@ -74,6 +72,7 @@ const renderSuggestionsContainer = ({containerProps, children}) => (
 
 export const AutocompleteTagInput = ({onAdd, onDelete, chips, ...rest}: PropTypes & Partial<ChipInputProps>) => {
     const classes = useStyles()
+    const {t} = useTranslation()
     const [textFieldInput, setTextFieldInput] = useState<string>("")
     const [suggestions, setSuggestions] = useState<string[]>([])
 
@@ -110,7 +109,8 @@ export const AutocompleteTagInput = ({onAdd, onDelete, chips, ...rest}: PropType
                 value: textFieldInput,
                 onChange: onTextFieldInputChange,
                 onAdd,
-                onDelete
+                onDelete,
+                t
             }}
             focusInputOnSuggestionClick={false}
         />

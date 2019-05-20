@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     filterContainer: {
         padding: theme.spacing(2),
-        paddingTop: 0
+        paddingBottom: theme.spacing(4)
     },
     select: {
         width: 140,
