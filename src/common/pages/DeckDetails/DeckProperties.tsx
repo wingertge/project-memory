@@ -49,7 +49,8 @@ export const DeckProperties = ({deck}: PropTypes) => {
 
     const {data} = useShallowDecksQuery({
         variables: {
-            id: userId
+            id: userId,
+            userId
         }
     })
 

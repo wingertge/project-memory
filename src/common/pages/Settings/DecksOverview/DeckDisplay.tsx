@@ -83,7 +83,8 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
 
     const {data} = useShallowDecksQuery({
         variables: {
-            id: userId
+            id: userId,
+            userId
         }
     })
 
@@ -107,7 +108,7 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
         variables: {
             userId,
             deckId: id,
-            value: liked ? undefined : true
+            value: !liked
         },
         optimisticResponse: {
             changeLikeStatus: {

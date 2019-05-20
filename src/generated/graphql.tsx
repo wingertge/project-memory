@@ -1762,7 +1762,7 @@ export type MutationChangeSubscriptionStatusArgs = {
 export type MutationChangeLikeStatusArgs = {
   id: Scalars["ID"];
   userID: Scalars["ID"];
-  value?: Maybe<Scalars["Boolean"]>;
+  value: Scalars["Boolean"];
 };
 
 export type MutationAddTagToDeckArgs = {
@@ -2652,7 +2652,8 @@ export type ReportReason =
   | "inappropriate"
   | "copyright"
   | "spam"
-  | "hatespeech";
+  | "hatespeech"
+  | "harassment";
 
 export type Review = {
   id: Scalars["ID"];
@@ -3166,7 +3167,7 @@ export type ChangeFollowingStatusMutation = { __typename?: "Mutation" } & {
 export type ChangeLikeStatusMutationVariables = {
   userId: Scalars["ID"];
   deckId: Scalars["ID"];
-  value?: Maybe<Scalars["Boolean"]>;
+  value: Scalars["Boolean"];
 };
 
 export type ChangeLikeStatusMutation = { __typename?: "Mutation" } & {
@@ -3569,6 +3570,7 @@ export type ReviewsCountQuery = { __typename?: "Query" } & {
 
 export type ShallowDecksQueryVariables = {
   id: Scalars["ID"];
+  userId: Scalars["ID"];
 };
 
 export type ShallowDecksQuery = { __typename?: "Query" } & {
@@ -5010,7 +5012,7 @@ export function useChangeFollowingStatusMutation(
   >(ChangeFollowingStatusDocument, baseOptions);
 }
 export const ChangeLikeStatusDocument = gql`
-  mutation ChangeLikeStatus($userId: ID!, $deckId: ID!, $value: Boolean) {
+  mutation ChangeLikeStatus($userId: ID!, $deckId: ID!, $value: Boolean!) {
     changeLikeStatus(id: $deckId, userID: $userId, value: $value) {
       id
       rating
@@ -6260,7 +6262,7 @@ export function useReviewsCountQuery(
   >(ReviewsCountDocument, baseOptions);
 }
 export const ShallowDecksDocument = gql`
-  query ShallowDecks($id: ID!) {
+  query ShallowDecks($id: ID!, $userId: ID!) {
     user(id: $id) {
       id
       ownedDecks {
@@ -6268,7 +6270,7 @@ export const ShallowDecksDocument = gql`
         name
         cardCount
         rating
-        isLikedBy(userID: $id)
+        isLikedBy(userID: $userId)
         language {
           ...languageFields
         }
@@ -6278,7 +6280,7 @@ export const ShallowDecksDocument = gql`
         name
         cardCount
         rating
-        isLikedBy(userID: $id)
+        isLikedBy(userID: $userId)
         language {
           ...languageFields
         }

@@ -8,6 +8,7 @@ import useRouter from "use-react-router/use-react-router"
 import {Deck, useShallowDecksQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
+import {useID} from "../../hooks"
 import PopularDecks from "../Intro/PopularDecks"
 
 interface PropTypes {
@@ -38,7 +39,8 @@ export const UserDecks = ({userId}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {history} = useRouter()
-    const {data, loading, error} = useShallowDecksQuery({variables: {id: userId}})
+    const currentUserId = useID()
+    const {data, loading, error} = useShallowDecksQuery({variables: {id: userId, userId: currentUserId}})
     let decks = oc(data).user.ownedDecks([]) as Deck[]
     if(decks.length > 20) decks = decks.slice(0, 20)
 

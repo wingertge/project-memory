@@ -27,7 +27,7 @@ export const PopularDecks = ({decks, onSave = () => {}}: PropTypes) => {
     const classes = useStyles()
     const id = useID()
     const userLangs = useUserLanguagesQuery({variables: {userId: id}})
-    const userDecks = useShallowDecksQuery({variables: {id}})
+    const userDecks = useShallowDecksQuery({variables: {id, userId: id}})
     const ownedDecks = oc(userDecks.data).user.ownedDecks([]) as Deck[]
     const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
 

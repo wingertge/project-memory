@@ -5,8 +5,9 @@ import {useID} from "./index"
 
 export const useSubscriptionToggle = (id?: string) => {
     id = id || useID()
+    const userId = useID()
 
-    const userDecks = useShallowDecksQuery({variables: {id}})
+    const userDecks = useShallowDecksQuery({variables: {id, userId}})
     const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
 
     const [updateSubscriptionStatusMutate] = useChangeSubscriptionStatusMutation()

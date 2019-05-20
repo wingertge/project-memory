@@ -48,7 +48,7 @@ export const DecksOverview = () => {
     const classes = useStyles()
     const id = useID()
     const {data, error, loading} = useShallowDecksQuery({
-        variables: {id}
+        variables: {id, userId: id}
     })
     const ownedDecks = oc(data).user.ownedDecks([]) as Deck[]
     const subscribedDecks = oc(data).user.subscribedDecks([]) as Deck[]

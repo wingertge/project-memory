@@ -1,4 +1,4 @@
-query ShallowDecks($id: ID!) {
+query ShallowDecks($id: ID!, $userId: ID!) {
     user(id: $id) {
         id
         ownedDecks {
@@ -6,7 +6,7 @@ query ShallowDecks($id: ID!) {
             name
             cardCount
             rating
-            isLikedBy(userID: $id)
+            isLikedBy(userID: $userId)
             language {
                 ...languageFields
             }
@@ -16,7 +16,7 @@ query ShallowDecks($id: ID!) {
             name
             cardCount
             rating
-            isLikedBy(userID: $id)
+            isLikedBy(userID: $userId)
             language {
                 ...languageFields
             }
