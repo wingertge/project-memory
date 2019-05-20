@@ -35,7 +35,7 @@ export const FinishedStep = () => {
                 <title>{t("Ready for Project Memory")}</title>
             </Helmet>
             <Typography variant="h6">
-                {t("Aaand - Done! You're good to go now, enjoy Project Memory! If you have any more questions feel free to look at our beginner's guide or ask it on the forum.")}
+                {t("Aaand - Done! You're good to go now, enjoy Project Memory! If you have any more questions feel free to look at the help section and ask questions on the help board there.")}
             </Typography>
             <Button variant="contained" color="primary" onClick={save} className={classes.button}>{t("Will do!")}</Button>
         </>
