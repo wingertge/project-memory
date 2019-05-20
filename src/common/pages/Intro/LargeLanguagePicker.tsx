@@ -20,7 +20,8 @@ interface PropTypes {
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     languageButtons: {
-        display: "flex"
+        display: "flex",
+        flexWrap: "wrap"
     },
     languageButton: {
         padding: 0,
@@ -33,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     searchField: {
         margin: theme.spacing(1),
         width: `calc(100% - ${theme.spacing(2)}px)`
+    },
+    root: {
+        width: "100%"
     }
 }))
 
@@ -63,7 +67,7 @@ export const LargeLanguagePicker = ({updateLanguage, exclusive}: PropTypes) => {
     if(langs.loading || userLangs.loading) return <CircularProgress />
 
     return (
-        <div>
+        <div className={classes.root}>
             <TextField label={t("Search")} variant="outlined" margin="dense" value={search.value} onChange={search.onChange} className={classes.searchField} />
             <div className={classes.languageButtons}>
                 {languages && languages.map(language => (
