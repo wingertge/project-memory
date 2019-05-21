@@ -55,6 +55,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     button: {
         margin: theme.spacing(2)
+    },
+    root: {
+        paddingTop: theme.spacing(2)
     }
 }))
 
@@ -76,7 +79,7 @@ export const ReviewsFinished = ({reviews, onReviewMore = () => {}}: PropTypes) =
     const reviewCount = data!.user!.reviewsCount
 
     return (
-        <div>
+        <div className={classes.root}>
             <Helmet>
                 <title>{t("Reviews Done - Project Memory")}</title>
             </Helmet>

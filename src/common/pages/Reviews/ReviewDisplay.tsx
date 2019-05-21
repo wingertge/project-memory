@@ -25,8 +25,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     review: {
         padding: theme.spacing(2),
-        background: theme.palette.background.paper,
-        marginTop: theme.spacing(-2)
+        background: theme.palette.background.paper
     },
     shownValue: {
         marginBottom: theme.spacing(2)

@@ -203,7 +203,7 @@ export const IssueThread = () => {
     const [openDeleteReplyConfirm, DeleteReplyConfirmDialog] = useConfirmDialog(deleteReply, "Delete this reply?", "Are you sure you want to delete this reply?")
     const {Dialog, openDialog} = useDialog(ReportDialog)
 
-    if(loading || !user) return <TimedCircularProgress />
+    if(loading || !user || !issue) return <TimedCircularProgress />
     if(error) return <ApolloErrorBox error={error} />
 
     const SideBar = ({by, postedAt}) => (

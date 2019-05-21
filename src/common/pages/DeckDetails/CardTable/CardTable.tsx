@@ -14,10 +14,9 @@ import {createStyles, makeStyles} from "@material-ui/styles"
 import {Dispatch, SetStateAction, useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import {oc} from "ts-optchain"
 import useRouter from "use-react-router"
-import {Deck, useCardsQuery, useDeleteCardsMutation} from "../../../../generated/graphql"
-import {useConfirmDialog, useDialog, useFormState} from "../../../hooks"
+import {Card, CardSortingOptions, Deck, useDeleteCardsMutation} from "../../../../generated/graphql"
+import {useConfirmDialog, useDialog} from "../../../hooks"
 import EditCardForm from "../EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
@@ -26,8 +25,18 @@ import {Column, SortDirection} from "../DeckDetails"
 interface PropTypes {
     rowsPerPage: number
     setRowsPerPage: Dispatch<SetStateAction<number>>
+    page: number
+    setPage: Dispatch<SetStateAction<number>>
+    sortBy: CardSortingOptions
+    setSortBy: Dispatch<SetStateAction<CardSortingOptions>>
+    sortDirection: SortDirection
+    setSortDirection: Dispatch<SetStateAction<SortDirection>>
     deck: Deck
     own?: boolean
+    cards: Card[]
+    cardCount: number
+    search: string
+    onSearchChange: any
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -55,38 +64,15 @@ interface RouteTypes {
     sortDirection: SortDirection
 }
 
-const CardTable = (
-    {rowsPerPage, setRowsPerPage, deck, own}: PropTypes
-) => {
+const CardTable = ({rowsPerPage, setRowsPerPage, page, setPage, sortBy, setSortBy, sortDirection, setSortDirection, deck, own, search, onSearchChange, cards, cardCount}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history, match: {params: {id, page: initialPage, sortBy: initialSortBy, sortDirection: initialSortDirection}}} = useRouter<RouteTypes>()
+    const {history, match: {params: {id}}} = useRouter<RouteTypes>()
 
     const [selected, setSelected] = useState<string[]>([])
-    const [page, setPage] = useState<number>(parseInt(initialPage || "0", 10))
-    const [sortBy, setSortBy] = useState<Column>(initialSortBy || "meaning")
-    const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortDirection || "asc")
-    const {search} = useFormState<{search: string}>({search: ""})
 
     const {Dialog, openDialog} = useDialog(EditCardForm)
-    const {data} = useCardsQuery({
-        variables: {
-            deckID: id,
-            limit: rowsPerPage,
-            offset: page * rowsPerPage,
-            filter: {
-                search: search.value.trim().length > 0 ? search.value : undefined
-            },
-            sort: {
-                sortBy,
-                sortDirection
-            }
-        }
-    })
 
-    const cards = oc(data).deck.cards([]).filter(a => !!a) as any
-    const cardCount = oc(data).deck.cardCount(0)
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, cardCount - page * rowsPerPage)
     const hasPronunciation = deck.language.hasPronunciation
 
     const [deleteCards] = useDeleteCardsMutation({
@@ -98,6 +84,9 @@ const CardTable = (
             sort: {
                 sortBy,
                 sortDirection
+            },
+            filter: {
+                search: search.trim().length > 0 ? search : undefined
             }
         },
         optimisticResponse: () => {
@@ -164,12 +153,12 @@ const CardTable = (
             <Dialog />
             <ConfirmDeleteDialog />
             <Paper className={classes.root}>
-                <CardTableToolbar numSelected={selected.length} onDeleteClicked={selected.length >= 30 ? confirmDelete : deleteCards} search={search.value} onSearchChange={search.onChange}/>
+                <CardTableToolbar numSelected={selected.length} onDeleteClicked={selected.length >= 30 ? confirmDelete : deleteCards} search={search} onSearchChange={onSearchChange}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle" size="small">
                         <CardTableHead numSelected={selected.length} order={sortDirection || "asc"}
                                        orderBy={sortBy || "meaning"} onSelectAllClick={event => event.target.checked ? setSelected(cards.map(card => card.id)) : setSelected([])}
-                                       onRequestSort={requestSort} rowCount={rowsPerPage - emptyRows} rows={columns} own={own}/>
+                                       onRequestSort={requestSort} rowCount={cards.length} rows={columns} own={own}/>
                         <TableBody>
                             {cards.map(card => (
                                 <TableRow hover role="checkbox" aria-checked={false} tabIndex={-1} key={card.id}
@@ -200,7 +189,9 @@ const CardTable = (
                                                 rowsPerPage,
                                                 page,
                                                 sortBy,
-                                                sortDirection
+                                                sortDirection,
+                                                cards,
+                                                search
                                             })}>
                                                 <Edit/>
                                             </IconButton>

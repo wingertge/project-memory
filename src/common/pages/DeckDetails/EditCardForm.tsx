@@ -31,6 +31,8 @@ export interface PropTypes {
     page: number
     sortDirection: SortDirection
     sortBy: Column
+    cards: Card[]
+    search: string
 }
 
 interface Form {
@@ -67,7 +69,7 @@ const validators: ValidatorMap<Form> = {
     translation: [{fun: shorterThan(401), message: "Can't enter more than 400 characters"}]
 }
 
-export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sortDirection, sortBy, language, nativeLanguage}: PropTypes) => {
+export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sortDirection, sortBy, language, nativeLanguage, cards, search}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {Toast, openToast} = useToast(`Successfully ${card ? "updated" : "created"} card`)
@@ -83,14 +85,10 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
     const userId = useID()
 
     const onSaved = () => {
-        openToast()
+        //openToast()
         if(card) {
+            openToast()
             closeDialog()
-        } else {
-            meaning.set("")
-            pronunciation.set("")
-            translation.set("");
-            (document.querySelector("#meaning") as any).focus()
         }
     }
 
@@ -107,6 +105,17 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
             sort: {
                 sortBy,
                 sortDirection
+            },
+            filter: {
+                search: search.trim().length > 0 ? search : undefined
+            }
+        },
+        optimisticResponse: {
+            __typename: "Mutation",
+            createCard: {
+                __typename: "Deck",
+                id: deckId,
+                cards: [...cards, {__typename: "Card", id: "asd", meaning: meaning.value, pronunciation: pronunciation.value, translation: translation.value}]
             }
         },
         refetchQueries: [
@@ -116,6 +125,12 @@ export const EditCardForm = ({closeDialog, card, deckId, rowsPerPage, page, sort
 
     const addCard = () => {
         addCardMutate().then(onSaved)
+        if(!card) {
+            meaning.set("")
+            pronunciation.set("")
+            translation.set("");
+            (document.querySelector("#meaning") as any).focus()
+        }
     }
 
     const [editCardMutate, {loading: editCardSaving, error}] = useUpdateCardMutation({

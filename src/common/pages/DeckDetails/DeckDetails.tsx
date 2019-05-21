@@ -5,9 +5,9 @@ import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import useRouter from "use-react-router/use-react-router"
-import {Deck, useDeckDetailsQuery} from "../../../generated/graphql"
+import {Deck, useCardsQuery, useDeckDetailsQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
-import {useID, ValidatorMap} from "../../hooks"
+import {useFormState, useID, ValidatorMap} from "../../hooks"
 import {Theme} from "../../theme"
 import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
 import CardTable from "./CardTable"
@@ -46,7 +46,7 @@ export const deckPropsValidators: ValidatorMap<Form> = {
 export const DeckDetails = () => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {match: {params: {id}}} = useRouter<RouteTypes>()
+    const {match: {params: {id, page: initialPage, sortBy: initialSortBy, sortDirection: initialSortDirection}}} = useRouter<RouteTypes>()
     const userId = useID()
 
     const {data, loading, error} = useDeckDetailsQuery({
@@ -55,9 +55,32 @@ export const DeckDetails = () => {
         }
     })
 
+    const [rowsPerPage, setRowsPerPage] = useState<number>(30)
+    const [page, setPage] = useState<number>(parseInt(initialPage || "0", 10))
+    const [sortBy, setSortBy] = useState<Column>(initialSortBy || "meaning")
+    const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortDirection || "asc")
+    const {search} = useFormState<{search: string}>({search: ""})
+
+    const {data: cardsData} = useCardsQuery({
+        variables: {
+            deckID: id,
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            filter: {
+                search: search.value.trim().length > 0 ? search.value : undefined
+            },
+            sort: {
+                sortBy,
+                sortDirection
+            }
+        }
+    })
+
+    const cards = oc(cardsData).deck.cards([]).filter(a => !!a) as any
+    const cardCount = oc(cardsData).deck.cardCount(0)
+
     const deck = data!.deck as Deck
     const isOwn = oc(deck).owner.id() === userId
-    const [rowsPerPage, setRowsPerPage] = useState<number>(30)
 
     if(error) return <ApolloErrorBox error={error} />
     if(loading) return null
@@ -69,8 +92,22 @@ export const DeckDetails = () => {
             </Helmet>
             <div className={classes.root}>
                 {!isOwn && <DeckProperties deck={deck} />}
-                {isOwn && <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} />}
-                <CardTable rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} deck={deck} own={isOwn} />
+                {isOwn && <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} cards={cards} search={search.value} />}
+                <CardTable
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
+                    page={page}
+                    setPage={setPage}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    deck={deck} own={isOwn}
+                    cards={cards}
+                    cardCount={cardCount}
+                    search={search.value}
+                    onSearchChange={search.onChange}
+                />
             </div>
         </>
     )

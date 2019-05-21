@@ -5,6 +5,7 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
 import {
+    Card,
     Deck, ShallowDecksDocument,
     useAddTagMutation,
     useDeleteDeckMutation,
@@ -20,6 +21,8 @@ import EditCardForm from "./EditCardForm"
 interface PropTypes {
     deck: Deck
     rowsPerPage: number
+    cards: Card[]
+    search: string
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -50,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
+export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {Dialog, openDialog} = useDialog(EditCardForm)
@@ -137,7 +140,9 @@ export const DeckEditForm = ({deck, rowsPerPage}: PropTypes) => {
                             rowsPerPage,
                             page,
                             sortBy,
-                            sortDirection
+                            sortDirection,
+                            cards,
+                            search
                         })} style={{flexShrink: 0}}>{t("Add Cards")}</Button>
                         <div style={{flex: "1 1 100%"}} />
                         <Button variant="outlined" className={classes.deleteButton} disabled={deleting} onClick={confirmDelete}>{t("Delete")}</Button>

@@ -73,6 +73,7 @@ export const Reviews = () => {
                 return response as any
             }
         })
+        updateNow()
     }
 
     const exit = () => {
