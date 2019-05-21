@@ -9,43 +9,43 @@ import Loadable from "react-loadable"
 import TestBed from "./pages/TestBed"
 
 const Home = Loadable({
-    loader: () => import("./pages/Home"),
+    loader: () => import(/* webpackChunkName: "home" */"./pages/Home"),
     loading: Loading,
     timeout: 10000
 })
 
 const Callback = Loadable({
-    loader: () => import("./pages/Callback"),
+    loader: () => import(/* webpackChunkName: "home" */"./pages/Callback"),
     loading: Loading,
     timeout: 10000
 })
 
 const Settings = Loadable({
-    loader: () => import("./pages/Settings"),
+    loader: () => import(/* webpackChunkName: "settings" */"./pages/Settings"),
     loading: Loading,
     timeout: 10000
 })
 
 const UserProfile = Loadable({
-    loader: () => import("./pages/UserProfile"),
+    loader: () => import(/* webpackChunkName: "profile" */"./pages/UserProfile"),
     loading: Loading,
     timeout: 10000
 })
 
 const Login = Loadable({
-    loader: () => import("./pages/Login"),
+    loader: () => import(/* webpackChunkName: "login" */"./pages/Login"),
     loading: Loading,
     timeout: 10000
 })
 
 const Lessons = Loadable({
-    loader: () => import("./pages/Lessons"),
+    loader: () => import(/* webpackChunkName: "lessons" */"./pages/Lessons"),
     loading: Loading,
     timeout: 1000
 })
 
 const DeckDetails = Loadable({
-    loader: () => import("./pages/DeckDetails"),
+    loader: () => import(/* webpackChunkName: "deck" */"./pages/DeckDetails"),
     loading: Loading
 })
 
@@ -57,57 +57,57 @@ const NotFound = Loadable({
 */
 
 const Intro = Loadable({
-    loader: () => import("./pages/Intro"),
+    loader: () => import(/* webpackChunkName: "intro" */"./pages/Intro"),
     loading: Loading
 })
 
 const Reviews = Loadable({
-    loader: () => import("./pages/Reviews"),
+    loader: () => import(/* webpackChunkName: "reviews" */"./pages/Reviews"),
     loading: Loading
 })
 
 const DeckDiscovery = Loadable({
-    loader: () => import("./pages/DeckDiscovery"),
+    loader: () => import(/* webpackChunkName: "decks" */"./pages/DeckDiscovery"),
     loading: Loading
 })
 
 const UserSearch = Loadable({
-    loader: () => import("./pages/UserSearch"),
+    loader: () => import(/* webpackChunkName: "user-search" */"./pages/UserSearch"),
     loading: Loading
 })
 
 const CMSPage = Loadable({
-    loader: () => import("./pages/CMSPage"),
+    loader: () => import(/* webpackChunkName: "cms-page" */"./pages/CMSPage"),
     loading: Loading
 })
 
 const Index = Loadable({
-    loader: () => import("./pages/Index"),
+    loader: () => import(/* webpackChunkName: "landing" */"./pages/Index"),
     loading: Loading
 })
 
 const Helpdesk = Loadable({
-    loader: () => import("./pages/Helpdesk"),
+    loader: () => import(/* webpackChunkName: "help" */"./pages/Helpdesk"),
     loading: Loading
 })
 
 const IssuesBoard = Loadable({
-    loader: () => import("./pages/IssuesBoard"),
+    loader: () => import(/* webpackChunkName: "help-board" */"./pages/IssuesBoard"),
     loading: Loading
 })
 
 const EditIssue = Loadable({
-    loader: () => import("./pages/IssuesBoard/EditIssue"),
+    loader: () => import(/* webpackChunkName: "help-board-edit" */"./pages/IssuesBoard/EditIssue"),
     loading: Loading
 })
 
 const IssueThread = Loadable({
-    loader: () => import("./pages/IssuesBoard/IssueThread"),
+    loader: () => import(/* webpackChunkName: "help-board-thread" */"./pages/IssuesBoard/IssueThread"),
     loading: Loading
 })
 
 const DeckImport = Loadable({
-    loader: () => import("./pages/DeckImport"),
+    loader: () => import(/* webpackChunkName: "deck-import" */"./pages/DeckImport"),
     loading: Loading
 })
 
