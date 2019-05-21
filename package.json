@@ -42,6 +42,7 @@
     "express-device": "^0.4.2",
     "express-sitemap": "^1.8.0",
     "fs": "^0.0.1-security",
+    "fuse.js": "^3.4.4",
     "graphcms-image": "^1.1.0-beta4",
     "graphql": "^14.3.0",
     "graphql-tag": "^2.10.1",

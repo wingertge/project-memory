@@ -1,6 +1,7 @@
 import {Button, TextField, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
+import Fuse from "fuse.js"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
@@ -54,6 +55,19 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
+const matchOptions = {
+    shouldSort: true,
+    threshold: 0.2,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: [
+        "translation",
+        "synonyms"
+    ]
+}
+
 export const ReviewDisplay = ({review, submitDisabled, onExit, exitDisabled, onSubmit}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
@@ -71,7 +85,9 @@ export const ReviewDisplay = ({review, submitDisabled, onExit, exitDisabled, onS
             setFieldToTest(selectTestableField(review))
             return
         }
-        const correct = review.card[fieldToTest] === response.value
+        const correct = fieldToTest === "translation"
+            ? new Fuse([review.card], matchOptions).search(response.value).length > 0
+            : review.card[fieldToTest]!.toLowerCase() === response.value.toLowerCase()
         if(correct) {
             onSubmit(fieldToTest, correct)
             response.set("")

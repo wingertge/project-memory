@@ -196,7 +196,7 @@ export const DeckImport = () => {
 
         const language = data!.language!
         const hasPronunciation = language.hasPronunciation
-        const isDone = meaningField.value !== "" && translationField.value !== "" && (pronunciationField.value !== "" || !hasPronunciation)
+        const isDone = meaningField.value !== "" || translationField.value !== "" || pronunciationField.value !== ""
 
         return (
             <div className={classes.mappingRoot}>
@@ -225,6 +225,7 @@ export const DeckImport = () => {
                 <Typography variant="h5" gutterBottom>{t("Drop your Anki collection (.apkg) here")}</Typography>
                 <ImageUploader imgExtension={[".apkg"]} withPreview={false} singleImage onChange={files => setFile(files.length > 0 ? files[0] : undefined)} />
                 <NoSsr>
+                    {file && !decks && <TimedCircularProgress />}
                     {decks && (
                         <TextField
                             select
