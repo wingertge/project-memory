@@ -22,7 +22,6 @@ import SectionFinished from "./SectionFinished"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
-        marginTop: theme.spacing(-2),
         height: "100%",
         display: "flex",
         flexDirection: "column"
