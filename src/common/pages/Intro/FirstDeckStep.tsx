@@ -19,7 +19,8 @@ import {
     useUserLanguagesQuery
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
-import {useFormState, useID} from "../../hooks"
+import {useID, useValidatedFormState, ValidatorMap} from "../../hooks"
+import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
 import PopularDecks from "./PopularDecks"
 
 interface Form {
@@ -46,6 +47,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
+const validators: ValidatorMap<Form> = {
+    name: [
+        {fun: notEmpty, message: "Name cannot be empty"},
+        {fun: longerThan(2), message: "Name has to be 3 characters or more"},
+        {fun: shorterThan(65), message: "Name has to be 64 characters or less"}
+    ]
+}
+
 export const FirstDeckStep = () => {
     const classes = useStyles()
     const {t} = useTranslation()
@@ -57,7 +66,7 @@ export const FirstDeckStep = () => {
     })
     const languages = oc(data).user.languages([]) as Language[]
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
-    const {name, language} = useFormState<Form>({name: "", language: oc(languages)[0].id("")})
+    const {name, language} = useValidatedFormState<Form>({name: "", language: oc(languages)[0].id("")}, validators)
 
     const [updateProfile, {loading: updateProfileSaving}] = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
     const [addDeckMutation, {loading: addDeckSaving}] = useAddDeckMutation({
