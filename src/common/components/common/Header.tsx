@@ -10,7 +10,7 @@ import {
 import {AccountCircle, AssignmentLate} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import {LocationContext} from "@reach/router"
-import React, {useState} from "react"
+import React, {forwardRef, useState} from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
 import {useReviewsCountQuery} from "../../../generated/graphql"
@@ -85,6 +85,12 @@ export const Header = ({location, navigate}: LocationContext) => {
         navigate!("/logout")
     }
 
+    const ProfileLink = forwardRef<HTMLLIElement>((_, ref) => (
+        <Hidden smUp implementation="css">
+            <MenuItem onClick={() => navigate!("/profile")} ref={ref}>{t("Profile")}</MenuItem>
+        </Hidden>
+    ))
+
     return (
         <AppBar position="sticky" className={classes.appBar}>
             <Toolbar>
@@ -113,9 +119,7 @@ export const Header = ({location, navigate}: LocationContext) => {
                     </IconButton>
                     <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{vertical: "top", horizontal: "right"}}
                           open={!!anchorEl} onClose={closeMenu}>
-                        <Hidden smUp implementation="css">
-                            <MenuItem onClick={() => navigate!("/profile")}>{t("Profile")}</MenuItem>
-                        </Hidden>
+                        <ProfileLink />
                         <MenuItem onClick={openSettings}>{t("Settings")}</MenuItem>
                         <MenuItem onClick={logout}>{t("Sign Out")}</MenuItem>
                     </Menu>

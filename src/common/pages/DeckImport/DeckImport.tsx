@@ -11,7 +11,6 @@ import {
     Language,
     useAddDeckMutation,
     useLanguageQuery,
-    useUserLanguagesQuery
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import ErrorBox from "../../components/apollo/ErrorBox"
@@ -72,10 +71,11 @@ interface Form {
 
 interface Params {
     languageCode: string
+    nativeLanguageCode: string
     name: string
 }
 
-export const DeckImport = ({languageCode, name, navigate}: RouteComponentProps<Params>) => {
+export const DeckImport = ({languageCode, nativeLanguageCode, name, navigate}: RouteComponentProps<Params>) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const id = useID()
@@ -88,8 +88,8 @@ export const DeckImport = ({languageCode, name, navigate}: RouteComponentProps<P
     const [importError, setImportError] = useState<string | undefined>(undefined)
     const {deck, model, meaningField, pronunciationField, translationField} = useFormState<Form>({deck: "", model: "", meaningField: "", pronunciationField: "", translationField: ""})
     const {data, loading, error} = useLanguageQuery({variables: {languageCode: languageCode!}})
-    const userLangs = useUserLanguagesQuery({variables: {userId: id}})
-    const nativeLanguage = oc(userLangs.data).user.nativeLanguage() as Language
+    const nativeLang = useLanguageQuery({variables: {languageCode: nativeLanguageCode!}})
+    const nativeLanguage = oc(nativeLang.data).language() as Language
 
     useEffect(() => {
         if(!file) return
@@ -190,8 +190,8 @@ export const DeckImport = ({languageCode, name, navigate}: RouteComponentProps<P
     )
 
     const MappingForm = () => {
-        if(loading || userLangs.loading) return <TimedCircularProgress />
-        if(error || userLangs.error) return <ApolloErrorBox error={error || userLangs.error} />
+        if(loading || nativeLang.loading) return <TimedCircularProgress />
+        if(error || nativeLang.error) return <ApolloErrorBox error={error || nativeLang.error} />
 
         const language = data!.language!
         const hasPronunciation = language.hasPronunciation

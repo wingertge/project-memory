@@ -1,5 +1,5 @@
 import {createStyles, makeStyles} from "@material-ui/styles"
-import React from "react"
+import React, {forwardRef} from "react"
 import {Theme, Chip} from "@material-ui/core"
 import * as PropTypes from "prop-types"
 import {useTranslation} from "react-i18next"
@@ -28,9 +28,10 @@ interface PropTypes {
     language: Language
     onDelete?: () => void
     onClick?: () => void
+    title?: string
 }
 
-export const LanguageDisplay = ({language, onDelete, onClick}: PropTypes) => {
+export const LanguageDisplay = forwardRef<HTMLDivElement, PropTypes>(({language, onDelete, onClick, title}: PropTypes, ref) => {
     const classes = useStyles()
     const {t} = useTranslation()
     const {name, nativeName} = language
@@ -42,8 +43,10 @@ export const LanguageDisplay = ({language, onDelete, onClick}: PropTypes) => {
             onDelete={onDelete}
             onClick={onClick}
             className={classes.chip}
+            ref={ref}
+            title={title}
         />
     )
-}
+})
 
 export default LanguageDisplay

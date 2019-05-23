@@ -36,7 +36,7 @@ const Routes = () => (
         <CMSPage path="/page/:slug" />
         <CMSPage path="/:slug" />
         <Authenticated path="/settings" component={Settings} />
-        <Authenticated path="/settings/import-deck/language/:languageCode/name/:name" component={DeckImport} />
+        <Authenticated path="/settings/import-deck/language/:languageCode/nativeLanguage/:nativeLanguageCode/name/:name" component={DeckImport} />
         <Authenticated path="/profile/search/:query*" component={UserSearch} />
         <Authenticated path="/profile/search" component={UserSearch} />
         <Authenticated path="/profile/:id" component={UserProfile} />

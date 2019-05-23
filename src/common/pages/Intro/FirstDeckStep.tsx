@@ -1,11 +1,6 @@
-import {
-    Button,
-    Grid,
-    TextField,
-    Theme,
-    Typography
-} from "@material-ui/core"
+import {Button, Grid, TextField, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {useState} from "react"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
@@ -19,8 +14,11 @@ import {
     useUserLanguagesQuery
 } from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
-import {useID, useValidatedFormState, ValidatorMap} from "../../hooks"
+import {useDialog, useID, useValidatedFormState, ValidatorMap} from "../../hooks"
+import {Theme} from "../../theme"
 import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
+import LanguageDisplay from "../Settings/LanguageSettings/LanguageDisplay"
+import LanguagePicker from "../Settings/LanguageSettings/LanguagePicker"
 import PopularDecks from "./PopularDecks"
 
 interface Form {
@@ -30,20 +28,20 @@ interface Form {
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     form: {
-        height: 64
+        maxWidth: 500,
+        width: "100%"
     },
     textField: {
-        width: "calc(60% - 8px)",
-        margin: theme.spacing(0.5, 0.5, 2, 0),
-        maxWidth: 400,
+        margin: theme.spacing(0.5, 0.5, 2, 0)
     },
     select: {
-        width: "calc(40% - 8px)",
         margin: theme.spacing(0.5, 1.5, 0.5, 0),
-        maxWidth: 300
     },
     button: {
         margin: theme.spacing(2)
+    },
+    nativeLanguage: {
+        margin: theme.spacing(0, -1, 1, 0)
     }
 }))
 
@@ -66,7 +64,8 @@ export const FirstDeckStep = () => {
     })
     const languages = oc(data).user.languages([]) as Language[]
     const nativeLanguage = oc(data).user.nativeLanguage() as Language
-    const {name, language} = useValidatedFormState<Form>({name: "", language: oc(languages)[0].id("")}, validators)
+    const {name, language, valid} = useValidatedFormState<Form>({name: "", language: oc(languages)[0].id("")}, validators, {enableInitialValidation: false})
+    const [selectedNativeLanguage, setNativeLanguage] = useState(nativeLanguage)
 
     const [updateProfile, {loading: updateProfileSaving}] = useUpdateProfileMutation({variables: {id, profile: {introStep: 3}}})
     const [addDeckMutation, {loading: addDeckSaving}] = useAddDeckMutation({
@@ -100,6 +99,7 @@ export const FirstDeckStep = () => {
         }
     })
     const decks = oc(globalDecks.data).decks([]) as Deck[]
+    const {Dialog, openDialog} = useDialog(LanguagePicker)
 
     const saving = updateProfileSaving || addDeckSaving
 
@@ -108,6 +108,7 @@ export const FirstDeckStep = () => {
 
     return (
         <Grid container direction="column">
+            <Dialog />
             <Helmet>
                 <title>{t("First Deck - Project Memory")}</title>
             </Helmet>
@@ -116,18 +117,27 @@ export const FirstDeckStep = () => {
                     {t("Alright, done. Let's create our first deck!")}
                 </Typography>
             </Grid>
-            <Grid item xs className={classes.form}>
-                <TextField label={t("Deck Name")} className={classes.textField} value={name.value} onChange={name.onChange} inputProps={{style: {height: 19}}}/>
-                <TextField label={t("Language")} className={classes.textField} value={language.value} onChange={language.onChange} select>
-                    {languages.map(lang => (
-                        <option key={lang.id} value={lang.id}>
-                            {`${t(lang.name)} (${lang.nativeName})`}
-                        </option>
-                    ))}
-                </TextField>
+            <Grid item xs container alignItems="center" direction="column">
+                <Grid item className={classes.form}>
+                    <TextField label={t("Deck Name")} value={name.value} onChange={name.onChange} fullWidth className={classes.textField} error={!!name.error} helperText={name.error} />
+                </Grid>
+                <Grid item container alignItems="flex-end" className={classes.form}>
+                    <Grid item xs>
+                        <TextField label={t("Language")} value={language.value} onChange={language.onChange} select SelectProps={{style: {height: 32}}} fullWidth className={classes.textField}>
+                            {languages.map(lang => (
+                                <option key={lang.id} value={lang.id}>
+                                    {`${t(lang.name)} (${lang.nativeName})`}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item className={classes.nativeLanguage}>
+                        <LanguageDisplay language={selectedNativeLanguage} title={t("Native Language")} onClick={() => openDialog({buttonText: "Set", onSave: lang => setNativeLanguage(lang)})} />
+                    </Grid>
+                </Grid>
             </Grid>
             <Grid item xs>
-                <Button className={classes.button} onClick={addDeck} disabled={saving} color="primary">{t("Create")}</Button>
+                <Button className={classes.button} onClick={addDeck} disabled={saving || !valid || name.value === ""} variant="contained" color="primary">{t("Create")}</Button>
             </Grid>
             <Grid item xs>
                 <Typography variant="h6">
