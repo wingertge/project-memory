@@ -1,3 +1,21 @@
+/*
+The following is the license for the Project Memory Frontend, a frontend for the Project Memory web app.
+Copyright (C) 2019  Genna Wingert
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import validator from "validator"
 import {UNICODE_INVALID_CHARACTERS} from "../hooks/constants"
 import {length as unicodeLength} from "stringz"
@@ -8,8 +26,7 @@ export const longerThan = (length: number) => (str: string) => unicodeLength(str
 export const notEmpty = (str: string) => !validator.isEmpty(str)
 export const noInvalidCharacters = (invalidChars = UNICODE_INVALID_CHARACTERS) => (str: string) => !validator.matches(str, invalidChars)
 export const isEmail = (str: string) => validator.isEmail(str)
-export const isEqualTo = <TProps>(otherPropName: keyof TProps) => (value: any, context: TProps) => value === context[otherPropName] as unknown
-export const equalsHook = (other: number) => (value: any, context: any[]) => value === context[other]
+export const isEqualTo = (other: number) => (value: any, context: any[]) => value === context[other]
 export const passwordStrongEnough = (strength: PasswordStrength = PasswordStrength.Good) => {
     let policy = new PasswordPolicy({length: {minLength: 1}})
     switch (strength) {
