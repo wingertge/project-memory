@@ -1,3 +1,4 @@
+import {ChunkExtractor} from "@loadable/server"
 import {CssBaseline} from "@material-ui/core"
 import {ThemeProvider, ServerStyleSheets} from "@material-ui/styles"
 import cookieParser from "cookie-parser"
@@ -8,7 +9,6 @@ import {ApolloProvider, getMarkupFromTree} from "react-apollo-hooks"
 import {renderToString} from "react-dom/server"
 import morgan from "morgan"
 import {I18nextProvider} from "react-i18next"
-import Loadable from "react-loadable"
 import I18NextMiddleware from "i18next-express-middleware"
 import i18n from "i18next"
 import {StaticRouter} from "react-router"
@@ -19,14 +19,11 @@ import {handleCallback} from "./Auth"
 import {manageCookies} from "./Cookies"
 import {appSrc, initI18n, preloadI18n} from "./i18n"
 import {Layout} from "./Layout"
-import {getBundleScripts} from "./ReactLoadable"
 import jwt from "jsonwebtoken"
 import proc from "./env"
 import device from "express-device"
 
 const server = express()
-// tslint:disable-next-line:no-console
-console.log(process.env.NODE_ENV === "production" ? path.join(__dirname, "../build/public") : "public")
 
 initI18n(() => {
     server
@@ -40,6 +37,10 @@ initI18n(() => {
         .post("/locales/add/:lng/:ns", I18NextMiddleware.missingKeyHandler(i18n))
         .get("/*", async (req, res) => {
             const routeParams = req.params[0].split("/")
+            const extractor = new ChunkExtractor({
+                statsFile: path.resolve("build/loadable-stats.json"),
+                entrypoints: ["client"]
+            })
 
             manageCookies(routeParams[0], req, res)
 
@@ -56,8 +57,6 @@ initI18n(() => {
             const sheets = new ServerStyleSheets()
             const context = {} as any
 
-            const modules: string[] = []
-
             const Root = () => (
                 <I18nextProvider i18n={req.i18n}>
                     <ApolloProvider client={apollo.client}>
@@ -73,11 +72,7 @@ initI18n(() => {
 
             const markup = await getMarkupFromTree({
                 renderFunction: tree => renderToString(sheets.collect(tree)),
-                tree: (
-                    <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-                        <Root />
-                    </Loadable.Capture>
-                )
+                tree: extractor.collectChunks(<Root />)
             })
 
             const {url} = context
@@ -94,7 +89,8 @@ initI18n(() => {
                 initialState: apollo.client.extract(),
                 i18Store: initialI18nStore,
                 css: sheets.toString(),
-                bundle: getBundleScripts(modules)
+                scripts: extractor.getScriptTags(),
+                links: extractor.getLinkTags()
             })
             res.send(result)
         }) // end get

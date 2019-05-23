@@ -1,29 +1,8 @@
 /* eslint-disable */
-const ReactLoadablePlugin = require("react-loadable/webpack").ReactLoadablePlugin
-//const razzleHeroku = require("razzle-heroku")
-
-const modifiedFileLoader = {
-    exclude: [
-        /\.html$/,
-        /\.(js|jsx|mjs)$/,
-        /\.(ts|tsx)$/,
-        /\.(vue)$/,
-        /\.(less)$/,
-        /\.(re)$/,
-        /\.(s?css|sass)$/,
-        /\.json$/,
-        /\.bmp$/,
-        /\.gif$/,
-        /\.jpe?g$/,
-        /\.png$/,
-        /\.graphql$/
-    ],
-    loader: require.resolve("file-loader"),
-    options: {
-        name: "static/media/[name].[hash:8].[ext]",
-        emitFile: true,
-    },
-}
+const path = require("path")
+const LoadablePlugin = require("@loadable/webpack-plugin")
+const LoadableBabelPlugin = require('@loadable/babel-plugin')
+const babelPresetRazzle = require('razzle/babel')
 
 module.exports = {
     plugins: [{
@@ -37,9 +16,34 @@ module.exports = {
             }
         }
     }],
-    modify: (config, {target}) => {
+    modify: (config, {dev, target}) => {
+        const appConfig = {...config}
+
         if(target === "web") {
-            return {
+            const filename = path.resolve(__dirname, 'build')
+
+            appConfig.node = {
+                fs: "empty"
+            }
+
+            appConfig.plugins = [
+                ...appConfig.plugins,
+                new LoadablePlugin({
+                    outputAsset: false,
+                    writeToDisk: {filename}
+                })
+            ]
+
+            appConfig.output.filename = "static/js/[name].js"
+            appConfig.optimization = {
+                ...appConfig.optimization,
+                runtimeChunk: true,
+                splitChunks: {
+                    chunks: "all",
+                    name: dev
+                }
+            }
+/*            return {
                 ...config,
                 node: {
                     fs: 'empty'
@@ -47,6 +51,10 @@ module.exports = {
                 plugins: [
                     new ReactLoadablePlugin({
                         filename: "./build/react-loadable.json"
+                    }),
+                    new LoadablePlugin({
+                        outputAsset: false,
+                        writeToDisk: {filename}
                     }),
                     ...config.plugins
                 ],
@@ -62,9 +70,14 @@ module.exports = {
                         modifiedFileLoader
                     ]
                 }
-            }
+            }*/
         }
 
-        return config
-    }
+        return appConfig
+    },
+    modifyBabelOptions: () => ({
+        babelrc: false,
+        presets: [babelPresetRazzle],
+        plugins: [LoadableBabelPlugin]
+    })
 }

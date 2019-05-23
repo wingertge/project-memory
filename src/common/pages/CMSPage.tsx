@@ -1,3 +1,4 @@
+import loadable from "@loadable/component"
 import {Grid, Link, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
 import clsx from "clsx"
@@ -7,10 +8,8 @@ import {useTranslation} from "react-i18next"
 import useRouter from "use-react-router/use-react-router"
 import {usePageQuery} from "../../generated/graphql"
 import LinkButton from "../components/common/LinkButton"
-import Loading from "../components/common/Loading"
 import RichText from "../components/common/RichText"
 import {TimedCircularProgress} from "../components/apollo/TimedCircularProgress"
-import Loadable from "react-loadable"
 import v4 from "uuid/v4"
 
 interface PropTypes {
@@ -74,10 +73,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-const NotFound = Loadable({
-    loader: () => import("./NotFound"),
-    loading: Loading
-})
+const NotFound = loadable(() => import(/* webpackChunkName: "not-found" */"./NotFound"), {fallback: <TimedCircularProgress />})
 
 export const CMSPage = ({slug}: PropTypes) => {
     const {t} = useTranslation("cms")

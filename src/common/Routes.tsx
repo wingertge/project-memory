@@ -1,115 +1,31 @@
+import loadable from "@loadable/component"
 import React from "react"
 import {Route, Switch, Redirect} from "react-router"
 import Auth from "../client/Auth"
-import Loading from "./components/common/Loading"
+import {TimedCircularProgress} from "./components/apollo/TimedCircularProgress"
 import AuthenticatedRoute from "./components/routing/AuthenticatedRoute"
 import {SwitchedRoute} from "./components/routing/SwitchedRoute"
 import UnauthenticatedRoute from "./components/routing/UnauthenticatedRoute"
-import Loadable from "react-loadable"
 import TestBed from "./pages/TestBed"
 
-const Home = Loadable({
-    loader: () => import(/* webpackChunkName: "home" */"./pages/Home"),
-    loading: Loading,
-    timeout: 10000
-})
-
-const Callback = Loadable({
-    loader: () => import(/* webpackChunkName: "home" */"./pages/Callback"),
-    loading: Loading,
-    timeout: 10000
-})
-
-const Settings = Loadable({
-    loader: () => import(/* webpackChunkName: "settings" */"./pages/Settings"),
-    loading: Loading,
-    timeout: 10000
-})
-
-const UserProfile = Loadable({
-    loader: () => import(/* webpackChunkName: "profile" */"./pages/UserProfile"),
-    loading: Loading,
-    timeout: 10000
-})
-
-const Login = Loadable({
-    loader: () => import(/* webpackChunkName: "login" */"./pages/Login"),
-    loading: Loading,
-    timeout: 10000
-})
-
-const Lessons = Loadable({
-    loader: () => import(/* webpackChunkName: "lessons" */"./pages/Lessons"),
-    loading: Loading,
-    timeout: 1000
-})
-
-const DeckDetails = Loadable({
-    loader: () => import(/* webpackChunkName: "deck" */"./pages/DeckDetails"),
-    loading: Loading
-})
-
-/*
-const NotFound = Loadable({
-    loader: () => import("./pages/NotFound"),
-    loading: Loading
-})
-*/
-
-const Intro = Loadable({
-    loader: () => import(/* webpackChunkName: "intro" */"./pages/Intro"),
-    loading: Loading
-})
-
-const Reviews = Loadable({
-    loader: () => import(/* webpackChunkName: "reviews" */"./pages/Reviews"),
-    loading: Loading
-})
-
-const DeckDiscovery = Loadable({
-    loader: () => import(/* webpackChunkName: "decks" */"./pages/DeckDiscovery"),
-    loading: Loading
-})
-
-const UserSearch = Loadable({
-    loader: () => import(/* webpackChunkName: "user-search" */"./pages/UserSearch"),
-    loading: Loading
-})
-
-const CMSPage = Loadable({
-    loader: () => import(/* webpackChunkName: "cms-page" */"./pages/CMSPage"),
-    loading: Loading
-})
-
-const Index = Loadable({
-    loader: () => import(/* webpackChunkName: "landing" */"./pages/Index"),
-    loading: Loading
-})
-
-const Helpdesk = Loadable({
-    loader: () => import(/* webpackChunkName: "help" */"./pages/Helpdesk"),
-    loading: Loading
-})
-
-const IssuesBoard = Loadable({
-    loader: () => import(/* webpackChunkName: "help-board" */"./pages/IssuesBoard"),
-    loading: Loading
-})
-
-const EditIssue = Loadable({
-    loader: () => import(/* webpackChunkName: "help-board-edit" */"./pages/IssuesBoard/EditIssue"),
-    loading: Loading
-})
-
-const IssueThread = Loadable({
-    loader: () => import(/* webpackChunkName: "help-board-thread" */"./pages/IssuesBoard/IssueThread"),
-    loading: Loading
-})
-
-const DeckImport = Loadable({
-    loader: () => import(/* webpackChunkName: "deck-import" */"./pages/DeckImport"),
-    loading: Loading
-})
+const Home = loadable(() => import(/* webpackChunkName: "home" */"./pages/Home"), {fallback: <TimedCircularProgress />})
+const Callback = loadable(() => import(/* webpackChunkName: "callback" */"./pages/Callback"), {fallback: <TimedCircularProgress />})
+const Settings = loadable(() => import(/* webpackChunkName: "settings" */"./pages/Settings"), {fallback: <TimedCircularProgress />})
+const UserProfile = loadable(() => import(/* webpackChunkName: "profile" */"./pages/UserProfile"), {fallback: <TimedCircularProgress />})
+const Login = loadable(() => import(/* webpackChunkName: "login" */"./pages/Login"), {fallback: <TimedCircularProgress />})
+const Lessons = loadable(() => import(/* webpackChunkName: "lessons" */"./pages/Lessons"), {fallback: <TimedCircularProgress />})
+const DeckDetails = loadable(() => import(/* webpackChunkName: "deck" */"./pages/DeckDetails"), {fallback: <TimedCircularProgress />})
+const Intro = loadable(() => import(/* webpackChunkName: "intro" */"./pages/Intro"), {fallback: <TimedCircularProgress />})
+const Reviews = loadable(() => import(/* webpackChunkName: "reviews" */"./pages/Reviews"), {fallback: <TimedCircularProgress />})
+const DeckDiscovery = loadable(() => import(/* webpackChunkName: "decks" */"./pages/DeckDiscovery"), {fallback: <TimedCircularProgress />})
+const UserSearch = loadable(() => import(/* webpackChunkName: "user-search" */"./pages/UserSearch"), {fallback: <TimedCircularProgress />})
+const CMSPage = loadable(() => import(/* webpackChunkName: "cms-page" */"./pages/CMSPage"), {fallback: <TimedCircularProgress />})
+const Index = loadable(() => import(/* webpackChunkName: "landing" */"./pages/Index"), {fallback: <TimedCircularProgress />})
+const Helpdesk = loadable(() => import(/* webpackChunkName: "help" */"./pages/Helpdesk"), {fallback: <TimedCircularProgress />})
+const IssuesBoard = loadable(() => import(/* webpackChunkName: "help-board" */"./pages/IssuesBoard"), {fallback: <TimedCircularProgress />})
+const EditIssue = loadable(() => import(/* webpackChunkName: "help-board-edit" */"./pages/IssuesBoard/EditIssue"), {fallback: <TimedCircularProgress />})
+const IssueThread = loadable(() => import(/* webpackChunkName: "help-board-thread" */"./pages/IssuesBoard/IssueThread"), {fallback: <TimedCircularProgress />})
+const DeckImport = loadable(() => import(/* webpackChunkName: "deck-import" */"./pages/DeckImport"), {fallback: <TimedCircularProgress />})
 
 const Routes = () => (
     <Switch>

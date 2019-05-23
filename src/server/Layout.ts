@@ -1,3 +1,4 @@
+import {html, oneLineTrim} from "common-tags"
 import ReactHelmet from "react-helmet"
 import serialize from "serialize-javascript"
 import proc from "./env"
@@ -17,11 +18,12 @@ const icons = `
 <meta name="theme-color" content="#ff1493">
 `
 
-export const Layout = (parameters: { markup: string, initialState: object, css: string, authToken: string, i18Store: object, lang: string, bundle: string }) => {
-    const {markup, initialState, css, authToken, i18Store, lang, bundle} = parameters
+export const Layout = (parameters: { markup: string, initialState: object, css: string, authToken: string, i18Store: object, lang: string, scripts: string, links: string }) => {
+    const {markup, initialState, css, authToken, i18Store, lang, scripts, links} = parameters
     const helmet = ReactHelmet.renderStatic()
 
-    return `<!doctype html>
+    return oneLineTrim(html`
+        <!doctype html>
         <html lang="${lang}">
         <head>
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -38,24 +40,25 @@ export const Layout = (parameters: { markup: string, initialState: object, css: 
         ? `<script src="${assets.client.js}" defer></script>`
         : `<script src="${assets.client.js}" defer crossorigin></script>`}
           <style id="jss-server-side">${css}</style>
+            ${links}
         </head>
         <body>
             <div id="root">${markup}</div>
             <script>
-              window.__PRELOADED_STATE__ = ${serialize(initialState)}
-              window.__AUTH__ = ${authToken ? `"${authToken}"` : "undefined"}
-              window.__PRELOADED_I18N__ = ${serialize(i18Store)}
-              window.__INITIAL_LANG__ = "${lang}"
-              window.__REACT_APP_API_ENDPOINT__ = "${proc.env.REACT_APP_API_ENDPOINT}"
-              window.__REACT_APP_AUTH0_LOGOUT_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_LOGOUT_CALLBACK}"
-              window.__REACT_APP_AUTH0_DOMAIN__ = "${proc.env.REACT_APP_AUTH0_DOMAIN}"
-              window.__REACT_APP_AUTH0_CLIENT_ID__ = "${proc.env.REACT_APP_AUTH0_CLIENT_ID}"
-              window.__REACT_APP_AUTH0_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_CALLBACK}"
-              window.__REACT_APP_AUTH0_AUDIENCE__ = "${proc.env.REACT_APP_AUTH0_AUDIENCE}"
-              window.__REACT_APP_CMS_SPACE__ = "${proc.env.REACT_APP_CMS_SPACE}"
-              window.__REACT_APP_CMS_TOKEN__ = "${proc.env.REACT_APP_CMS_TOKEN}"
+              window.__AUTH__ = ${authToken ? `"${authToken}"` : "undefined"};
+              window.__PRELOADED_I18N__ = ${serialize(i18Store)};
+              window.__INITIAL_LANG__ = "${lang}";
+              window.__REACT_APP_API_ENDPOINT__ = "${proc.env.REACT_APP_API_ENDPOINT}";
+              window.__REACT_APP_AUTH0_LOGOUT_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_LOGOUT_CALLBACK}";
+              window.__REACT_APP_AUTH0_DOMAIN__ = "${proc.env.REACT_APP_AUTH0_DOMAIN}";
+              window.__REACT_APP_AUTH0_CLIENT_ID__ = "${proc.env.REACT_APP_AUTH0_CLIENT_ID}";
+              window.__REACT_APP_AUTH0_CALLBACK__ = "${proc.env.REACT_APP_AUTH0_CALLBACK}";
+              window.__REACT_APP_AUTH0_AUDIENCE__ = "${proc.env.REACT_APP_AUTH0_AUDIENCE}";
+              window.__REACT_APP_CMS_SPACE__ = "${proc.env.REACT_APP_CMS_SPACE}";
+              window.__REACT_APP_CMS_TOKEN__ = "${proc.env.REACT_APP_CMS_TOKEN}";
+              window.__PRELOADED_STATE__ = ${serialize(initialState)};
             </script>
-            ${bundle}
+            ${scripts}
         </body>
-    </html>`
+    </html>`)
 }

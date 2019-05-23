@@ -1,7 +1,8 @@
 // tslint:disable-next-line:no-reference
+///<reference path="../typings/index.d.ts"/>
+import {loadableReady} from "@loadable/component"
 import {ApolloLink} from "apollo-link"
 import {BatchHttpLink} from "apollo-link-batch-http"
-///<reference path="../typings/index.d.ts"/>
 import ReactGA from "react-ga"
 import {ThemeProvider} from "@material-ui/styles"
 import localResolvers from "../common/apollo/localResolvers"
@@ -17,7 +18,6 @@ import {ApolloClient} from "apollo-client"
 import {InMemoryCache} from "apollo-cache-inmemory"
 import {ApolloProvider} from "react-apollo-hooks"
 import {BrowserRouter} from "react-router-dom"
-import Loadable from "react-loadable"
 
 // tslint:disable-next-line:no-var-requires
 let App = require("../common/App").default
@@ -81,7 +81,7 @@ const RootApp = () => (
     </I18nextProvider>
 )
 
-Loadable.preloadReady().then(() => {
+loadableReady().then(() => {
     hydrate(
         RootApp(),
         document.getElementById("root")

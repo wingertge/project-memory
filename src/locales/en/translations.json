@@ -132,5 +132,12 @@
   "Leave your question": "Leave your question",
   "Issue created successfully": "Issue created successfully",
   "edited {{time}}": "edited {{time}}",
-  "posted {{time}}": "posted {{time}}"
+  "posted {{time}}": "posted {{time}}",
+  "by {{username}}": "by {{username}}",
+  "Subscribe": "Subscribe",
+  "Drop your Anki collection (.apkg) here": "Drop your Anki collection (.apkg) here",
+  "Drag 'n' drop a file here, or click to select files": "Drag 'n' drop a file here, or click to select files",
+  "Spanish": "Spanish",
+  "Press Enter to add a tag": "Press Enter to add a tag",
+  "Login - Project Memory": "Login - Project Memory"
 }

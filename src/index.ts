@@ -3,7 +3,6 @@
 ///<reference path="./typings/index.d.ts"/>
 
 import express from "express"
-import Loadable from "react-loadable"
 import dotenv from "dotenv"
 dotenv.config()
 import proc from "./server/env"
@@ -25,15 +24,13 @@ if (module.hot) {
 const port = proc.env.PORT || 3000
 
 // noinspection TypeScriptValidateJSTypes
-const listen = Loadable.preloadAll().then(() => {
-    express()
-        .use((req, res) => app.handle(req, res))
-        .listen(port, err => {
-            if (err) {
-                console.error(err)
-                return
-            }
-            console.log(`> Started on port ${port}`)
-        })
-})
+const listen = express()
+    .use((req, res) => app.handle(req, res))
+    .listen(port, err => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        console.log(`> Started on port ${port}`)
+    })
 export default listen
