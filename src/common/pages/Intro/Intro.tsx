@@ -13,11 +13,6 @@ import LearningLanguageStep from "./LearningLanguageStep"
 import NativeLanguageStep from "./NativeLanguageStep"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-        root: {
-            [theme.breakpoints.up("sm")]: {
-                marginTop: theme.spacing(-2)
-            }
-        },
         stepRoot: {
             marginTop: theme.spacing(2)
         }
@@ -37,7 +32,7 @@ export const Intro = () => {
     const introStep = user.introStep || 0
 
     return (
-        <div className={classes.root}>
+        <div>
             <Helmet>
                 <title>{t("Get started with Project Memory")}</title>
             </Helmet>
