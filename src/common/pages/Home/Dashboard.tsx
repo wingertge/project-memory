@@ -1,10 +1,10 @@
 import {Button, Card, IconButton, makeStyles, Theme, Tooltip, Typography} from "@material-ui/core"
 import {MoreHoriz} from "@material-ui/icons"
+import {navigate} from "@reach/router"
 import React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router"
 import {
     Deck,
     Language,
@@ -48,7 +48,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const Dashboard = () => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
     const user = useUser()
     const {data, loading, error} = useReviewsCountQuery({
         skip: !user,
@@ -61,7 +60,7 @@ export const Dashboard = () => {
     })
 
     const lessonsCount = oc(data).user.reviewsCount(0)
-    const openLessons = () => history.push("/lessons")
+    const openLessons = () => navigate("/lessons")
 
     const userLangs = useUserLanguagesQuery({
         skip: !user,
@@ -115,7 +114,7 @@ export const Dashboard = () => {
                         <Typography variant="h5" className={classes.deckDiscoveryHeaderText}>{t("Discover more decks")}</Typography>
                         <div style={{flex: "1 1 100%"}} />
                         <Tooltip title={t("Show More")}>
-                            <IconButton onClick={() => history.push("/decks")} className={classes.iconButton}>
+                            <IconButton onClick={() => navigate("/decks")} className={classes.iconButton}>
                                 <MoreHoriz />
                             </IconButton>
                         </Tooltip>

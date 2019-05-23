@@ -1,10 +1,10 @@
 import {Button, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {navigate} from "@reach/router"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
 import {useUpdateProfileMutation} from "../../../generated/graphql"
 import {useUser} from "../../hooks"
 
@@ -18,7 +18,6 @@ export const FinishedStep = () => {
     const classes = useStyles()
     const {t} = useTranslation()
     const user = useUser()
-    const {history} = useRouter()
     const [mutate] = useUpdateProfileMutation({
         variables: {
             id: oc(user).id(""),
@@ -27,7 +26,7 @@ export const FinishedStep = () => {
             }
         }
     })
-    const save = () => mutate().then(() => history.push("/"))
+    const save = () => mutate().then(() => navigate("/"))
 
     return (
         <>

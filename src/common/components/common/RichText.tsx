@@ -8,7 +8,7 @@ import * as React from "react"
 import {useTranslation} from "react-i18next"
 import v4 from "uuid/v4"
 import {Theme} from "../../theme"
-import {Link as RouterLink} from "react-router-dom"
+import {Link as RouterLink} from "@reach/router"
 import {Link as A} from "@material-ui/core"
 
 interface DocumentTree {

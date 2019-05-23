@@ -1,11 +1,10 @@
 import loadable from "@loadable/component"
+import {Router} from "@reach/router"
 import React from "react"
-import {Route, Switch, Redirect} from "react-router"
-import Auth from "../client/Auth"
 import {TimedCircularProgress} from "./components/apollo/TimedCircularProgress"
-import AuthenticatedRoute from "./components/routing/AuthenticatedRoute"
-import {SwitchedRoute} from "./components/routing/SwitchedRoute"
-import UnauthenticatedRoute from "./components/routing/UnauthenticatedRoute"
+import Authenticated from "./components/routing/Authenticated"
+import Switched from "./components/routing/Switched"
+import Unauthenticated from "./components/routing/Unauthenticated"
 import TestBed from "./pages/TestBed"
 
 const Home = loadable(() => import(/* webpackChunkName: "home" */"./pages/Home"), {fallback: <TimedCircularProgress />})
@@ -26,35 +25,39 @@ const IssuesBoard = loadable(() => import(/* webpackChunkName: "help-board" */".
 const EditIssue = loadable(() => import(/* webpackChunkName: "help-board-edit" */"./pages/IssuesBoard/EditIssue"), {fallback: <TimedCircularProgress />})
 const IssueThread = loadable(() => import(/* webpackChunkName: "help-board-thread" */"./pages/IssuesBoard/IssueThread"), {fallback: <TimedCircularProgress />})
 const DeckImport = loadable(() => import(/* webpackChunkName: "deck-import" */"./pages/DeckImport"), {fallback: <TimedCircularProgress />})
+const Logout = loadable(() => import(/* webpackChunkName: "logout" */"./pages/Logout"), {fallback: <TimedCircularProgress />})
 
 const Routes = () => (
-    <Switch>
-        <SwitchedRoute exact path="/" authenticatedComponent={Home} unauthenticatedComponent={Index} />
-        <Route path="/landing" component={Index} />
-        <AuthenticatedRoute path="/intro" component={Intro} />
-        <Route path="/callback" component={Callback} />
-        <Route path="/page/:slug*" component={CMSPage} />
-        <AuthenticatedRoute path="/settings/import-deck/language/:languageCode/name/:name" component={DeckImport} />
-        <AuthenticatedRoute path="/settings" component={Settings} />
-        <AuthenticatedRoute path="/profile/search/:query*" component={UserSearch} />
-        <AuthenticatedRoute path="/profile/:id([a-zA-Z0-9]+)?" component={UserProfile} />
-        <AuthenticatedRoute exact path="/deck/:id([a-zA-Z0-9\\-]+)/(page)?/:page([0-9]+)?/(sortBy)?/:sortBy(meaning|pronunciation|translation)?/(sortDirection)?/:sortDirection(asc|desc)?" component={DeckDetails}/>
-        <AuthenticatedRoute path="/decks" component={DeckDiscovery} />
-        <AuthenticatedRoute path="/logout" render={() => {
-            if(typeof window === "undefined") { return <Redirect to="/"/> }
-            Auth.logout()
-        }} />
-        <AuthenticatedRoute path="/help/board/new" component={EditIssue} />
-        <AuthenticatedRoute path="/help/board/edit/:issueId" component={EditIssue} />
-        <AuthenticatedRoute path="/help/board/:threadId" component={IssueThread} />
-        <AuthenticatedRoute path="/help/board" component={IssuesBoard} />
-        <Route path="/help/:slug*" component={Helpdesk} />
-        <AuthenticatedRoute path="/test" component={TestBed} />
-        <AuthenticatedRoute path="/lessons" component={Lessons} />
-        <AuthenticatedRoute path="/reviews" component={Reviews} />
-        <UnauthenticatedRoute path="/login" component={Login} />
-        <Route path="/:slug" component={CMSPage} />
-    </Switch>
+    <Router>
+        <Switched path="/" render={({authenticated, ...props}) => authenticated ? <Home {...props} /> : <Index {...props} />} />
+        <Index path="/landing" />
+        <Authenticated path="/intro" component={Intro} />
+        <Callback path="/callback" />
+        <CMSPage path="/page/:slug" />
+        <CMSPage path="/:slug" />
+        <Authenticated path="/settings" component={Settings} />
+        <Authenticated path="/settings/import-deck/language/:languageCode/name/:name" component={DeckImport} />
+        <Authenticated path="/profile/search/:query*" component={UserSearch} />
+        <Authenticated path="/profile/search" component={UserSearch} />
+        <Authenticated path="/profile/:id" component={UserProfile} />
+        <Authenticated path="/profile" component={UserProfile} />
+        <Authenticated path="/deck/:id" component={DeckDetails} />
+        <Authenticated path="/deck/:id/page/:page" component={DeckDetails} />
+        <Authenticated path="/deck/:id/page/:page/sortBy/:sortBy" component={DeckDetails} />
+        <Authenticated path="/deck/:id/page/:page/sortBy/:sortBy/sortDirection/:sortDirection" component={DeckDetails} />
+        <Authenticated path="/decks" component={DeckDiscovery} />
+        <Authenticated path="/logout" component={Logout} />
+        <Authenticated path="/help/board/new" component={EditIssue} />
+        <Authenticated path="/help/board/edit/:issueId" component={EditIssue} />
+        <Authenticated path="/help/board/:threadId" component={IssueThread} />
+        <Authenticated path="/help/board" component={IssuesBoard} />
+        <Helpdesk path="/help/:slug" />
+        <Helpdesk path="/help" />
+        <Authenticated path="/test" component={TestBed} />
+        <Authenticated path="/lessons" component={Lessons} />
+        <Authenticated path="/reviews" component={Reviews} />
+        <Unauthenticated path="/login" component={Login} />
+    </Router>
 )
 
 export default Routes

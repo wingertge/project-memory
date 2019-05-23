@@ -12,10 +12,10 @@ import {
 } from "@material-ui/core"
 import {Message} from "@material-ui/icons"
 import {makeStyles} from "@material-ui/styles"
+import {navigate} from "@reach/router"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router"
 import {useIssuesCountQuery, useIssuesQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
@@ -60,7 +60,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const IssueTable = ({search}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
 
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(20)
@@ -98,7 +97,7 @@ export const IssueTable = ({search}: PropTypes) => {
                             <TableCell padding="checkbox">
                                 <Checkbox />
                             </TableCell>
-                            <TableCell component="th" scope="row" onClick={() => history.push(`/help/board/${issue.id}`)} className={classes.issueDisplay}>
+                            <TableCell component="th" scope="row" onClick={() => navigate(`/help/board/${issue.id}`)} className={classes.issueDisplay}>
                                 <Typography className={classes.title}>{issue.title}</Typography>
                                 <Typography variant="body2" color="textSecondary">
                                     {t("last active {{time}}", {

@@ -1,9 +1,9 @@
 import {TextField, Theme} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
 import {User, useUsersQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
@@ -42,11 +42,10 @@ const validators = {
     ]
 }
 
-export const UserSearch = () => {
+export const UserSearch = ({query: paramsQuery, navigate}: RouteComponentProps<RouteParams>) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {match: {params}, history} = useRouter<RouteParams>()
-    const {query, valid} = useValidatedFormState<RouteParams>({query: params.query || ""}, validators)
+    const {query, valid} = useValidatedFormState<RouteParams>({query: paramsQuery || ""}, validators)
     const {data, error, loading} = useUsersQuery({skip: !valid, variables: {limit: 20, filter: {search: query.value}}})
     const users = oc(data).users([]) as User[]
 
@@ -72,7 +71,7 @@ export const UserSearch = () => {
             {loading ? <TimedCircularProgress /> : (
                 <div className={classes.resultList}>
                     {users.map(user => (
-                        <div key={user.id} className={classes.result} onClick={() => history.push(`/profile/${user.id}`)}>
+                        <div key={user.id} className={classes.result} onClick={() => navigate!(`/profile/${user.id}`)}>
                             <UserSummary user={user} />
                         </div>
                     ))}

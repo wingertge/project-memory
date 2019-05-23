@@ -1,18 +1,18 @@
 import loadable from "@loadable/component"
 import {Grid, Link, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import clsx from "clsx"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router/use-react-router"
 import {usePageQuery} from "../../generated/graphql"
 import LinkButton from "../components/common/LinkButton"
 import RichText from "../components/common/RichText"
 import {TimedCircularProgress} from "../components/apollo/TimedCircularProgress"
 import v4 from "uuid/v4"
 
-interface PropTypes {
+interface PropTypes extends RouteComponentProps<{slug: string}> {
     slug?: string
 }
 
@@ -78,9 +78,7 @@ const NotFound = loadable(() => import(/* webpackChunkName: "not-found" */"./Not
 export const CMSPage = ({slug}: PropTypes) => {
     const {t} = useTranslation("cms")
     const classes = useStyles()
-    const {match: {params: {slug: routeSlug}}} = useRouter<{slug: string}>()
-    slug = slug || routeSlug
-    const {data, error, loading} = usePageQuery({variables: {slug}})
+    const {data, error, loading} = usePageQuery({variables: {slug: slug!}})
 
     if(loading) return <TimedCircularProgress />
     if(!data || !data.page || error) return <NotFound />

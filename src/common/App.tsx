@@ -9,6 +9,7 @@ import {useNow} from "./hooks"
 import Routes from "./Routes"
 import PatreonButton from "./assets/become_a_patron_button@2x.png"
 import PatreonButtonSmall from "./assets/Patreon_Mark_Coral.svg"
+import {Location} from "@reach/router"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
         root: {
@@ -80,7 +81,9 @@ export const App = () => {
             <Helmet>
                 <title>{t("Project Memory")}</title>
             </Helmet>
-            <AppHeader/>
+            <Location>
+                {props => <AppHeader {...props} />}
+            </Location>
             <div className={classes.content}>
                 <Routes/>
             </div>

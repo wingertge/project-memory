@@ -1,11 +1,11 @@
 import {Button, Grid, MenuItem, NoSsr, TextField, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import {useEffect, useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import initSQL, {Database} from "sql.js"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router"
 import {
     CardInput,
     Language,
@@ -75,10 +75,9 @@ interface Params {
     name: string
 }
 
-export const DeckImport = () => {
+export const DeckImport = ({languageCode, name, navigate}: RouteComponentProps<Params>) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history, match: {params: {languageCode, name}}} = useRouter<Params>()
     const id = useID()
 
     const [file, setFile] = useState<File | undefined>(undefined)
@@ -88,7 +87,7 @@ export const DeckImport = () => {
     const [importing, setImporting] = useState(false)
     const [importError, setImportError] = useState<string | undefined>(undefined)
     const {deck, model, meaningField, pronunciationField, translationField} = useFormState<Form>({deck: "", model: "", meaningField: "", pronunciationField: "", translationField: ""})
-    const {data, loading, error} = useLanguageQuery({variables: {languageCode}})
+    const {data, loading, error} = useLanguageQuery({variables: {languageCode: languageCode!}})
     const userLangs = useUserLanguagesQuery({variables: {userId: id}})
     const nativeLanguage = oc(userLangs.data).user.nativeLanguage() as Language
 
@@ -162,7 +161,7 @@ export const DeckImport = () => {
                 },
                 userId: id
             }
-        }).then(() => history.push("/settings"))
+        }).then(() => navigate!("/settings"))
     }
 
     const Mapping = ({label, formField}) => (

@@ -1,9 +1,9 @@
 import {Button, TextField, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
+import {navigate} from "@reach/router"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router/use-react-router"
 import {
     Card,
     Deck, ShallowDecksDocument,
@@ -14,15 +14,19 @@ import {
 } from "../../../generated/graphql"
 import AutocompleteTagInput from "../../components/common/AutocompleteTagInput"
 import WithErrorBox from "../../components/apollo/WithErrorBox"
-import {useConfirmDialog, useDialog, useID, useToast, useValidatedFormState} from "../../hooks"
-import {deckPropsValidators, Form, RouteTypes} from "./DeckDetails"
-import EditCardForm from "./EditCardForm"
+import {useConfirmDialog, useID, useToast, useValidatedFormState} from "../../hooks"
+import {Column, deckPropsValidators, Form, SortDirection} from "./DeckDetails"
+import {PropTypes as CardFormPropTypes} from "./EditCardForm"
 
 interface PropTypes {
     deck: Deck
     rowsPerPage: number
     cards: Card[]
     search: string
+    page: number
+    sortDirection: SortDirection
+    sortBy: Column
+    openDialog: (props: Partial<CardFormPropTypes>) => void
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -53,15 +57,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
+export const DeckEditForm = ({deck, rowsPerPage, cards, search, page, sortDirection, sortBy, openDialog}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {Dialog, openDialog} = useDialog(EditCardForm)
-    const {history, match: {params: {id, page: pageString = "0", sortDirection = "asc", sortBy = "meaning"}}} = useRouter<RouteTypes>()
-    const page = parseInt(pageString, 10)
     const {name} = useValidatedFormState<Form>({name: deck.name}, deckPropsValidators)
     const {Toast, openToast} = useToast("Successfully saved deck")
-    const [updateDeck, {error: mutationError}] = useUpdateDeckMutation({variables: {id, deckInput: {name: name.value}}})
+    const [updateDeck, {error: mutationError}] = useUpdateDeckMutation({variables: {id: deck.id, deckInput: {name: name.value}}})
     const save = () => updateDeck().then(openToast)
     const tags = deck.tags
     const [tagError, setTagError] = useState<string | undefined>(undefined)
@@ -78,11 +79,11 @@ export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
             return
         }
         addTagMutate({
-            variables: {deckId: id, tag: chip},
+            variables: {deckId: deck.id, tag: chip},
             optimisticResponse: {
                 addTagToDeck: {
                     __typename: "Deck",
-                    id,
+                    id: deck.id,
                     tags: [...tags, chip]
                 }
             },
@@ -94,11 +95,11 @@ export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
     const removeTag = (chip: string) => {
         setTagError(undefined)
         removeTagMutate({
-            variables: {deckId: id, tag: chip},
+            variables: {deckId: deck.id, tag: chip},
             optimisticResponse: {
                 removeTagFromDeck: {
                     __typename: "Deck",
-                    id,
+                    id: deck.id,
                     tags: tags.filter(tag => tag !== chip)
                 }
             },
@@ -106,9 +107,9 @@ export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
         })
     }
 
-    const [deleteDeckMutate, {loading: deleting}] = useDeleteDeckMutation({variables: {id}, refetchQueries: [{query: ShallowDecksDocument, variables: {id: userId}}, "GlobalDecks", "LessonsCount", "ReviewsCount"]})
+    const [deleteDeckMutate, {loading: deleting}] = useDeleteDeckMutation({variables: {id: deck.id}, refetchQueries: [{query: ShallowDecksDocument, variables: {id: userId}}, "GlobalDecks", "LessonsCount", "ReviewsCount"]})
     const deleteDeck = () => {
-        deleteDeckMutate().then(() => history.push("/"))
+        deleteDeckMutate().then(() => navigate("/"))
     }
     const [confirmDelete, ConfirmDeleteDialog] = useConfirmDialog(
         deleteDeck,
@@ -119,7 +120,6 @@ export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
     return (
         <>
             <Toast />
-            <Dialog />
             <ConfirmDeleteDialog />
             <WithErrorBox prop={{error: mutationError}} retry={save}>
                 <Typography variant="h5">
@@ -134,7 +134,7 @@ export const DeckEditForm = ({deck, rowsPerPage, cards, search}: PropTypes) => {
                     <div className={classes.actions}>
                         <Button onClick={save}>{t("Save")}</Button>
                         <Button onClick={() => openDialog({
-                            deckId: id,
+                            deckId: deck.id,
                             language: deck.language,
                             nativeLanguage: deck.nativeLanguage,
                             rowsPerPage,

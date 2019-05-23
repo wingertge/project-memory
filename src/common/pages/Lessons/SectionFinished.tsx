@@ -1,9 +1,9 @@
 import {Button, Theme, Typography} from "@material-ui/core"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {navigate} from "@reach/router"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router/use-react-router"
 import Checkmark from "../../assets/checkmark.png"
 
 interface PropTypes {
@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export const SectionFinished = ({lessonCount, onMoreLessonsClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
 
     return (
         <div>
@@ -36,7 +35,7 @@ export const SectionFinished = ({lessonCount, onMoreLessonsClick}: PropTypes) =>
             <Typography variant="body1" className={classes.all}>
                 {t("You can do more lessons, or go back to the home page.")}
             </Typography>
-            <Button onClick={() => history.push("/")} className={classes.all}>{t("Home")}</Button>
+            <Button onClick={() => navigate("/")} className={classes.all}>{t("Home")}</Button>
             <Button disabled={lessonCount === 0}
                     title={lessonCount === 0 ? t("No more lessons available") : undefined}
                     onClick={onMoreLessonsClick}

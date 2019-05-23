@@ -17,7 +17,6 @@ import {createUploadLink} from "apollo-upload-client"
 import {ApolloClient} from "apollo-client"
 import {InMemoryCache} from "apollo-cache-inmemory"
 import {ApolloProvider} from "react-apollo-hooks"
-import {BrowserRouter} from "react-router-dom"
 
 // tslint:disable-next-line:no-var-requires
 let App = require("../common/App").default
@@ -42,13 +41,6 @@ ReactGA.pageview(window.location.pathname + window.location.search)
 
 const cache = new InMemoryCache().restore(window.__PRELOADED_STATE__ as any)
 
-/*const httpLink = createUploadLink({
-    uri: window.__REACT_APP_API_ENDPOINT__,
-    headers: window.__AUTH__ && {
-        authorization: `Bearer ${window.__AUTH__}`
-    }
-})*/
-
 const httpOptions = {
     uri: window.__REACT_APP_API_ENDPOINT__,
     headers: window.__AUTH__ && {
@@ -71,12 +63,10 @@ const client = new ApolloClient({
 const RootApp = () => (
     <I18nextProvider i18n={i18n}>
         <ApolloProvider client={client}>
-            <BrowserRouter>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline/>
-                    <MainApp/>
-                </ThemeProvider>
-            </BrowserRouter>
+            <ThemeProvider theme={theme}>
+                <CssBaseline/>
+                <MainApp/>
+            </ThemeProvider>
         </ApolloProvider>
     </I18nextProvider>
 )

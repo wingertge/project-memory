@@ -1,24 +1,25 @@
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import {useState} from "react"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
 import {Deck, useCardsQuery, useDeckDetailsQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
-import {useFormState, useID, ValidatorMap} from "../../hooks"
+import {useDialog, useFormState, useID, ValidatorMap} from "../../hooks"
 import {Theme} from "../../theme"
 import {longerThan, notEmpty, shorterThan} from "../../util/validationUtils"
 import CardTable from "./CardTable"
 import {DeckEditForm} from "./DeckEditForm"
 import {Column, SortDirection} from "./DeckDetails"
 import DeckProperties from "./DeckProperties"
+import EditCardForm from "./EditCardForm"
 
 export type SortDirection = "asc" | "desc"
 export type Column = "meaning" | "pronunciation" | "translation"
 
-export interface RouteTypes {
+interface RouteTypes {
     id: string,
     page: string
     sortDirection: SortDirection
@@ -43,15 +44,14 @@ export const deckPropsValidators: ValidatorMap<Form> = {
     ]
 }
 
-export const DeckDetails = () => {
+export const DeckDetails = ({id, page: initialPage, sortDirection: initialSortDirection, sortBy: initialSortBy}: RouteComponentProps<RouteTypes>) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {match: {params: {id, page: initialPage, sortBy: initialSortBy, sortDirection: initialSortDirection}}} = useRouter<RouteTypes>()
     const userId = useID()
 
     const {data, loading, error} = useDeckDetailsQuery({
         variables: {
-            deckID: id
+            deckID: id!
         }
     })
 
@@ -63,7 +63,7 @@ export const DeckDetails = () => {
 
     const {data: cardsData} = useCardsQuery({
         variables: {
-            deckID: id,
+            deckID: id!,
             limit: rowsPerPage,
             offset: page * rowsPerPage,
             filter: {
@@ -81,19 +81,33 @@ export const DeckDetails = () => {
 
     const deck = data!.deck as Deck
     const isOwn = oc(deck).owner.id() === userId
+    const {Dialog, openDialog} = useDialog(EditCardForm)
 
     if(error) return <ApolloErrorBox error={error} />
     if(loading) return null
 
     return (
         <>
+            <Dialog />
             <Helmet>
                 <title>{t("Deck {{deckName}} - Project Memory", {deckName: deck.name})}</title>
             </Helmet>
             <div className={classes.root}>
                 {!isOwn && <DeckProperties deck={deck} />}
-                {isOwn && <DeckEditForm deck={deck} rowsPerPage={rowsPerPage} cards={cards} search={search.value} />}
+                {isOwn && (
+                    <DeckEditForm
+                        deck={deck}
+                        rowsPerPage={rowsPerPage}
+                        cards={cards}
+                        search={search.value}
+                        openDialog={openDialog}
+                        page={page}
+                        sortDirection={sortDirection}
+                        sortBy={sortBy}
+                    />
+                )}
                 <CardTable
+                    id={id!}
                     rowsPerPage={rowsPerPage}
                     setRowsPerPage={setRowsPerPage}
                     page={page}
@@ -107,6 +121,7 @@ export const DeckDetails = () => {
                     cardCount={cardCount}
                     search={search.value}
                     onSearchChange={search.onChange}
+                    openDialog={openDialog}
                 />
             </div>
         </>

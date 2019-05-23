@@ -1,15 +1,15 @@
 import {createStyles, Tab, Tabs} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
+import {Redirect, RouteComponentProps} from "@reach/router"
 import React, {useState} from "react"
 import {useTranslation} from "react-i18next"
-import {Redirect} from "react-router"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useUser} from "../../hooks"
 import {Theme} from "../../theme"
 import AggregatedFeed from "./AggregatedFeed"
 import Dashboard from "./Dashboard"
 
-interface PropTypes {
+interface PropTypes extends RouteComponentProps {
     initialTab?: number
 }
 

@@ -2,15 +2,14 @@ import {Avatar, Breadcrumbs, Button, Card, Collapse, IconButton, TablePagination
 import {fade} from "@material-ui/core/styles"
 import {DeleteOutlined, Edit, ReportProblem} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {Link, RouteComponentProps} from "@reach/router"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import ReactMarkdown from "react-markdown"
-import {Link} from "react-router-dom"
 import breaks from "remark-breaks"
 import moment from "moment"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router"
 import {
     Issue, IssueReply, ReportReason,
     useDeleteIssueMutation,
@@ -113,10 +112,9 @@ const validators = {
     ]
 }
 
-export const IssueThread = () => {
+export const IssueThread = ({threadId, navigate}: RouteComponentProps<RouteProps>) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {match: {params: {threadId}}, history} = useRouter<RouteProps>()
     const {content, valid} = useValidatedFormState<Form>({content: ""}, validators, {enableInitialValidation: false})
 
     const id = useID()
@@ -133,20 +131,20 @@ export const IssueThread = () => {
 
     const {data, loading, error} = useIssueQuery({
         variables: {
-            id: threadId,
+            id: threadId!,
             userId: id,
             ...repliesSelect
         }
     })
 
     const [deleteIssueMutate] = useDeleteIssueMutation({
-        variables: {id: threadId},
+        variables: {id: threadId!},
         refetchQueries: ["Issues"]
     })
     const deleteIssue = () => {
         deleteIssueMutate().then(() => {
             openDeleteIssueToast()
-            history.push("/help/board")
+            navigate!("/help/board")
         })
     }
 
@@ -160,7 +158,7 @@ export const IssueThread = () => {
                 __typename: "Mutation",
                 deleteIssueReply: {
                     __typename: "Issue",
-                    id: threadId,
+                    id: threadId!,
                     replies: issue.replies.filter(reply => reply.id !== replyId),
                     replyCount: issue.replyCount - 1
                 }
@@ -172,12 +170,12 @@ export const IssueThread = () => {
     const [replyToIssueMutate] = useReplyToIssueMutation()
     const replyToIssue = () => {
         replyToIssueMutate({
-            variables: {id: threadId, content: content.value, ...repliesSelect},
+            variables: {id: threadId!, content: content.value, ...repliesSelect},
             optimisticResponse: {
                 __typename: "Mutation",
                 replyToIssue: {
                     __typename: "Issue",
-                    id: threadId,
+                    id: threadId!,
                     replies: issue.replies.length > 10 ? issue.replies : [...issue.replies, {__typename: "IssueReply", id: "asd", content: content.value, by: {...user}, postedAt: new Date(), editedOn: null}],
                     replyCount: issue.replyCount + 1
                 }
@@ -196,7 +194,7 @@ export const IssueThread = () => {
             message
         },
         refetchQueries: ["Issues"]
-    }).then(() => history.push("/help/board"))
+    }).then(() => navigate!("/help/board"))
 
     const {Toast: DeleteIssueToast, openToast: openDeleteIssueToast} = useToast("Successfully deleted the issue")
     const [openDeleteIssueConfirm, DeleteIssueConfirmDialog] = useConfirmDialog(deleteIssue, "Delete this issue?", "Are you sure you want to delete this issue? This action is irreversible and will delete all replies as well.")
@@ -208,8 +206,8 @@ export const IssueThread = () => {
 
     const SideBar = ({by, postedAt}) => (
         <div className={classes.sideBar}>
-            <Avatar src={by.picture} className={classes.avatar} onClick={() => history.push(`/profile/${by.id}`)} style={{cursor: "pointer"}} />
-            <Typography onClick={() => history.push(`/profile/${by.id}`)} style={{cursor: "pointer"}}>{by.username}</Typography>
+            <Avatar src={by.picture} className={classes.avatar} onClick={() => navigate!(`/profile/${by.id}`)} style={{cursor: "pointer"}} />
+            <Typography onClick={() => navigate!(`/profile/${by.id}`)} style={{cursor: "pointer"}}>{by.username}</Typography>
             <Typography variant="body2" color="textSecondary">{moment(postedAt).fromNow()}</Typography>
         </div>
     )
@@ -322,7 +320,7 @@ export const IssueThread = () => {
                             <div style={{flex: "1 1 100%"}} />
                             {issue.by.id === id && (
                                 <>
-                                    <IconButton onClick={() => history.push(`/help/board/edit/${issue.id}`)} className={classes.iconButton}>
+                                    <IconButton onClick={() => navigate!(`/help/board/edit/${issue.id}`)} className={classes.iconButton}>
                                         <Edit />
                                     </IconButton>
                                     <IconButton onClick={openDeleteIssueConfirm} className={classes.iconButton}>

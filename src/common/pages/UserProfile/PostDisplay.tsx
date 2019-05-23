@@ -8,10 +8,10 @@ import {
     Typography
 } from "@material-ui/core"
 import {Delete, Repeat, ReportProblem, ThumbUp, ThumbUpOutlined} from "@material-ui/icons"
+import {navigate} from "@reach/router"
 import clsx from "clsx"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router/use-react-router"
 import {Post, useChangePostLikeMutation, useDeletePostMutation} from "../../../generated/graphql"
 import ReactMarkdown from "react-markdown"
 import breaks from "remark-breaks"
@@ -76,7 +76,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
     const userId = useID()
     const isLiked = post.isLikedBy
     const [deletePost] = useDeletePostMutation({
@@ -111,7 +110,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                 {post.type === "repost" && (
                     <Card>
                         <CardContent>
-                            <div className={classes.header} onClick={() => history.push(`/profile/${post.originalPost!.by.id}`)} style={{cursor: "pointer"}}>
+                            <div className={classes.header} onClick={() => navigate(`/profile/${post.originalPost!.by.id}`)} style={{cursor: "pointer"}}>
                                 <Avatar src={post.originalPost!.by.picture} className={classes.avatar} />
                                 <Typography style={{fontWeight: "bold"}}>{post.originalPost!.by.username}</Typography>
                             </div>

@@ -1,10 +1,10 @@
 import {Button, Card, TextField, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import {useEffect} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router"
 import {useCreateIssueMutation, useEditIssueMutation, useIssueQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
@@ -60,12 +60,11 @@ interface RouteTypes {
     issueId: string
 }
 
-export const EditIssue = () => {
+export const EditIssue = ({issueId, navigate}: RouteComponentProps<RouteTypes>) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history, match: {params: {issueId}}} = useRouter<RouteTypes>()
     const userId = useID()
-    const {data, loading, error} = useIssueQuery({skip: !issueId, variables: {id: issueId, userId}})
+    const {data, loading, error} = useIssueQuery({skip: !issueId, variables: {id: issueId!, userId}})
     const issue = oc(data).issue()
     const issueTitle = oc(issue).title("")
     const issueContent = oc(issue).content("")
@@ -73,17 +72,17 @@ export const EditIssue = () => {
     const {text, title, valid} = useValidatedFormState<Form>({text: issueContent, title: issueTitle}, validators, {enableInitialValidation: false})
 
     const [createIssueMutate, {loading: savingCreate}] = useCreateIssueMutation({variables: {input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
-    const [updateIssueMutate, {loading: savingEdit}] = useEditIssueMutation({variables: {id: issueId, input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
+    const [updateIssueMutate, {loading: savingEdit}] = useEditIssueMutation({variables: {id: issueId!, input: {title: title.value, content: text.value}}, refetchQueries: ["Issues"]})
     const createIssue = () => {
         createIssueMutate().then(() => {
             openToast()
-            history.push("/help/board")
+            navigate!("/help/board")
         })
     }
     const updateIssue = () => {
         updateIssueMutate().then(() => {
             openToast()
-            history.push(`/help/board/${issueId}`)
+            navigate!(`/help/board/${issueId}`)
         })
     }
     const save = () => {

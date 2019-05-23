@@ -9,11 +9,10 @@ import {
 } from "@material-ui/core"
 import {AccountCircle, AssignmentLate} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {LocationContext} from "@reach/router"
 import React, {useState} from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
-import Auth from "../../../client/Auth"
 import {useReviewsCountQuery} from "../../../generated/graphql"
 import {useNow, useUser} from "../../hooks"
 import LinkButton from "./LinkButton"
@@ -45,12 +44,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-export const Header = () => {
+export const Header = ({location, navigate}: LocationContext) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history, location} = useRouter()
     const [anchorEl, setAnchorEl] = useState<any>(null)
-    const openMenu = event => authenticated ? setAnchorEl(event.currentTarget) : Auth.login(true, location.pathname)
+    const openMenu = event => {
+        if(authenticated) {
+            setAnchorEl(event.currentTarget)
+        } else {
+            import("../../../client/auth").then(auth => auth.login(true, location!.pathname))
+        }
+    }
     const closeMenu = () => setAnchorEl(null)
     const user = useUser()
     const authenticated = !!user
@@ -69,22 +73,22 @@ export const Header = () => {
 
     const openSettings = () => {
         closeMenu()
-        history.push("/settings")
+        navigate!("/settings")
     }
 
     const openReviews = () => {
-        history.push("/reviews")
+        navigate!("/reviews")
     }
 
     const logout = () => {
         closeMenu()
-        history.push("/logout")
+        navigate!("/logout")
     }
 
     return (
         <AppBar position="sticky" className={classes.appBar}>
             <Toolbar>
-                <img src={Logo} alt={t("Logo")} className={classes.logo} onClick={() => history.push("/")} />
+                <img src={Logo} alt={t("Logo")} className={classes.logo} onClick={() => navigate!("/")} />
                 <Typography variant="h6" color="inherit">
                     <LinkButton to="/" className={classes.navbarLink}>{t("Home")}</LinkButton>
                 </Typography>
@@ -110,7 +114,7 @@ export const Header = () => {
                     <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{vertical: "top", horizontal: "right"}}
                           open={!!anchorEl} onClose={closeMenu}>
                         <Hidden smUp implementation="css">
-                            <MenuItem onClick={() => history.push("/profile")}>{t("Profile")}</MenuItem>
+                            <MenuItem onClick={() => navigate!("/profile")}>{t("Profile")}</MenuItem>
                         </Hidden>
                         <MenuItem onClick={openSettings}>{t("Settings")}</MenuItem>
                         <MenuItem onClick={logout}>{t("Sign Out")}</MenuItem>

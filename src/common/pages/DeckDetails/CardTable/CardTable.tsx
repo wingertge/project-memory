@@ -11,18 +11,19 @@ import {
 } from "@material-ui/core"
 import {Edit} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
-import {Dispatch, SetStateAction, useState} from "react"
+import {navigate} from "@reach/router"
+import {Dispatch, SetStateAction, useEffect, useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router"
 import {Card, CardSortingOptions, Deck, useDeleteCardsMutation} from "../../../../generated/graphql"
-import {useConfirmDialog, useDialog} from "../../../hooks"
-import EditCardForm from "../EditCardForm"
+import {useConfirmDialog} from "../../../hooks"
+import {PropTypes as CardFormPropTypes} from "../EditCardForm"
 import CardTableHead from "./CardTableHead"
 import CardTableToolbar from "./CardTableToolbar"
-import {Column, SortDirection} from "../DeckDetails"
+import {SortDirection} from "../DeckDetails"
 
 interface PropTypes {
+    id: string
     rowsPerPage: number
     setRowsPerPage: Dispatch<SetStateAction<number>>
     page: number
@@ -37,6 +38,7 @@ interface PropTypes {
     cardCount: number
     search: string
     onSearchChange: any
+    openDialog: (props: Partial<CardFormPropTypes>) => void
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -57,21 +59,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }))
 
-interface RouteTypes {
-    id: string
-    page: string
-    sortBy: Column
-    sortDirection: SortDirection
-}
-
-const CardTable = ({rowsPerPage, setRowsPerPage, page, setPage, sortBy, setSortBy, sortDirection, setSortDirection, deck, own, search, onSearchChange, cards, cardCount}: PropTypes) => {
+const CardTable = ({id, rowsPerPage, setRowsPerPage, page, setPage, sortBy, setSortBy, sortDirection, setSortDirection, deck, own, search, onSearchChange, cards, cardCount, openDialog}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history, match: {params: {id}}} = useRouter<RouteTypes>()
 
     const [selected, setSelected] = useState<string[]>([])
-
-    const {Dialog, openDialog} = useDialog(EditCardForm)
 
     const hasPronunciation = deck.language.hasPronunciation
 
@@ -116,7 +108,7 @@ const CardTable = ({rowsPerPage, setRowsPerPage, page, setPage, sortBy, setSortB
     }
 
     const changePage = (_, newPage: number) => {
-        history.push(formatPath())
+        navigate(formatPath())
         setPage(newPage)
     }
 
@@ -130,13 +122,15 @@ const CardTable = ({rowsPerPage, setRowsPerPage, page, setPage, sortBy, setSortB
     const requestSort = (event, prop) => {
         setSortBy(prop)
         if(sortBy === prop && sortDirection === "asc") {
-            history.push(formatPath())
             setSortDirection("desc")
         } else {
-            history.push(formatPath())
             setSortDirection("asc")
         }
     }
+
+    useEffect(() => {
+        navigate(formatPath())
+    }, [page, sortBy, sortDirection, id])
 
     let columns = [
         {id: "meaning", numeric: false, disablePadding: false, label: "Meaning"},
@@ -150,7 +144,6 @@ const CardTable = ({rowsPerPage, setRowsPerPage, page, setPage, sortBy, setSortB
 
     return (
         <>
-            <Dialog />
             <ConfirmDeleteDialog />
             <Paper className={classes.root}>
                 <CardTableToolbar numSelected={selected.length} onDeleteClicked={selected.length >= 30 ? confirmDelete : deleteCards} search={search} onSearchChange={onSearchChange}/>

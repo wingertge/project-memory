@@ -1,9 +1,9 @@
 import {Button, Chip, Theme, Typography} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
+import {navigate} from "@reach/router"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
 import {Deck, useShallowDecksQuery} from "../../../generated/graphql"
 import {useID, useSubscriptionToggle} from "../../hooks"
 
@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const DeckProperties = ({deck}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
     const tags = deck.tags
     const userId = useID()
 
@@ -63,7 +62,7 @@ export const DeckProperties = ({deck}: PropTypes) => {
         <div>
             <div className={classes.titleContainer}>
                 <Typography variant="h4" gutterBottom>{deck.name}</Typography>
-                <Typography variant="h6" onClick={() => history.push(`/profile/${deck.owner.id}`)} className={classes.ownerText}>
+                <Typography variant="h6" onClick={() => navigate(`/profile/${deck.owner.id}`)} className={classes.ownerText}>
                     {t("by {{username}}", {username: deck.owner.username})}
                 </Typography>
             </div>

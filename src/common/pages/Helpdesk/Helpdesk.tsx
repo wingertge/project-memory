@@ -1,13 +1,13 @@
 import {makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import {useEffect, useState} from "react"
 import * as React from "react"
-import useRouter from "use-react-router/use-react-router"
 import {Theme} from "../../theme"
 import HelpdeskArticle from "./HelpdeskArticle"
 import HelpdeskNav from "./HelpdeskNav"
 
 interface Params {
-    slug?: string
+    slug: string
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -16,9 +16,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }))
 
-export const Helpdesk = () => {
+export const Helpdesk = ({slug = "index"}: RouteComponentProps<Params>) => {
     const classes = useStyles()
-    const {match: {params: {slug = "index"}}} = useRouter<Params>()
     const [drawerOpen, setDrawerOpen] = useState(false)
 
     useEffect(() => setDrawerOpen(false), [slug])

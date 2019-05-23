@@ -26,11 +26,7 @@ const port = proc.env.PORT || 3000
 // noinspection TypeScriptValidateJSTypes
 const listen = express()
     .use((req, res) => app.handle(req, res))
-    .listen(port, err => {
-        if (err) {
-            console.error(err)
-            return
-        }
+    .listen(port, () => {
         console.log(`> Started on port ${port}`)
     })
 export default listen

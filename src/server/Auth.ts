@@ -6,6 +6,7 @@ import proc from "./env"
 
 export const handleCallback = async (basePath: string, req, res, apollo: Apollo) => {
     let newApollo: Apollo | undefined
+    let token: string | undefined
     if(req.query.code && basePath === "callback") {
         const authResult = await apollo.client.mutate<LoginMutation, LoginMutationVariables>({
             mutation: LoginDocument,
@@ -15,7 +16,7 @@ export const handleCallback = async (basePath: string, req, res, apollo: Apollo)
         })
 
         if(authResult.data && authResult.data.authenticate) {
-            const token = authResult.data.authenticate.accessToken
+            token = authResult.data.authenticate.accessToken
             const decoded = jwt.decode(token)
             const id = decoded![`${proc.env.REACT_APP_OAUTH_NAMESPACE}/id`]
             // tslint:disable-next-line:no-console
@@ -27,5 +28,5 @@ export const handleCallback = async (basePath: string, req, res, apollo: Apollo)
         }
     }
 
-    return newApollo || apollo
+    return {apollo: newApollo || apollo, token}
 }

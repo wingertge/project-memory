@@ -1,9 +1,9 @@
 import {Grid} from "@material-ui/core"
 import {makeStyles} from "@material-ui/styles"
+import {RouteComponentProps} from "@reach/router"
 import * as React from "react"
 import Helmet from "react-helmet"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router/use-react-router"
 import {TimedCircularProgress} from "../../components/apollo/TimedCircularProgress"
 import {useID, useUser} from "../../hooks"
 import Badges from "./Badges"
@@ -22,10 +22,9 @@ const useStyles = makeStyles({
     }
 })
 
-export const UserProfile = () => {
+export const UserProfile = ({id}: RouteComponentProps<{id: string}>) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    let {match: {params: {id}}} = useRouter<{id: string}>()
     const userId = useID()
     const isOwn = !id || id === userId
     id = id || userId

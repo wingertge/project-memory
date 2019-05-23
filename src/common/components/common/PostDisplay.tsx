@@ -8,11 +8,11 @@ import {
     Typography
 } from "@material-ui/core"
 import {Delete, Edit, Repeat, ReportProblem, ThumbUp, ThumbUpOutlined} from "@material-ui/icons"
+import {navigate} from "@reach/router"
 import clsx from "clsx"
 import {useState} from "react"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
-import useRouter from "use-react-router/use-react-router"
 import {
     Post, ReportReason,
     useChangePostLikeMutation,
@@ -93,7 +93,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
     const userId = useID()
     const isLiked = post.isLikedBy
     const [deletePost] = useDeletePostMutation({
@@ -152,7 +151,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
     return (
         <div className={classes.post}>
             <Dialog />
-            <div className={classes.header} onClick={() => {if(!isOwn) history.push(`/profile/${post.by.id}`)}} style={{cursor: isOwn ? "default" : "pointer"}}>
+            <div className={classes.header} onClick={() => {if(!isOwn) navigate(`/profile/${post.by.id}`)}} style={{cursor: isOwn ? "default" : "pointer"}}>
                 <Avatar src={post.by.picture} className={classes.avatar} />
                 <Typography style={{fontWeight: "bold"}}>{post.by.username}</Typography>
                 {post.type === "repost" && <Repeat className={classes.repostIcon} />}
@@ -193,7 +192,7 @@ export const PostDisplay = ({post, isOwn, onRepostClick}: PropTypes) => {
                 {post.type === "repost" && (
                     <Card>
                         <CardContent>
-                            <div className={classes.header} onClick={() => history.push(`/profile/${post.originalPost!.by.id}`)} style={{cursor: "pointer"}}>
+                            <div className={classes.header} onClick={() => navigate(`/profile/${post.originalPost!.by.id}`)} style={{cursor: "pointer"}}>
                                 <Avatar src={post.originalPost!.by.picture} className={classes.avatar} />
                                 <Typography style={{fontWeight: "bold"}}>{post.originalPost!.by.username}</Typography>
                             </div>

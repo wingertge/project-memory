@@ -1,6 +1,7 @@
 import {ChunkExtractor} from "@loadable/server"
 import {CssBaseline} from "@material-ui/core"
 import {ThemeProvider, ServerStyleSheets} from "@material-ui/styles"
+import {ServerLocation} from "@reach/router"
 import cookieParser from "cookie-parser"
 import express from "express"
 import * as path from "path"
@@ -11,7 +12,6 @@ import morgan from "morgan"
 import {I18nextProvider} from "react-i18next"
 import I18NextMiddleware from "i18next-express-middleware"
 import i18n from "i18next"
-import {StaticRouter} from "react-router"
 import App from "../common/App"
 import theme from "../common/theme"
 import {createApollo} from "./Apollo"
@@ -44,14 +44,16 @@ initI18n(() => {
 
             manageCookies(routeParams[0], req, res)
 
-            const __auth__ = req.signedCookies.__auth__
+            let __auth__ = req.signedCookies.__auth__
             const decoded = __auth__ && jwt.decode(__auth__)
             const id = decoded && decoded[`${proc.env.REACT_APP_OAUTH_NAMESPACE}/id`] || "none"
             // tslint:disable-next-line:no-string-literal
             const expiresAt = decoded && new Date(decoded["exp"] * 1000) || undefined
             let apollo = createApollo({auth: __auth__, id, loginExpiry: expiresAt})
 
-            apollo = await handleCallback(routeParams[0], req, res, apollo)
+            const callback = await handleCallback(routeParams[0], req, res, apollo)
+            apollo = callback.apollo
+            __auth__ = callback.token || __auth__
 
             // Create the server side style sheet
             const sheets = new ServerStyleSheets()
@@ -60,12 +62,12 @@ initI18n(() => {
             const Root = () => (
                 <I18nextProvider i18n={req.i18n}>
                     <ApolloProvider client={apollo.client}>
-                        <StaticRouter location={req.url} context={context}>
+                        <ServerLocation url={req.url}>
                             <ThemeProvider theme={theme}>
                                 <CssBaseline />
                                 <App />
                             </ThemeProvider>
-                        </StaticRouter>
+                        </ServerLocation>
                     </ApolloProvider>
                 </I18nextProvider>
             )

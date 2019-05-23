@@ -1,8 +1,8 @@
 import {Divider, List, ListItem, ListItemText} from "@material-ui/core"
+import {navigate} from "@reach/router"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router/use-react-router"
 import {useHelpPageListQuery} from "../../../generated/graphql"
 import ApolloErrorBox from "../../components/apollo/ApolloErrorBox"
 import ResponsiveDrawer from "../../components/common/ResponsiveDrawer"
@@ -13,7 +13,6 @@ interface PropTypes {
 
 export const HelpdeskNav = ({drawerOpen}: PropTypes) => {
     const {t} = useTranslation("help")
-    const {history} = useRouter()
     const {data, loading, error} = useHelpPageListQuery()
 
     if(error) return <ApolloErrorBox error={error} />
@@ -26,7 +25,7 @@ export const HelpdeskNav = ({drawerOpen}: PropTypes) => {
                 <List component="nav" disablePadding>
                     {pages.map(page => (
                         <React.Fragment key={page!.id}>
-                            <ListItem button onClick={() => history.push(`/help/${page!.slug}`)}>
+                            <ListItem button onClick={() => navigate(`/help/${page!.slug}`)}>
                                 <ListItemText primary={t(page!.title)} />
                             </ListItem>
                             <Divider />

@@ -7,10 +7,10 @@ import {
 } from "@material-ui/core"
 import {Edit, Favorite, FavoriteBorder, ThumbUp, ThumbUpOutlined} from "@material-ui/icons"
 import {createStyles, makeStyles} from "@material-ui/styles"
+import {navigate} from "@reach/router"
 import * as React from "react"
 import {useTranslation} from "react-i18next"
 import {oc} from "ts-optchain"
-import useRouter from "use-react-router"
 import {
     Deck, useChangeLikeStatusMutation,
     useChangeSubscriptionStatusMutation,
@@ -78,7 +78,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, name, language}, owned, subscribed, onEditClicked, onFavoriteClicked, onLikeClicked}: PropTypes) => {
     const classes = useStyles()
     const {t} = useTranslation()
-    const {history} = useRouter()
     const userId = useID()
 
     const {data} = useShallowDecksQuery({
@@ -120,7 +119,7 @@ export const DeckDisplay = ({deck: {id, cardCount, rating, isLikedBy: liked, nam
         }
     })
 
-    onEditClicked = onEditClicked || (() => history.push(`/deck/${id}`))
+    onEditClicked = onEditClicked || (() => navigate(`/deck/${id}`))
     onFavoriteClicked = onFavoriteClicked || toggleSubscription
     onLikeClicked = onLikeClicked || toggleLike
     const favoriteClicked = event => {
