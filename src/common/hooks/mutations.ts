@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import {oc} from "ts-optchain"
 import {Deck, useChangeSubscriptionStatusMutation, useShallowDecksQuery} from "../../generated/graphql"
-import {isSubscribed} from "../selectors"
 import {useID} from "./index"
 
 export const useSubscriptionToggle = (id?: string) => {
@@ -29,23 +28,23 @@ export const useSubscriptionToggle = (id?: string) => {
     const subscribedDecks = oc(userDecks.data).user.subscribedDecks([]) as Deck[]
 
     const [updateSubscriptionStatusMutate] = useChangeSubscriptionStatusMutation()
-    return (deck: Deck) => updateSubscriptionStatusMutate({
-        variables: {
-            userId: id as string,
-            deckId: deck.id,
-            value: !isSubscribed({decks: subscribedDecks, id: deck.id})
-        },
-        optimisticResponse: {
-            __typename: "Mutation",
-            changeSubscriptionStatus: {
-                __typename: "User",
-                id: id as string,
-                subscribedDecks: isSubscribed({
-                    decks: subscribedDecks,
-                    id: deck.id
-                }) ? subscribedDecks.filter(d => d.id !== deck.id) : [...subscribedDecks, deck]
-            }
-        },
-        refetchQueries: ["ReviewsCount", "LessonsCount", "Reviews"]
-    })
+    return (deck: Deck) => {
+        const isSubscribed = subscribedDecks.some(d => d.id === deck.id)
+        return updateSubscriptionStatusMutate({
+            variables: {
+                userId: id as string,
+                deckId: deck.id,
+                value: !isSubscribed
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                changeSubscriptionStatus: {
+                    __typename: "User",
+                    id: id as string,
+                    subscribedDecks: isSubscribed ? subscribedDecks.filter(d => d.id !== deck.id) : [...subscribedDecks, deck]
+                }
+            },
+            refetchQueries: ["ReviewsCount", "LessonsCount", "Reviews"]
+        })
+    }
 }

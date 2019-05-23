@@ -79,7 +79,6 @@
     "react-markdown": "^4.0.8",
     "react-visibility-sensor": "^5.0.2",
     "remark-breaks": "^1.0.2",
-    "reselect": "^4.0.0",
     "serialize-javascript": "^1.7.0",
     "sql-template-strings": "^2.2.2",
     "sql.js": "^1.0.0",
