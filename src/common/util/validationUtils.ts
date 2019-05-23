@@ -26,7 +26,7 @@ export const longerThan = (length: number) => (str: string) => unicodeLength(str
 export const notEmpty = (str: string) => !validator.isEmpty(str)
 export const noInvalidCharacters = (invalidChars = UNICODE_INVALID_CHARACTERS) => (str: string) => !validator.matches(str, invalidChars)
 export const isEmail = (str: string) => validator.isEmail(str)
-export const isEqualTo = (other: number) => (value: any, context: any[]) => value === context[other]
+export const isEqualTo = <TProps>(otherPropName: keyof TProps) => (value: any, context: TProps) => value === context[otherPropName] as unknown
 export const passwordStrongEnough = (strength: PasswordStrength = PasswordStrength.Good) => {
     let policy = new PasswordPolicy({length: {minLength: 1}})
     switch (strength) {
