@@ -35,7 +35,7 @@
     "apollo-link-http": "^1.6.0-alpha.5",
     "apollo-link-retry": "^2.2.13",
     "apollo-upload-client": "^10.0.1",
-    "auth0-js": "^9.10.2",
+    "auth0-js": "^9.13.2",
     "autosuggest-highlight": "^3.1.1",
     "clsx": "^1.0.4",
     "color": "^3.1.1",
