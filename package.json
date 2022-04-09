@@ -61,7 +61,7 @@
     "jszip": "^3.7.0",
     "lodash": "^4.17.21",
     "material-ui-chip-input": "^1.0.0-beta.16",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
     "password-sheriff": "^1.1.0",
